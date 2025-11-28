@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TripStay | Nơi Nghỉ Ngơi Sau Những Cuộc Vui</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="shortcut icon" href="/image/logo.ico" type="image/x-icon">
+ 
+</head>
+
+<body>
+  <!-- Header chung -->
+  <header class="header">
+    <div class="container nav">
+      <a class="brand" href="/"><span class="mark">🏠</span><span class="text">tripstay</span></a>
+      <nav class="tabs">
+        <a class="tab-link " href="/"><span class="emoji">🏠</span> Nơi lưu trú</a>
+        <a class="tab-link" href="experiences.html"><span class="emoji">🎈</span> Trải nghiệm</a>
+        <a class="tab-link" href="services.html"><span class="emoji">🛎️</span> Dịch vụ</a>
+      </nav>
+      <div class="nav-actions">
+        <% if(login == null) { %>
+        <a class="link" href="/login.html">Đăng nhập</a>
+        <a class="link" href="/register.html">Đăng ký</a>
+        <% } %>
+
+        <% if(login != null) { %>
+        <div class="user-dropdown">
+          <button class="user-btn">
+            👋 Xin chào, <%= login.username %> ▾
+          </button>
+          <div class="dropdown-menu">
+            <a href="/profile.html">👤 Thông tin cá nhân</a>
+            <a href="/bookings.html">🧾 Lịch sử đặt phòng</a>
+            <a href="/logout.html" class="logout">🚪 Đăng xuất</a>
+          </div>
+        </div>
+        
+
+        <div class="notification-dropdown">
+          <button class="notify-btn">
+            🔔 Thông báo <span id="notify-count" class="badge-noti">0</span> ▾
+          </button>
+
+          <div class="notify-menu">
+            <% if (thongbao && thongbao.length > 0) { %>
+              <% thongbao.forEach(n => { %>
+                <div class="notify-item">
+                  <img src="admin/uploads/thumbnail_thongbao/<%= n.Thumbnail %>" class="notify-thumb" alt="Chưa có ảnh">
+
+                  <div class="notify-content">
+                    <h4><%= n.TieuDe %></h4>
+                    <p><%= n.NoiDung %></p>
+                   
+                  </div>
+                </div>
+              <% }) %>
+            <% } else { %>
+              <div class="notify-empty">Không có thông báo nào</div>
+            <% } %>
+          </div>
+        </div>
+
+        
+
+
+        <% } %>
+      </div>
+
+  </header>
+  <div class="toast-container" aria-live="polite" aria-atomic="true"></div>

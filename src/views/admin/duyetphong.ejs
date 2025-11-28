@@ -1,0 +1,52 @@
+<%- include('./layout/header') %>
+
+<div class="container mt-4">
+  <h3>📋 Danh sách chỗ ở chờ duyệt</h3>
+
+  <table class="table table-striped mt-3">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Số phòng</th>
+        <th>Địa chỉ</th>
+         <th>Người đăng</th>
+        <th>Trạng thái</th>
+        <th>Thao tác</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% if (rooms && rooms.length > 0) { %>
+        <% rooms.forEach(room => { %>
+          <tr>
+            <td><%= room.MaPhong %></td>
+            <td><%= room.SoPhong %></td>
+            <td><%= room.DiaChi %></td>
+             <td><%= room.Username || 'Không xác định' %></td> 
+            <td>
+  <span class="badge bg-secondary"><%= room.TrangThaiPhong %></span>
+</td>
+            <td>
+              <a href="/admin/duyetphong/<%= room.MaPhong %>" class="btn btn-info btn-sm">Xem chi tiết</a>
+            </td>
+          </tr>
+        <% }) %>
+      <% } else { %>
+        <tr>
+          <td colspan="5" class="text-center text-muted">Không có phòng nào chờ duyệt.</td>
+        </tr>
+      <% } %>
+    </tbody>
+  </table>
+</div>
+<script>
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('approved') === '1') {
+    alert('✅ Phê duyệt phòng thành công!');
+    window.history.replaceState({}, document.title, window.location.pathname);
+  } else if (params.get('error') === '1') {
+    alert('❌ Có lỗi xảy ra khi phê duyệt phòng!');
+    window.history.replaceState({}, document.title, window.location.pathname);
+  }
+</script>
+
+<%- include('./layout/footer') %>
