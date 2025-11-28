@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>TripStay – Dịch vụ</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Header dùng chung -->
+  <header class="header">
+    <div class="container nav">
+      <a class="brand" href="index.html"><span class="mark">🏠</span><span class="text">tripstay</span></a>
+      <nav class="tabs">
+        <a class="tab-link" href="index.html"><span class="emoji">🏠</span> Nơi lưu trú</a>
+        <a class="tab-link" href="experiences.html"><span class="emoji">🎈</span> Trải nghiệm <span class="new">MỚI</span></a>
+        <a class="tab-link active" href="services.html"><span class="emoji">🛎️</span> Dịch vụ <span class="new">MỚI</span></a>
+      </nav>
+      <div class="nav-actions">
+        <a class="link" href="#">Trở thành host</a>
+        <span class="icon-btn">🌐</span>
+        <span class="icon-btn">≡</span>
+      </div>
+    </div>
+
+    <!-- Ô tìm kiếm: đổi nhãn cột 3 thành Loại dịch vụ -->
+    <div class="container search-wrap">
+      <div class="search-pill" role="search">
+        <div class="pill-field"><label>Địa điểm</label><input placeholder="Tìm kiếm điểm đến"></div>
+        <div class="pill-field"><label>Thời gian</label><input placeholder="Thêm ngày"></div>
+        <div class="pill-field"><label>Loại dịch vụ</label><input placeholder="Thêm dịch vụ"></div>
+        <button class="pill-search" aria-label="Tìm kiếm" disabled>
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+            <path d="M11 19a8 8 0 1 1 5.66-2.34L21 21" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- Nhóm: Đầu bếp -->
+    <section class="container section">
+      <header class="section-head">
+        <h2>Đầu bếp</h2>
+        <a class="more" href="#" aria-label="Xem thêm">›</a>
+      </header>
+
+      <div class="row">
+        <!-- Dùng .card.round để ảnh bo góc lớn như ảnh mẫu -->
+        <article class="card round">
+          <div class="thumb">
+            <img src="https://images.unsplash.com/photo-1551183053-bf91a1d81141?q=80&w=1600&auto=format&fit=crop" alt="Giá vé siêu địa phương, tìm kiếm thức ăn của Clair">
+            <span class="wish">♡</span>
+          </div>
+          <div class="card-body">
+            <h3 class="title">Giá vé siêu địa phương, tìm kiếm thức ăn của Clair</h3>
+            <div class="meta">Từ ₫2.607.597 / khách · Tối thiểu ₫5.004.480 · ★ 5,0</div>
+          </div>
+        </article>
+
+        <article class="card round">
+          <div class="thumb">
+            <img src="https://images.unsplash.com/photo-1504754524776-8f4f37790ca0?q=80&w=1600&auto=format&fit=crop" alt="Bữa ăn La Mã đích thực">
+            <span class="wish">♡</span>
+          </div>
+          <div class="card-body">
+            <h3 class="title">Bữa ăn La Mã đích thực</h3>
+            <div class="meta">Từ ₫1.980.220 / khách · ★ 4,97</div>
+          </div>
+        </article>
+
+        <article class="card round">
+          <div class="thumb">
+            <img src="https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=1600&auto=format&fit=crop" alt="Đằng sau ngọn lửa và hương vị hợp nhất của Erick">
+            <span class="wish">♡</span>
+          </div>
+          <div class="card-body">
+            <h3 class="title">Đằng sau ngọn lửa và hương vị hợp nhất của Erick</h3>
+            <div class="meta">Từ ₫1.712.049 / khách · Tối thiểu ₫2.996.085 · ★ 5,0</div>
+          </div>
+        </article>
+
+        <article class="card round">
+          <div class="thumb">
+            <img src="https://images.unsplash.com/photo-1555244162-803834f70033?q=80&w=1600&auto=format&fit=crop" alt="Luxury Private Dining by Chef Jimmy Matiz">
+            <span class="wish">♡</span>
+          </div>
+          <div class="card-body">
+            <h3 class="title">Luxury Private Dining by Chef Jimmy Matiz</h3>
+            <div class="meta">Từ ₫4.345.996 / khách · Tối thiểu ₫34.241.178 · ★ 5,0</div>
+          </div>
+        </article>
+
+        <article class="card round">
+          <div class="thumb">
+            <img src="https://images.unsplash.com/photo-1543332164-6e82f355badc?q=80&w=1600&auto=format&fit=crop" alt="Ẩm thực Catalan cùng Cristina">
+            <span class="wish">♡</span>
+          </div>
+          <div class="card-body">
+            <h3 class="title">Ẩm thực Catalan cùng Cristina</h3>
+            <div class="meta">Từ ₫1.218.597 / khách</div>
+          </div>
+        </article>
+
+        <article class="card round">
+          <div class="thumb">
+            <img src="https://images.unsplash.com/photo-1511690656952-34342bb7c2f2?q=80&w=1600&auto=format&fit=crop" alt="Thực đơn Cali-Mediterranean sôi động của Liza">
+            <span class="wish">♡</span>
+          </div>
+          <div class="card-body">
+            <h3 class="title">Thực đơn Cali-Mediterranean sôi động của Liza</h3>
+            <div class="meta">Từ ₫6.663.860 / khách · Tối thiểu ₫26.655.440</div>
+          </div>
+        </article>
+
+        <article class="card round">
+          <div class="thumb">
+            <img src="https://images.unsplash.com/photo-1532634896-26909d0d4b6a?q=80&w=1600&auto=format&fit=crop" alt="Sự kết hợp dành cho người sành ăn quốc tế của Brian">
+            <span class="wish">♡</span>
+          </div>
+          <div class="card-body">
+            <h3 class="title">Sự kết hợp dành cho người sành ăn quốc tế của Brian</h3>
+            <div class="meta">Từ ₫2.370.543 / khách</div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- Nhóm: Đào tạo -->
+    <section class="container section">
+      <header class="section-head">
+        <h2>Đào tạo</h2>
+      </header>
+
+      <div class="row">
+        <article class="card round">
+          <div class="thumb">
+            <img src="https://images.unsplash.com/photo-1520975867597-0af37a22e31f?q=80&w=1600&auto=format&fit=crop" alt="Khóa huấn luyện thể hình cơ bản">
+            <span class="timechip">Phổ biến</span><span class="wish">♡</span>
+          </div>
+          <div class="card-body">
+            <h3 class="title">Huấn luyện thể hình cơ bản</h3>
+            <div class="meta">Từ ₫450.000 / buổi · ★ 4,9</div>
+          </div>
+        </article>
+
+        <article class="card round">
+          <div class="thumb">
+            <img src="https://images.unsplash.com/photo-1549880338-65ddcdfd017b?q=80&w=1600&auto=format&fit=crop" alt="Workshop gốm">
+            <span class="wish">♡</span>
+          </div>
+          <div class="card-body">
+            <h3 class="title">Workshop gốm cơ bản</h3>
+            <div class="meta">Từ ₫520.000 / khách · ★ 4,8</div>
+          </div>
+        </article>
+
+        <article class="card round">
+          <div class="thumb">
+            <img src="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?q=80&w=1600&auto=format&fit=crop" alt="Tour ảnh ngoài trời">
+            <span class="wish">♡</span>
+          </div>
+          <div class="card-body">
+            <h3 class="title">Tour ảnh ngoài trời</h3>
+            <div class="meta">Từ ₫600.000 / khách · ★ 5,0</div>
+          </div>
+        </article>
+
+        <article class="card round">
+          <div class="thumb">
+            <img src="https://images.unsplash.com/photo-1520975867597-0af37a22e31f?q=80&w=1600&auto=format&fit=crop" alt="Khoá kéo giãn & phục hồi">
+            <span class="wish">♡</span>
+          </div>
+          <div class="card-body">
+            <h3 class="title">Khoá kéo giãn & phục hồi</h3>
+            <div class="meta">Từ ₫390.000 / khách · ★ 4,95</div>
+          </div>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer dùng chung -->
+  <footer class="footer">
+    <div class="container footer-grid">
+      <div><h4>Hỗ trợ</h4>
+        <a href="#">Trung tâm trợ giúp</a><a href="#">Yêu cầu trợ giúp về vấn đề an toàn</a>
+        <a href="#">AirCover</a><a href="#">Chống phân biệt đối xử</a>
+        <a href="#">Hỗ trợ người khuyết tật</a><a href="#">Các tuỳ chọn huỷ</a>
+        <a href="#">Báo cáo lo ngại của khu dân cư</a>
+      </div>
+      <div><h4>Đón tiếp khách</h4>
+        <a href="#">Cho thuê nhà trên TripStay</a><a href="#">Đưa trải nghiệm của bạn lên TripStay</a>
+        <a href="#">Đưa dịch vụ của bạn lên TripStay</a><a href="#">AirCover cho host</a>
+        <a href="#">Tài nguyên về đón tiếp khách</a><a href="#">Diễn đàn cộng đồng</a>
+        <a href="#">Đón tiếp khách có trách nhiệm</a>
+      </div>
+      <div><h4>TripStay</h4>
+        <a href="#">Bản phát hành Mùa hè 2025</a><a href="#">Trang tin tức</a>
+        <a href="#">Cơ hội nghề nghiệp</a><a href="#">Nhà đầu tư</a>
+        <a href="#">Chỗ ở khẩn cấp TripStay.org</a>
+      </div>
+    </div>
+    <div class="container footer-meta">
+      <div>© 2025 TripStay, Inc. · <a href="#">Quyền riêng tư</a> · <a href="#">Điều khoản</a> · <a href="#">Sơ đồ trang web</a></div>
+      <div class="meta-right"><a class="link" href="#">Tiếng Việt (VN)</a><a class="link" href="#">₫ VND</a><a class="link" href="#">Facebook</a><a class="link" href="#">X</a><a class="link" href="#">Instagram</a></div>
+    </div>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,63 @@
+<%- include('../layout/header.ejs') %>
+<main>
+  <section class="container section">
+    <header class="section-head">
+      <h2>Những Loại Nơi Lưu Trú</h2>
+      <a class="more" href="#">›</a>
+    </header>
+        <div class="controls-center">
+          <div class="controls">
+            <button class="btn filter-btn active" data-filter="Tất cả">Tất cả</button>
+            <% roomTypes.forEach(type => { %>
+              <button class="btn filter-btn" data-filter="<%= type.TenLoaiPhong %>"><%= type.TenLoaiPhong %></button>
+            <% }); %>
+          </div>
+        </div>
+    
+        <div class="row" id="room-list">
+          <% rooms.forEach(room => { %>
+            <article class="card" data-type="<%= room.TenLoaiPhong %>">
+              <div class="thumb">
+                <% const firstImage = room.HinhAnh ? room.HinhAnh.split(',')[0] : 'default.jpg'; %>
+                <img src="admin/uploads/anhphong/<%= firstImage.trim() %>" alt="<%= room.TenLoaiPhong %>" >
+
+                <span class="badge">Được khách yêu thích</span>
+                <span class="wish"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#111827" stroke-width="1.6">
+                    <path d="M12 21s-7-4.73-9.33-7.06a5.5 5.5 0 1 1 7.78-7.78L12 5.72l1.55-1.56a5.5 5.5 0 1 1 7.78 7.78C19 16.27 12 21 12 21Z" />
+                  </svg></span>
+              </div>
+              <div class="card-body">
+                <h3 class="title"><%= room.TenLoaiPhong %> tại <%= room.DiaChi %></h3>
+                <div class="meta">₫<%= room.Gia %> cho 2 đêm · ★ <%= room.Rating %></div>
+              </div>
+            </article>
+          <% }); %>
+        </div>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        const roomCards = document.querySelectorAll('#room-list .card');
+    
+        filterButtons.forEach(button => {
+          button.addEventListener('click', () => {
+            // Remove active class from all buttons
+            filterButtons.forEach(btn => btn.classList.remove('active'));
+            // Add active class to the clicked button
+            button.classList.add('active');
+    
+            const filter = button.getAttribute('data-filter');
+    
+            roomCards.forEach(card => {
+              if (filter === 'Tất cả' || card.getAttribute('data-type') === filter) {
+                card.style.display = 'flex'; // Use flex to maintain card layout
+              } else {
+                card.style.display = 'none';
+              }
+            });
+          });
+        });
+      });
+    </script>
+      </section>
+</main>
+<%- include('../layout/footer.ejs') %>

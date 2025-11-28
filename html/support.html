@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>TripStay – Trung tâm trợ giúp</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Header chung -->
+  <header class="header">
+    <div class="container nav">
+      <a class="brand" href="index.html"><span class="mark">🏠</span><span class="text">tripstay</span></a>
+      <nav class="tabs">
+        <a class="tab-link" href="index.html"><span class="emoji">🏠</span> Nơi lưu trú</a>
+        <a class="tab-link" href="experiences.html"><span class="emoji">🎈</span> Trải nghiệm</a>
+        <a class="tab-link" href="services.html"><span class="emoji">🛎️</span> Dịch vụ</a>
+      </nav>
+      <div class="nav-actions">
+        <a class="link" href="account.html">Tài khoản</a>
+        <span class="icon-btn">🌐</span>
+        <span class="icon-btn">≡</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero + tìm kiếm -->
+  <section class="help-hero container narrow">
+    <h1 class="help-title">Chào bạn! Chúng tôi có thể giúp gì cho bạn?</h1>
+    <!-- Search (1 dòng) -->
+    <div class="help-search">
+      <form class="hs-form" action="#" method="get">
+        <input class="hs-input" type="search" name="q"
+              placeholder="Tìm kiếm thông tin hướng dẫn..."
+              aria-label="Tìm kiếm" />
+        <button class="hs-btn" type="submit" aria-label="Tìm kiếm"></button>
+      </form>
+    </div>
+
+
+    <div class="help-tabs">
+      <a class="help-tab active" href="#">Khách</a>
+      <a class="help-tab" href="#">Host cho thuê chỗ ở</a>
+      <a class="help-tab" href="#">Host trải nghiệm</a>
+      <a class="help-tab" href="#">Nhà cung cấp dịch vụ</a>
+      <a class="help-tab" href="#">Quản trị viên chuyên công tác</a>
+    </div>
+  </section>
+
+  <!-- Gợi ý nhanh -->
+  <section class="container narrow">
+    <div class="suggest-wrap">
+      <div class="suggest-card">
+        <div class="s-slab">🛡️</div>
+        <div>
+          <p class="s-title">Xác minh danh tính</p>
+          <p class="s-desc">Cập nhật thông tin để tăng độ tin cậy khi đặt chỗ.</p>
+        </div>
+        <a class="s-cta" href="#">Bắt đầu →</a>
+      </div>
+
+      <div class="suggest-card">
+        <div class="s-slab">🧾</div>
+        <div>
+          <p class="s-title">Tìm thông tin đặt phòng/đặt chỗ</p>
+          <p class="s-desc">Xem tình trạng, chi tiết và lịch sử đặt của bạn.</p>
+        </div>
+        <a class="s-cta" href="#">Xem chuyến đi →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Hướng dẫn khi mới bắt đầu -->
+  <section class="container narrow section">
+    <header class="section-head">
+      <h2>Hướng dẫn khi mới bắt đầu</h2>
+      <a class="more" href="#" aria-label="Xem tất cả">›</a>
+    </header>
+    <div class="guide-row">
+      <article class="guide">
+        <div class="thumb"><img src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?q=80&w=1400&auto=format&fit=crop" alt=""></div>
+        <div class="card-body">
+          <h4>Bắt đầu làm khách trên TripStay</h4>
+          <div class="meta">Các bước cơ bản để đặt chỗ an toàn</div>
+        </div>
+      </article>
+      <article class="guide">
+        <div class="thumb"><img src="https://images.unsplash.com/photo-1520975854417-3e27f459bb0c?q=80&w=1400&auto=format&fit=crop" alt=""></div>
+        <div class="card-body">
+          <h4>Sử dụng tính năng tìm kiếm & bộ lọc</h4>
+          <div class="meta">Tìm chỗ phù hợp nhanh hơn</div>
+        </div>
+      </article>
+      <article class="guide">
+        <div class="thumb"><img src="https://images.unsplash.com/photo-1524758631624-e2822e304c36?q=80&w=1400&auto=format&fit=crop" alt=""></div>
+        <div class="card-body">
+          <h4>Xác minh, chỉnh sửa thông tin tài khoản</h4>
+          <div class="meta">Giữ tài khoản luôn an toàn</div>
+        </div>
+      </article>
+      <article class="guide">
+        <div class="thumb"><img src="https://images.unsplash.com/photo-1631788012422-0b53b9c7f03d?q=80&w=1400&auto=format&fit=crop" alt=""></div>
+        <div class="card-body">
+          <h4>AirCover cho khách</h4>
+          <div class="meta">Quyền lợi bảo vệ toàn diện</div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- Bài viết hàng đầu -->
+  <section class="container">
+    <header class="section-head">
+      <h2>Bài viết hàng đầu</h2>
+    </header>
+    <div class="blog-wrap">
+      <div class="blog">
+        <a href="#">Hủy đặt phòng & cách liên hệ với Chủ nhà</a>
+        <p>Cách điều chỉnh kế hoạch, đổi ngày ở và yêu cầu hỗ trợ khi cần.</p>
+      </div>
+      <div class="blog">
+        <a href="#">Thêm hoặc sử dụng phương thức thanh toán</a>
+        <p>Cập nhật thẻ, kiểm tra các tùy chọn thanh toán được chấp nhận.</p>
+      </div>
+      <div class="blog">
+        <a href="#">Thời điểm thanh toán tiền đặt trải nghiệm</a>
+        <p>Quy trình thanh toán và các mốc thời gian phổ biến.</p>
+      </div>
+      <div class="blog">
+        <a href="#">Nếu host hủy đặt phòng của bạn</a>
+        <p>Quyền lợi và các bước TripStay sẽ hỗ trợ.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Khám phá thêm / cần liên hệ -->
+  <section class="explore-band">
+    <div class="explore-grid">
+      <article class="ex-card">
+        <div class="thumb"><img src="https://images.unsplash.com/photo-1511735643442-503bb3bd3487?q=80&w=1400&auto=format&fit=crop" alt=""></div>
+        <div class="card-body">
+          <h3 style="margin:0 0 6px">Chính sách cho cộng đồng của chúng tôi</h3>
+          <p class="meta">Giữ an toàn & tôn trọng lẫn nhau trên mỗi hành trình.</p>
+        </div>
+      </article>
+
+      <article class="ex-card">
+        <div class="thumb"><img src="https://images.unsplash.com/photo-1532634876-26909d0d4b6a?q=80&w=1400&auto=format&fit=crop" alt=""></div>
+        <div class="card-body">
+          <h3 style="margin:0 0 6px">Mẹo và hướng dẫn an toàn</h3>
+          <p class="meta">Lưu ý quan trọng dành cho khách & chủ nhà.</p>
+        </div>
+      </article>
+
+      <aside class="help-box">
+        <h3 style="margin:0">Bạn cần liên hệ?</h3>
+        <p class="meta">Để bắt đầu, vui lòng tóm tắt một số chi tiết để chúng tôi có thể kết nối bạn với phê duyệt phù hợp.</p>
+        <input placeholder="Mô tả vấn đề của bạn…" />
+        <button class="btn">Liên hệ với chúng tôi</button>
+        <p class="meta">Bạn cũng có thể <a class="link" href="#">gửi phản hồi cho chúng tôi</a>.</p>
+      </aside>
+    </div>
+  </section>
+
+  <!-- Footer chung -->
+  <footer class="footer">
+    <div class="container footer-grid">
+      <div><h4>Hỗ trợ</h4>
+        <a href="#">Trung tâm trợ giúp</a><a href="#">Yêu cầu trợ giúp về vấn đề an toàn</a>
+        <a href="#">AirCover</a><a href="#">Chống phân biệt đối xử</a>
+        <a href="#">Hỗ trợ người khuyết tật</a><a href="#">Các tuỳ chọn huỷ</a>
+        <a href="#">Báo cáo lo ngại của khu dân cư</a>
+      </div>
+      <div><h4>Đón tiếp khách</h4>
+        <a href="#">Cho thuê nhà trên TripStay</a><a href="#">Đưa trải nghiệm của bạn lên TripStay</a>
+        <a href="#">Đưa dịch vụ của bạn lên TripStay</a><a href="#">AirCover cho host</a>
+        <a href="#">Tài nguyên về đón tiếp khách</a><a href="#">Diễn đàn cộng đồng</a>
+        <a href="#">Đón tiếp khách có trách nhiệm</a>
+      </div>
+      <div><h4>TripStay</h4>
+        <a href="#">Bản phát hành Mùa hè 2025</a><a href="#">Trang tin tức</a>
+        <a href="#">Cơ hội nghề nghiệp</a><a href="#">Nhà đầu tư</a>
+        <a href="#">Chỗ ở khẩn cấp TripStay.org</a>
+      </div>
+    </div>
+    <div class="container footer-meta">
+      <div>© 2025 TripStay, Inc. · <a href="#">Quyền riêng tư</a> · <a href="#">Điều khoản</a> · <a href="#">Sơ đồ trang web</a></div>
+      <div class="meta-right"><a class="link" href="#">Tiếng Việt (VN)</a><a class="link" href="#">₫ VND</a><a class="link" href="#">Facebook</a><a class="link" href="#">X</a><a class="link" href="#">Instagram</a></div>
+    </div>
+  </footer>
+</body>
+</html>

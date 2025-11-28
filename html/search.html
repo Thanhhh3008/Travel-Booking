@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>TripStay – Tìm kiếm</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Header dùng chung -->
+  <header class="header">
+    <div class="container nav">
+      <a class="brand" href="index.html"><span class="mark">🏠</span><span class="text">tripstay</span></a>
+      <nav class="tabs">
+        <a class="tab-link active" href="index.html"><span class="emoji">🏠</span> Nơi lưu trú</a>
+        <a class="tab-link" href="experiences.html"><span class="emoji">🎈</span> Trải nghiệm <span class="new">MỚI</span></a>
+        <a class="tab-link" href="services.html"><span class="emoji">🛎️</span> Dịch vụ <span class="new">MỚI</span></a>
+      </nav>
+      <div class="nav-actions">
+        <a class="link" href="auth.html">Đăng nhập</a>
+        <span class="icon-btn">🌐</span>
+        <span class="icon-btn">≡</span>
+      </div>
+    </div>
+
+    <!-- Thanh tìm kiếm: mỗi field là 1 link mở overlay -->
+    <div class="container search-wrap">
+      <div class="search-pill" role="search" aria-label="Tìm kiếm">
+        <div class="pill-field">
+          <label>Địa điểm</label>
+          <a class="pill-link" href="#where"><span class="placeholder">Tìm kiếm điểm đến</span></a>
+        </div>
+        <div class="pill-field">
+          <label>Thời gian</label>
+          <a class="pill-link" href="#when"><span class="placeholder">Thêm ngày</span></a>
+        </div>
+        <div class="pill-field">
+          <label>Khách</label>
+          <a class="pill-link" href="#who"><span class="placeholder">Thêm khách</span></a>
+        </div>
+        <button class="pill-search" aria-label="Tìm kiếm" disabled>
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+            <path d="M11 19a8 8 0 1 1 5.66-2.34L21 21" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- Nội dung giả để thấy overlay đè lên -->
+    <section class="container section">
+      <header class="section-head">
+        <h2>Nơi lưu trú được ưa chuộng tại Hà Nội</h2>
+      </header>
+      <div class="row">
+        <!-- vài thẻ mẫu tái dùng từ trang trước -->
+        <article class="card"><div class="thumb">
+          <img src="https://images.unsplash.com/photo-1505691938895-1758d7feb511?q=80&w=1600&auto=format&fit=crop" alt="">
+          <span class="badge">Được khách yêu thích</span><span class="wish">♡</span>
+        </div><div class="card-body"><h3 class="title">Căn hộ tại Quận Tây Hồ</h3><div class="meta">₫1.351.210 cho 2 đêm · ★ 4,95</div></div></article>
+
+        <article class="card"><div class="thumb">
+          <img src="https://images.unsplash.com/photo-1524758631624-e2822e304c36?q=80&w=1600&auto=format&fit=crop" alt="">
+          <span class="badge">Được khách yêu thích</span><span class="wish">♡</span>
+        </div><div class="card-body"><h3 class="title">Nhà tại Quận Ba Đình</h3><div class="meta">₫1.330.000 cho 2 đêm · ★ 5,0</div></div></article>
+
+        <article class="card"><div class="thumb">
+          <img src="https://images.unsplash.com/photo-1501045661006-fcebe0257c3f?q=80&w=1600&auto=format&fit=crop" alt="">
+          <span class="badge">Được khách yêu thích</span><span class="wish">♡</span>
+        </div><div class="card-body"><h3 class="title">Phòng tại Quận Hoàn Kiếm</h3><div class="meta">₫597.977 cho 2 đêm · ★ 4,94</div></div></article>
+      </div>
+    </section>
+  </main>
+
+  <!-- ========= OVERLAYS ========= -->
+
+  <!-- 1) Gợi ý ĐỊA ĐIỂM -->
+  <section id="where" class="overlay" aria-hidden="false">
+    <a href="#" class="backdrop" aria-label="Đóng"></a>
+    <div class="panel small" role="dialog" aria-modal="true" aria-labelledby="whereTitle">
+      <div class="panel-head">
+        <strong id="whereTitle" class="panel-title">Điểm đến được đề xuất</strong>
+        <a href="#" class="panel-close" aria-label="Đóng">✕</a>
+      </div>
+      <div class="panel-scroll">
+        <div class="panel-body">
+          <div class="suggest">
+            <div class="s-item">
+              <div class="s-icon">📍</div>
+              <div><p class="s-title">Lân cận</p><p class="s-desc">Tìm xung quanh bạn</p></div>
+            </div>
+            <div class="s-item">
+              <div class="s-icon">🏙️</div>
+              <div><p class="s-title">Hà Nội</p><p class="s-desc">Có các thắng cảnh như Nhà hát lớn Hà Nội</p></div>
+            </div>
+            <div class="s-item">
+              <div class="s-icon">🏖️</div>
+              <div><p class="s-title">Vũng Tàu, Bà Rịa – Vũng Tàu</p><p class="s-desc">Nổi tiếng với những bãi biển</p></div>
+            </div>
+            <div class="s-item">
+              <div class="s-icon">🌲</div>
+              <div><p class="s-title">Đà Lạt, Lâm Đồng</p><p class="s-desc">Phù hợp cho người yêu thiên nhiên</p></div>
+            </div>
+            <div class="s-item">
+              <div class="s-icon">🕌</div>
+              <div><p class="s-title">Bangkok, Thái Lan</p><p class="s-desc">Có cuộc sống về đêm náo nhiệt</p></div>
+            </div>
+            <div class="s-item">
+              <div class="s-icon">🏝️</div>
+              <div><p class="s-title">Nha Trang, Khánh Hòa</p><p class="s-desc">Điểm đến có bãi biển được ưa chuộng</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2) LỊCH -->
+  <section id="when" class="overlay">
+    <a href="#" class="backdrop" aria-label="Đóng"></a>
+    <div class="panel" role="dialog" aria-modal="true" aria-labelledby="whenTitle">
+      <div class="panel-head">
+        <strong id="whenTitle" class="panel-title">Chọn ngày</strong>
+        <a href="#" class="panel-close" aria-label="Đóng">✕</a>
+      </div>
+
+      <div class="panel-scroll">
+        <div class="panel-body">
+          <div class="cal-wrap">
+            <div class="cal-tabs">
+              <a class="cal-tab active" href="#when">Ngày</a>
+              <span class="cal-tab" aria-disabled="true">Tháng</span>
+              <span class="cal-tab" aria-disabled="true">Linh hoạt</span>
+            </div>
+
+            <div class="cal">
+              <!-- Tháng 10/2025 -->
+              <div class="month">
+                <div class="m-head">Tháng 10 năm 2025</div>
+                <div class="grid">
+                  <div class="cell mute">T2</div><div class="cell mute">T3</div><div class="cell mute">T4</div><div class="cell mute">T5</div><div class="cell mute">T6</div><div class="cell mute">T7</div><div class="cell mute">CN</div>
+                  <div class="cell mute"></div><div class="cell mute">1</div><div class="cell mute">2</div><div class="cell">3</div><div class="cell">4</div><div class="cell">5</div><div class="cell mute"> </div>
+                  <div class="cell">6</div><div class="cell">7</div><div class="cell">8</div><div class="cell">9</div><div class="cell">10</div><div class="cell">11</div><div class="cell">12</div>
+                  <div class="cell">13</div><div class="cell">14</div><div class="cell">15</div><div class="cell">16</div><div class="cell">17</div><div class="cell">18</div><div class="cell">19</div>
+                  <div class="cell">20</div><div class="cell">21</div><div class="cell">22</div><div class="cell">23</div><div class="cell">24</div><div class="cell">25</div><div class="cell">26</div>
+                  <div class="cell">27</div><div class="cell">28</div><div class="cell">29</div><div class="cell">30</div><div class="cell">31</div><div class="cell mute"></div><div class="cell mute"></div>
+                </div>
+              </div>
+              <!-- Tháng 11/2025 -->
+              <div class="month">
+                <div class="m-head">Tháng 11 năm 2025</div>
+                <div class="grid">
+                  <div class="cell mute">T2</div><div class="cell mute">T3</div><div class="cell mute">T4</div><div class="cell mute">T5</div><div class="cell mute">T6</div><div class="cell mute">T7</div><div class="cell mute">CN</div>
+                  <div class="cell mute"></div><div class="cell mute"></div><div class="cell mute"></div><div class="cell mute"></div><div class="cell">1</div><div class="cell">2</div><div class="cell">3</div>
+                  <div class="cell">4</div><div class="cell">5</div><div class="cell">6</div><div class="cell">7</div><div class="cell">8</div><div class="cell">9</div><div class="cell">10</div>
+                  <div class="cell">11</div><div class="cell">12</div><div class="cell">13</div><div class="cell">14</div><div class="cell">15</div><div class="cell">16</div><div class="cell">17</div>
+                  <div class="cell">18</div><div class="cell">19</div><div class="cell">20</div><div class="cell">21</div><div class="cell">22</div><div class="cell">23</div><div class="cell">24</div>
+                  <div class="cell">25</div><div class="cell">26</div><div class="cell">27</div><div class="cell">28</div><div class="cell">29</div><div class="cell">30</div><div class="cell mute"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="cal-actions">
+              <span class="chip">Ngày chính xác</span>
+              <span class="chip">± 1 ngày</span>
+              <span class="chip">± 2 ngày</span>
+              <span class="chip">± 3 ngày</span>
+              <span class="chip">± 7 ngày</span>
+              <span class="chip">± 14 ngày</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3) KHÁCH -->
+  <section id="who" class="overlay">
+    <a href="#" class="backdrop" aria-label="Đóng"></a>
+    <div class="panel small" role="dialog" aria-modal="true" aria-labelledby="whoTitle">
+      <div class="panel-head">
+        <strong id="whoTitle" class="panel-title">Khách</strong>
+        <a href="#" class="panel-close" aria-label="Đóng">✕</a>
+      </div>
+      <div class="panel-scroll">
+        <div class="rows">
+          <div class="rowg">
+            <div><p class="r-title">Người lớn</p><p class="r-sub">Từ 13 tuổi trở lên</p></div>
+            <div class="counter"><button class="btn-ghost">−</button><span class="count">0</span><button class="btn-ghost">+</button></div>
+          </div>
+
+          <div class="rowg">
+            <div><p class="r-title">Trẻ em</p><p class="r-sub">Độ tuổi 2 – 12</p></div>
+            <div class="counter"><button class="btn-ghost">−</button><span class="count">0</span><button class="btn-ghost">+</button></div>
+          </div>
+
+          <div class="rowg">
+            <div><p class="r-title">Em bé</p><p class="r-sub">Dưới 2 tuổi</p></div>
+            <div class="counter"><button class="btn-ghost">−</button><span class="count">0</span><button class="btn-ghost">+</button></div>
+          </div>
+
+          <div class="rowg">
+            <div><p class="r-title">Thú cưng</p><p class="r-sub"><a class="link" href="#">Bạn sẽ mang theo động vật phục vụ?</a></p></div>
+            <div class="counter"><button class="btn-ghost">−</button><span class="count">0</span><button class="btn-ghost">+</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer dùng chung -->
+  <footer class="footer">
+    <div class="container footer-grid">
+      <div><h4>Hỗ trợ</h4>
+        <a href="#">Trung tâm trợ giúp</a><a href="#">Yêu cầu trợ giúp về vấn đề an toàn</a>
+        <a href="#">AirCover</a><a href="#">Chống phân biệt đối xử</a>
+        <a href="#">Hỗ trợ người khuyết tật</a><a href="#">Các tuỳ chọn huỷ</a>
+        <a href="#">Báo cáo lo ngại của khu dân cư</a>
+      </div>
+      <div><h4>Đón tiếp khách</h4>
+        <a href="#">Cho thuê nhà trên TripStay</a><a href="#">Đưa trải nghiệm của bạn lên TripStay</a>
+        <a href="#">Đưa dịch vụ của bạn lên TripStay</a><a href="#">AirCover cho host</a>
+        <a href="#">Tài nguyên về đón tiếp khách</a><a href="#">Diễn đàn cộng đồng</a>
+        <a href="#">Đón tiếp khách có trách nhiệm</a>
+      </div>
+      <div><h4>TripStay</h4>
+        <a href="#">Bản phát hành Mùa hè 2025</a><a href="#">Trang tin tức</a>
+        <a href="#">Cơ hội nghề nghiệp</a><a href="#">Nhà đầu tư</a>
+        <a href="#">Chỗ ở khẩn cấp TripStay.org</a>
+      </div>
+    </div>
+    <div class="container footer-meta">
+      <div>© 2025 TripStay, Inc. · <a href="#">Quyền riêng tư</a> · <a href="#">Điều khoản</a> · <a href="#">Sơ đồ trang web</a></div>
+      <div class="meta-right"><a class="link" href="#">Tiếng Việt (VN)</a><a class="link" href="#">₫ VND</a><a class="link" href="#">Facebook</a><a class="link" href="#">X</a><a class="link" href="#">Instagram</a></div>
+    </div>
+  </footer>
+</body>
+</html>

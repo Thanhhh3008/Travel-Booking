@@ -1,0 +1,43 @@
+<%- include('../layout/header.ejs') %>
+<main class="auth-shell">
+  <section class="auth-card">
+    <div class="auth-head">
+      <div>Đăng nhập</div>
+      <a class="link" href="/register.html">Tạo tài khoản</a>
+    </div>
+    <div class="auth-body">
+      <h1 class="auth-title">Chào mừng bạn trở lại 👋</h1>
+
+      <form action="/login" class="form-login" method="POST">
+        <label class="auth-label" for="login-email">Email</label>
+        <input type="email" name="email" id="login-email" class="auth-input" placeholder="ban@gmail.com">
+
+        <label class="auth-label" for="login-passs">Password</label>
+        <input type="password" name="password" id="login-passs" class="auth-input">
+        <div style="margin-top:12px">
+          <button class="auth-btn">Tiếp tục</button>
+        </div>
+      </form>
+
+
+      <div class="auth-divider">hoặc</div>
+
+      <div class="auth-alt">
+        <a class="btn" href="#">
+          <span class="badge-g">
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+              <path fill="#EA4335" d="M12 10.2v3.7h5.2c-.2 1.2-1.6 3.5-5.2 3.5A6 6 0 1 1 12 6a5.5 5.5 0 0 1 3.9 1.5l2.6-2.6A9.3 9.3 0 0 0 12 2.7a9.3 9.3 0 1 0 0 18.6c5.4 0 9-3.8 9-9 0-.6-.1-1.1-.2-1.6H12z" />
+            </svg>
+          </span>
+          Tiếp tục với Google
+        </a>
+        <!-- <a class="btn" href="#"> Tiếp tục với Apple</a> -->
+      </div>
+
+      <!-- <p class="auth-mini">Bằng việc tiếp tục, bạn đồng ý với
+        <a class="link" href="#">Điều khoản</a> và <a class="link" href="#">Chính sách quyền riêng tư</a> của TripStay.
+      </p> -->
+    </div>
+  </section>
+</main>
+<%- include('../layout/footer.ejs') %>

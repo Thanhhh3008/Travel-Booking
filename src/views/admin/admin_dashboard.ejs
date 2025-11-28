@@ -1,0 +1,85 @@
+<%- include('./layout/header') %>
+
+<div class="header-card">
+  <h4>🌙 Xin chào, Admin Thành Nguyễn!</h4>
+  <p>Chào mừng trở lại với bảng điều khiển quản lý hệ thống.</p>
+  <small>Cập nhật lần cuối: <%= new Date().toLocaleString("vi-VN") %></small>
+</div>
+
+<!-- Cards -->
+<div class="row g-3">
+  <div class="col-md-3"><div class="card card-light-blue"><div class="card-body"><h6>Người dùng</h6><h3>1,668</h3><p class="text-success">+8%</p></div></div></div>
+  <div class="col-md-3"><div class="card card-light-green"><div class="card-body"><h6>Số phòng</h6><h3>86</h3><p class="text-success">Đang hoạt động</p></div></div></div>
+  <div class="col-md-3"><div class="card card-light-yellow"><div class="card-body"><h6>Đặt phòng hôm nay</h6><h3>147</h3><p class="text-danger">-2%</p></div></div></div>
+  <div class="col-md-3"><div class="card card-light-pink"><div class="card-body"><h6>Doanh thu</h6><h3>2.847M</h3><p class="text-success">+5%</p></div></div></div>
+</div>
+
+<!-- Chart -->
+<div class="card mt-4 shadow-sm border-0">
+  <div class="card-body">
+    <h5 class="mb-3">📈 Biểu đồ doanh thu & đặt phòng (7 ngày gần nhất)</h5>
+    <canvas id="dashboardChart" height="120"></canvas>
+  </div>
+</div>
+
+<!-- Các quy trình quản lý -->
+<div class="row g-3 mt-4">
+  <div class="col-md-6">
+    <div class="card shadow-sm border-0">
+      <div class="card-body">
+        <h5>📑 Quy trình phê duyệt chỗ ở mới</h5>
+        <p>Admin kiểm tra hồ sơ, hình ảnh, giấy tờ và chọn “Chấp thuận” hoặc “Từ chối”.</p>
+        <a href="/admin/duyetphong/" class="btn btn-primary btn-sm">Xem danh sách chờ duyệt</a>
+        
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-6">
+    <div class="card shadow-sm border-0">
+      <div class="card-body">
+        <h5>⚙️ Quy trình phân quyền người dùng</h5>
+        <p>Admin chọn tài khoản và gán quyền phù hợp trong mục "Quản lý người dùng".</p>
+        <a href="/admin/user" class="btn btn-secondary btn-sm">Quản lý người dùng</a>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-3 mt-3">
+  <div class="col-md-6">
+    <div class="card shadow-sm border-0">
+      <div class="card-body">
+        <h5>💬 Quy trình hỗ trợ/khiếu nại</h5>
+        <p>Xem, phản hồi và lưu lại nội dung hỗ trợ/khiếu nại từ người dùng hoặc nhà cung cấp.</p>
+        <button class="btn btn-warning btn-sm">Xem khiếu nại</button>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="card shadow-sm border-0">
+      <div class="card-body">
+        <h5>📑 Quy trình phê duyệt chỗ ở mới</h5>
+        <p>Admin theo dõi và quản lý danh sách chỗ ở.</p>
+        <a href="/admin/duyetphong/tatca" class="btn btn-warning btn-sm">Xem danh sách chỗ ở</a>
+        
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-6">
+    <div class="card shadow-sm border-0">
+      <div class="card-body">
+        <h5>📢 Quản lý thông báo hệ thống</h5>
+        <p>Tạo, gửi và theo dõi thông báo đến người dùng hoặc nhà cung cấp.</p>
+        <a href="/admin/thongbao" class="btn btn-info btn-sm text-white">
+          Tạo thông báo mới
+</a>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('./layout/footer') %>

@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>TripStay – Xác nhận và thanh toán</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Header chung -->
+  <header class="header">
+    <div class="container nav">
+      <a class="brand" href="index.html"><span class="mark">🏠</span><span class="text">tripstay</span></a>
+      <nav class="tabs">
+        <a class="tab-link" href="index.html"><span class="emoji">🏠</span> Nơi lưu trú</a>
+        <a class="tab-link" href="experiences.html"><span class="emoji">🎈</span> Trải nghiệm</a>
+        <a class="tab-link" href="services.html"><span class="emoji">🛎️</span> Dịch vụ</a>
+      </nav>
+      <div class="nav-actions">
+        <a class="link" href="room.html">Quay lại phòng</a>
+        <span class="icon-btn">🌐</span>
+        <span class="icon-btn">≡</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="container checkout-header">
+    <div style="display:flex;align-items:center;gap:12px">
+      <span class="back-circle">←</span>
+      <h1 class="checkout-title">Xác nhận và thanh toán</h1>
+    </div>
+  </div>
+
+  <main class="container" style="padding:18px 0 60px">
+    <div class="checkout-wrap">
+      <!-- LEFT: steps -->
+      <section>
+        <!-- Bước 1 -->
+        <article class="step-card">
+          <div class="step-head">1. Thêm phương thức thanh toán</div>
+          <div class="step-body">
+            <p style="margin:0 0 10px"><strong>Thẻ tín dụng hoặc thẻ ghi nợ</strong> · VISA · MasterCard</p>
+
+            <div class="field">
+              <label>Số thẻ</label>
+              <input class="input" placeholder="Số thẻ" />
+            </div>
+
+            <div class="field-row" style="margin-top:8px">
+              <div class="field">
+                <label>Ngày hết hạn</label>
+                <input class="input" placeholder="MM/YY" />
+              </div>
+              <div class="field">
+                <label>CVV</label>
+                <input class="input" placeholder="CVV" />
+              </div>
+            </div>
+
+            <div class="field" style="margin-top:8px">
+              <label>Mã bưu chính</label>
+              <input class="input" placeholder="Mã bưu chính" />
+            </div>
+
+            <div class="field" style="margin-top:8px">
+              <label>Quốc gia/khu vực</label>
+              <select class="select">
+                <option>Việt Nam</option>
+                <option>United States</option>
+                <option>Japan</option>
+                <option>Singapore</option>
+              </select>
+            </div>
+
+            <div style="margin-top:12px;display:flex;justify-content:flex-end">
+              <button class="btn-dark">Tiếp theo</button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Bước 2 -->
+        <article class="step-card" style="margin-top:16px">
+          <div class="step-head">2. Xem lại lượt đặt của bạn</div>
+          <div class="step-body">
+            <p class="meta" style="margin:0">Bạn sẽ thanh toán khi ấn “Yêu cầu đặt”. Các thông tin bên phải hiển thị chi tiết giá.</p>
+          </div>
+        </article>
+      </section>
+
+      <!-- RIGHT: Summary -->
+      <aside class="summary">
+        <div class="step-card">
+          <div class="step-body">
+            <div class="sum-head">
+              <div class="sum-thumb"><img src="https://images.unsplash.com/photo-1560066984-138dadb4c035?q=80&w=1200&auto=format&fit=crop" alt=""></div>
+              <div>
+                <div class="sum-title">Khu phố cổ*Hoàn Kiếm*Phòng bình dân</div>
+                <div class="sum-sub">★ 4,83 (103)</div>
+              </div>
+            </div>
+
+            <div class="sum-box">
+              <div class="meta"><strong>Hủy miễn phí</strong> · Hủy trước 4 thg 12 để được hoàn tiền đầy đủ. <a class="link" href="#">Toàn bộ chính sách</a></div>
+            </div>
+
+            <div class="sum-box">
+              <div class="sum-row">
+                <div>
+                  <div class="meta">Ngày</div>
+                  <div>5 – 7 thg 12, 2025</div>
+                </div>
+                <a class="btn" href="#" style="text-decoration:none">Thay đổi</a>
+              </div>
+              <div class="sum-row">
+                <div>
+                  <div class="meta">Khách</div>
+                  <div>1 người lớn</div>
+                </div>
+                <a class="btn" href="#" style="text-decoration:none">Thay đổi</a>
+              </div>
+            </div>
+
+            <div class="sum-box">
+              <div style="font-weight:800;margin-bottom:6px">Chi tiết giá</div>
+              <div class="sum-row"><span>2 đêm × ₫319.530</span><span>₫639.059</span></div>
+              <div class="sum-total"><span>Tổng VND</span><span>₫639.059</span></div>
+            </div>
+
+            <div class="note-chip">
+              <div class="note-ico">💎</div>
+              <div class="meta">Nơi này rất hiếm khi còn chỗ. Nhà/phòng cho thuê của Quyet thường kín phòng.</div>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <!-- Footer chung -->
+  <footer class="footer">
+    <div class="container footer-grid">
+      <div><h4>Hỗ trợ</h4>
+        <a href="#">Trung tâm trợ giúp</a><a href="#">Yêu cầu trợ giúp về vấn đề an toàn</a>
+        <a href="#">AirCover</a><a href="#">Chống phân biệt đối xử</a>
+        <a href="#">Hỗ trợ người khuyết tật</a><a href="#">Các tuỳ chọn huỷ</a>
+        <a href="#">Báo cáo lo ngại của khu dân cư</a>
+      </div>
+      <div><h4>Đón tiếp khách</h4>
+        <a href="#">Cho thuê nhà trên TripStay</a><a href="#">Đưa trải nghiệm của bạn lên TripStay</a>
+        <a href="#">Đưa dịch vụ của bạn lên TripStay</a><a href="#">AirCover cho host</a>
+        <a href="#">Tài nguyên về đón tiếp khách</a><a href="#">Diễn đàn cộng đồng</a>
+        <a href="#">Đón tiếp khách có trách nhiệm</a>
+      </div>
+      <div><h4>TripStay</h4>
+        <a href="#">Bản phát hành Mùa hè 2025</a><a href="#">Trang tin tức</a>
+        <a href="#">Cơ hội nghề nghiệp</a><a href="#">Nhà đầu tư</a>
+        <a href="#">Chỗ ở khẩn cấp TripStay.org</a>
+      </div>
+    </div>
+    <div class="container footer-meta">
+      <div>© 2025 TripStay, Inc. · <a href="#">Quyền riêng tư</a> · <a href="#">Điều khoản</a> · <a href="#">Sơ đồ trang web</a></div>
+      <div class="meta-right"><a class="link" href="#">Tiếng Việt (VN)</a><a class="link" href="#">₫ VND</a><a class="link" href="#">Facebook</a><a class="link" href="#">X</a><a class="link" href="#">Instagram</a></div>
+    </div>
+  </footer>
+</body>
+</html>

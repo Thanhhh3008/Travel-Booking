@@ -1,0 +1,176 @@
+<%- include('./layout/header') %>
+
+<div class="container mt-5">
+  <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
+    <div class="card-body bg-light p-4">
+
+      <h3 class="card-title text-primary fw-bold mb-4">🏠 Chi tiết chỗ ở: <%= room.SoPhong %></h3>
+      <hr>
+
+      <div class="row mb-4">
+        <div class="col-md-6">
+          <p><strong>📍 Địa chỉ:</strong> <%= room.DiaChi %></p>
+          <p><strong>📝 Mô tả:</strong> <%= room.MoTa %></p>
+          <p><strong>🛏️ Loại phòng:</strong> <%= room.TenLoaiPhong %></p>
+          <p><strong>📐 Diện tích:</strong> <%= room.DienTich %> m²</p>
+          
+
+        </div>
+        <div class="col-md-6">
+          <p><strong>⭐ Rating:</strong> <span class="badge bg-warning text-dark"><%= room.Rating %></span></p>
+          <p><strong>📊 Trạng thái:</strong> 
+            <span class="badge <%= room.TrangThaiPhong === 'Chờ xét duyệt' ? 'bg-secondary' : 'bg-success' %>">
+              <%= room.TrangThaiPhong %>
+            </span>
+          </p>
+          <p><strong>👥 Số khách tối đa:</strong> <%= room.SoKhachToiDa %></p>
+          <p><strong>💰 Giá:</strong> <%= room.Gia.toLocaleString() %> VND</p>
+        </div>
+      </div>
+
+      <% if (room.HinhAnh || room.GiayToPhong) { %>
+
+        <!-- Ảnh phòng -->
+        <% if (room.HinhAnh) { %>
+        <div class="mb-5">
+          <h5 class="fw-bold mb-3 text-dark">🖼️ Ảnh phòng</h5>
+          <div class="gallery-grid mb-4">
+            <% room.HinhAnh.split(',').forEach((img) => { %>
+              <a href="/admin/uploads/anhphong/<%= img.trim() %>" class="glightbox" data-gallery="anhphong">
+                <img src="/admin/uploads/anhphong/<%= img.trim() %>" class="gallery-img" alt="Hình ảnh phòng">
+              </a>
+            <% }) %>
+          </div>
+        </div>
+        <% } %>
+
+        <!-- Ảnh giấy tờ pháp lý -->
+        <% if (room.GiayToPhong) { %>
+        <div class="mb-3">
+          <h5 class="fw-bold mb-3 text-dark">📄 Ảnh giấy tờ pháp lý</h5>
+          <div class="gallery-grid mb-4">
+            <% room.GiayToPhong.split(',').forEach((img) => { %>
+              <a href="/admin/uploads/anhphaply/<%= img.trim() %>" class="glightbox" data-gallery="giayto">
+                <img src="/admin/uploads/anhphaply/<%= img.trim() %>" class="gallery-img" alt="Giấy tờ pháp lý">
+              </a>
+            <% }) %>
+          </div>
+        </div>
+        <% } %>
+
+      <% } %>
+
+  <div class="d-flex justify-content-end mt-4 gap-3">
+  <% if (room.TrangThaiPhong === 'Chờ xét duyệt') { %>
+    <!-- Nút phê duyệt / từ chối -->
+    <form action="/admin/duyetphong/<%= room.MaPhong %>/approve" method="POST">
+      <button type="submit" class="btn btn-success btn-lg px-4 shadow-sm">✅ Phê duyệt</button>
+    </form>
+
+    <button type="button" class="btn btn-danger btn-lg px-4 shadow-sm" data-bs-toggle="modal" data-bs-target="#rejectModal">
+      ❌ Từ chối
+    </button>
+  <% } else if (room.TrangThaiPhong === 'Đã duyệt') { %>
+    <!-- Nếu phòng đã duyệt thì hiện nút Ẩn khỏi web -->
+    <form action="/admin/duyetphong/<%= room.MaPhong %>/hide" method="POST">
+      <button type="submit" class="btn btn-warning btn-lg px-4 shadow-sm">🙈 Ẩn khỏi web</button>
+    </form>
+  <% } else if (room.TrangThaiPhong === 'Ẩn') { %>
+    <!-- Nếu phòng đang bị ẩn thì hiện nút Hiển thị lại -->
+    <form action="/admin/duyetphong/<%= room.MaPhong %>/show" method="POST">
+      <button type="submit" class="btn btn-info btn-lg px-4 shadow-sm text-white">👁️ Hiển thị lại</button>
+    </form>
+  <% } %>
+
+  <a href="/admin/duyetphong/tatca" class="btn btn-outline-secondary btn-lg px-4 shadow-sm">Quay lại</a>
+</div>
+
+
+
+    </div>
+  </div>
+</div>
+
+<!-- Modal nhập lý do -->
+<div class="modal fade" id="rejectModal" tabindex="-1" aria-labelledby="rejectModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <form action="/admin/duyetphong/<%= room.MaPhong %>/reject" method="POST" class="modal-content">
+      <div class="modal-header bg-danger text-white">
+        <h5 class="modal-title">Từ chối phê duyệt phòng</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+      </div>
+      <div class="modal-body">
+        <label for="reason" class="form-label fw-bold">Lý do từ chối:</label>
+        <textarea name="reason" id="reason" class="form-control" rows="4" required placeholder="Nhập lý do từ chối..."></textarea>
+      </div>
+      <div class="modal-footer">
+        <button type="submit" class="btn btn-danger">Xác nhận từ chối</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+      </div>
+    </form>
+  </div>
+</div>
+<!-- GLightbox (CDN) -->
+<link href="https://cdn.jsdelivr.net/npm/glightbox/dist/css/glightbox.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/glightbox/dist/js/glightbox.min.js"></script>
+<script>
+  GLightbox({ selector: '.glightbox', touchNavigation: true, loop: true });
+</script>
+<script>
+  const form = document.querySelector('#rejectModal form');
+  const reasonInput = document.getElementById('reason');
+
+  form.addEventListener('submit', function(e) {
+    if (reasonInput.value.length > 200) {
+      e.preventDefault(); 
+      alert('Lý do từ chối không được quá 200 ký tự!');
+    }
+  });
+</script>
+<style>
+  body {
+    background: linear-gradient(to bottom right, #eef2f3, #ffffff);
+    min-height: 100vh;
+  }
+
+  .gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 12px;
+  }
+
+  .gallery-img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 10px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+  }
+
+  .gallery-img:hover {
+    transform: scale(1.03);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.25);
+  }
+
+  .card {
+    transition: all 0.3s ease;
+  }
+
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+  }
+
+  h5 {
+    border-left: 4px solid #0d6efd;
+    padding-left: 10px;
+  }
+  body.modal-open .card:hover {
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+</style>
+
+<%- include('./layout/footer') %>

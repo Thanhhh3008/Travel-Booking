@@ -1,0 +1,650 @@
+<%- include('./layout/header') %>
+
+<div class="container mt-4 mb-5">
+  <!-- Header với nút quay lại -->
+  <div class="d-flex align-items-center mb-4">
+    <a href="/admin/thongbao" class="btn btn-outline-secondary me-3">
+      <i class="bi bi-arrow-left"></i> Quay lại
+    </a>
+    <h3 class="mb-0">Chi tiết Thông báo</h3>
+  </div>
+
+  <!-- Card chứa thông tin chi tiết -->
+  <div class="detail-card">
+    
+    <!-- Banner Header -->
+    <div class="detail-header">
+      <% if (thongbao.Thumbnail) { %>
+        <div class="thumbnail-container">
+          <img src="/admin/uploads/thumbnail_thongbao/<%= thongbao.Thumbnail %>" alt="Thumbnail" class="detail-thumbnail">
+        </div>
+      <% } else { %>
+        <div class="detail-placeholder">
+          <div class="notification-icon">
+            <i class="bi bi-bell-fill"></i>
+          </div>
+        </div>
+      <% } %>
+      
+      <div class="detail-main-info">
+        <div class="badge-type mb-2">
+          <span class="badge <%= thongbao.LoaiThongBao === 'ca_nhan' ? 'bg-info' : 'bg-secondary' %>">
+            <%= thongbao.LoaiThongBao === 'ca_nhan' ? '👤 Cá nhân' : '🌍 Toàn cục' %>
+          </span>
+        </div>
+        <h2 class="detail-title"><%= thongbao.TieuDe %></h2>
+        <p class="detail-date">
+          <i class="bi bi-calendar-check"></i>
+          <%= new Date().toLocaleDateString('vi-VN', { 
+            weekday: 'long', 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric' 
+          }) %>
+        </p>
+      </div>
+    </div>
+
+    <!-- Nội dung chi tiết -->
+    <div class="detail-body">
+      
+      <!-- Nội dung thông báo -->
+      <div class="detail-section main-content">
+        <div class="content-icon">📢</div>
+        <div class="content-text">
+          <h5 class="section-title">Nội dung thông báo</h5>
+          <div class="content-box">
+            <%= thongbao.NoiDung %>
+          </div>
+        </div>
+      </div>
+
+      <!-- Đối tượng nhận -->
+      <div class="detail-section">
+        <div class="info-card">
+          <div class="info-header">
+            <i class="bi bi-people-fill"></i>
+            <span>Đối tượng nhận thông báo</span>
+          </div>
+          <div class="info-body">
+            <% if (thongbao.LoaiThongBao === 'ca_nhan') { %>
+              <div class="recipient-info">
+                <div class="recipient-label">Người nhận cụ thể:</div>
+                <div class="recipient-value">
+                  <i class="bi bi-envelope-fill"></i>
+                  <%= thongbao.EmailNguoiNhan %>
+                </div>
+              </div>
+            <% } else { %>
+              <div class="recipient-info">
+                <div class="recipient-value global">
+                  <i class="bi bi-broadcast"></i>
+                  Gửi đến tất cả người dùng trong hệ thống
+                </div>
+              </div>
+            <% } %>
+          </div>
+        </div>
+      </div>
+
+      <!-- Thông tin chi tiết -->
+      <div class="detail-section">
+        <h5 class="section-title">
+          <i class="bi bi-info-circle-fill"></i>
+          Thông tin chi tiết
+        </h5>
+        <div class="info-grid">
+          <div class="info-item">
+            <div class="info-label">
+              <i class="bi bi-hash"></i>
+              Mã thông báo
+            </div>
+            <div class="info-value">#<%= thongbao.MaThongBao %></div>
+          </div>
+
+          <div class="info-item">
+            <div class="info-label">
+              <i class="bi bi-tag-fill"></i>
+              Loại thông báo
+            </div>
+            <div class="info-value">
+              <span class="badge <%= thongbao.LoaiThongBao === 'ca_nhan' ? 'bg-info' : 'bg-secondary' %>">
+                <%= thongbao.LoaiThongBao === 'ca_nhan' ? 'Cá nhân' : 'Toàn cục' %>
+              </span>
+            </div>
+          </div>
+
+          <div class="info-item">
+            <div class="info-label">
+              <i class="bi bi-clock-fill"></i>
+              Thời gian tạo
+            </div>
+            <div class="info-value">
+               <%= thongbao.NgayTao ? new Date(thongbao.NgayTao).toLocaleString('vi-VN') : 'N/A' %>
+            </div>
+          </div>
+
+          <% if (thongbao.EmailNguoiNhan) { %>
+          <div class="info-item">
+            <div class="info-label">
+              <i class="bi bi-person-fill"></i>
+              Email người nhận
+            </div>
+            <div class="info-value">
+              <%= thongbao.EmailNguoiNhan %>
+            </div>
+          </div>
+          <% } %>
+
+          <% if (thongbao.Thumbnail) { %>
+          <div class="info-item full-width">
+            <div class="info-label">
+              <i class="bi bi-image-fill"></i>
+              Hình ảnh đính kèm
+            </div>
+            <div class="info-value">
+              <span class="text-success">✓ Có</span>
+            </div>
+          </div>
+          <% } %>
+        </div>
+      </div>
+
+      <!-- Lưu ý -->
+      <div class="detail-section">
+        <div class="alert-box">
+          <div class="alert-icon">💡</div>
+          <div class="alert-content">
+            <strong>Lưu ý:</strong>
+            <ul class="note-list">
+              <li>Thông báo này đã được gửi đến email của người dùng</li>
+              <li>Người dùng có thể xem thông báo trong phần "Thông báo" của họ</li>
+              <% if (thongbao.LoaiThongBao === 'toan_cuc') { %>
+              <li>Thông báo toàn cục sẽ được hiển thị cho tất cả người dùng đăng nhập</li>
+              <% } else { %>
+              <li>Thông báo cá nhân chỉ được hiển thị cho người dùng được chỉ định</li>
+              <% } %>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Footer với các hành động -->
+    <div class="detail-footer">
+      <a href="/admin/thongbao" class="btn-back">
+        <i class="bi bi-arrow-left"></i> Quay lại danh sách
+      </a>
+      <button 
+        class="btn-edit" 
+        data-bs-toggle="modal" 
+        data-bs-target="#editModal"
+        onclick="openEditModal('<%= thongbao.MaThongBao %>', '<%= thongbao.TieuDe %>', '<%= thongbao.NoiDung %>', '<%= thongbao.LoaiThongBao %>', '<%= thongbao.EmailNguoiNhan || '' %>')">
+        <i class="bi bi-pencil-fill"></i> Chỉnh sửa
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<!-- Modal Sửa (Copy từ trang chính) -->
+<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <form id="editForm" method="POST" action="">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editModalLabel">Sửa Thông Báo</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" name="MaThongBao" id="editMaThongBao">
+          <div class="mb-2">
+            <label>Tiêu đề</label>
+            <input type="text" name="TieuDe" id="editTieuDe" class="form-control">
+          </div>
+          <div class="mb-2">
+            <label>Loại thông báo</label>
+            <select name="LoaiThongBao" id="editLoaiThongBao" class="form-select">
+              <option value="toan_cuc">Toàn cục</option>
+              <option value="ca_nhan">Cá nhân</option>
+            </select>
+          </div>
+          <div class="mb-2">
+            <label>Email người nhận (nếu cá nhân)</label>
+            <input type="text" name="NguoiNhan" id="editNguoiNhan" class="form-control" placeholder="Email người nhận">
+          </div>
+          <div class="mb-2">
+            <label>Nội dung</label>
+            <textarea name="NoiDung" id="editNoiDung" rows="3" class="form-control"></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+          <button type="submit" class="btn btn-primary">💾 Lưu thay đổi</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<style>
+/* Import Bootstrap Icons */
+@import url('https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css');
+
+.detail-card {
+  background: #fff;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+}
+
+.detail-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 0;
+  position: relative;
+  min-height: 250px;
+  display: flex;
+  align-items: center;
+  color: white;
+}
+
+.thumbnail-container {
+  width: 250px;
+  height: 250px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.detail-thumbnail {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.detail-placeholder {
+  width: 250px;
+  height: 250px;
+  background: linear-gradient(135deg, #5f72bd 0%, #6b5b95 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.notification-icon {
+  font-size: 80px;
+  color: rgba(255, 255, 255, 0.9);
+  animation: bellRing 2s ease-in-out infinite;
+}
+
+@keyframes bellRing {
+  0%, 100% { transform: rotate(0deg); }
+  10%, 30% { transform: rotate(-10deg); }
+  20%, 40% { transform: rotate(10deg); }
+}
+
+.detail-main-info {
+  flex: 1;
+  padding: 40px;
+}
+
+.badge-type {
+  display: flex;
+  align-items: center;
+}
+
+.badge-type .badge {
+  font-size: 13px;
+  padding: 8px 16px;
+  font-weight: 600;
+}
+
+.detail-title {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 12px;
+  color: white;
+  line-height: 1.3;
+}
+
+.detail-date {
+  font-size: 15px;
+  margin: 0;
+  color: rgba(255,255,255,0.9);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.detail-body {
+  padding: 40px;
+}
+
+.detail-section {
+  margin-bottom: 35px;
+}
+
+.main-content {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+.content-icon {
+  font-size: 48px;
+  flex-shrink: 0;
+}
+
+.content-text {
+  flex: 1;
+}
+
+.section-title {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 15px;
+  color: #2d3748;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.content-box {
+  background: #f7fafc;
+  border-left: 4px solid #667eea;
+  padding: 20px;
+  border-radius: 8px;
+  font-size: 16px;
+  line-height: 1.8;
+  color: #4a5568;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.info-card {
+  background: #fff;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.info-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 15px 20px;
+  font-weight: 600;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.info-body {
+  padding: 20px;
+}
+
+.recipient-info {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.recipient-label {
+  font-size: 14px;
+  color: #718096;
+  font-weight: 500;
+}
+
+.recipient-value {
+  font-size: 16px;
+  color: #2d3748;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  background: #edf2f7;
+  border-radius: 8px;
+}
+
+.recipient-value.global {
+  background: linear-gradient(135deg, #e0e7ff 0%, #e9d5ff 100%);
+  color: #5b21b6;
+  justify-content: center;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 15px;
+}
+
+.info-item {
+  background: #f7fafc;
+  padding: 16px;
+  border-radius: 10px;
+  border-left: 3px solid #667eea;
+  transition: all 0.3s;
+}
+
+.info-item:hover {
+  background: #edf2f7;
+  transform: translateX(5px);
+}
+
+.info-item.full-width {
+  grid-column: 1 / -1;
+}
+
+.info-label {
+  font-size: 13px;
+  color: #718096;
+  font-weight: 600;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.info-value {
+  font-size: 15px;
+  color: #2d3748;
+  font-weight: 500;
+}
+
+.alert-box {
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  border-left: 4px solid #f59e0b;
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  gap: 15px;
+}
+
+.alert-icon {
+  font-size: 32px;
+  flex-shrink: 0;
+}
+
+.alert-content {
+  flex: 1;
+}
+
+.alert-content strong {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 16px;
+  color: #92400e;
+}
+
+.note-list {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.note-list li {
+  margin-bottom: 8px;
+  color: #78350f;
+  line-height: 1.6;
+}
+
+.detail-footer {
+  padding: 25px 40px;
+  background: #f7fafc;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+}
+
+.btn-back, .btn-edit {
+  padding: 12px 28px;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-back {
+  background: #e2e8f0;
+  color: #2d3748;
+}
+
+.btn-back:hover {
+  background: #cbd5e0;
+  color: #1a202c;
+  transform: translateX(-3px);
+}
+
+.btn-edit {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.btn-edit:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .detail-header {
+    flex-direction: column;
+    min-height: auto;
+  }
+  
+  .thumbnail-container,
+  .detail-placeholder {
+    width: 100%;
+    height: 200px;
+  }
+  
+  .detail-main-info {
+    padding: 30px 20px;
+  }
+  
+  .detail-title {
+    font-size: 22px;
+  }
+  
+  .detail-body {
+    padding: 25px 20px;
+  }
+  
+  .main-content {
+    flex-direction: column;
+  }
+  
+  .info-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .detail-footer {
+    flex-direction: column;
+    padding: 20px;
+  }
+  
+  .btn-back, .btn-edit {
+    width: 100%;
+    justify-content: center;
+  }
+}
+</style>
+
+<script>
+// Copy script từ trang chính để xử lý modal sửa
+function openEditModal(id, title, content, loai, nguoiNhan) {
+  document.getElementById('editMaThongBao').value = id;
+  document.getElementById('editTieuDe').value = title;
+  document.getElementById('editNoiDung').value = content;
+  document.getElementById('editLoaiThongBao').value = loai.trim();
+  document.getElementById('editNguoiNhan').value = nguoiNhan;
+  document.getElementById('editForm').action = `/admin/thongbao/edit/${id}`;
+  toggleEditFields();
+}
+
+const loaiSelectEdit = document.getElementById('editLoaiThongBao');
+const nguoiNhanInputEdit = document.getElementById('editNguoiNhan');
+
+function toggleEditFields() {
+  if (loaiSelectEdit.value === 'ca_nhan') {
+    nguoiNhanInputEdit.disabled = false;
+    nguoiNhanInputEdit.placeholder = 'Email người nhận';
+  } else {
+    nguoiNhanInputEdit.value = '';
+    nguoiNhanInputEdit.disabled = true;
+    nguoiNhanInputEdit.placeholder = '';
+  }
+}
+
+loaiSelectEdit.addEventListener('change', toggleEditFields);
+
+const editForm = document.getElementById('editForm');
+editForm.addEventListener('submit', (e) => {
+  const title = document.getElementById('editTieuDe').value.trim();
+  const content = document.getElementById('editNoiDung').value.trim();
+  const loai = document.getElementById('editLoaiThongBao').value.trim();
+  const email = document.getElementById('editNguoiNhan').value.trim();
+
+  if (!title || !content) {
+    e.preventDefault();
+    alert('⚠️ Tiêu đề và nội dung không được để trống!');
+    return;
+  }
+
+  if (title.length > 50) {
+    e.preventDefault();
+    alert('⚠️ Tiêu đề không được vượt quá 50 ký tự!');
+    return;
+  }
+  
+  if (content.length > 300) {
+    e.preventDefault();
+    alert('⚠️ Nội dung không được vượt quá 300 ký tự!');
+    return;
+  }
+
+  if (loai === 'ca_nhan') {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email) {
+      e.preventDefault();
+      alert('⚠️ Vui lòng nhập email người nhận!');
+      return;
+    }
+    if (!emailRegex.test(email)) {
+      e.preventDefault();
+      alert('⚠️ Email người nhận không hợp lệ!');
+      return;
+    }
+  }
+});
+</script>
+
+<%- include('./layout/footer') %>

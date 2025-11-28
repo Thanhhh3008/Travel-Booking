@@ -1,0 +1,102 @@
+<%- include('./layout/header') %>
+
+<div class="container" style="display:flex; padding:20px; gap:20px;">
+
+  <!-- Danh sách user online -->
+  <div style="width:220px; border:1px solid #ccc; border-radius:8px; overflow-y:auto; height:500px;">
+    <h4 style="margin:0; padding:10px; background:#f1f1f1; text-align:center;">User Online</h4>
+    <ul id="userList" style="list-style:none; padding:0; margin:0;"></ul>
+  </div>
+
+  <!-- Chat với user -->
+  <div style="flex:1; display:flex; flex-direction:column; border:1px solid #ccc; border-radius:8px; height:500px; overflow:hidden;">
+    <div id="chatAdminBody" style="flex:1; padding:10px; overflow-y:auto; display:flex; flex-direction:column; gap:8px; background:#f7f7f7;"></div>
+    <div style="display:flex; border-top:1px solid #ccc; padding:10px;">
+      <input id="adminInput" placeholder="Nhập tin nhắn" style="flex:1; padding:8px; border-radius:4px; border:1px solid #ccc;">
+      <button id="adminSend" style="margin-left:8px; padding:8px 12px; border:none; background:#111827; color:white; border-radius:4px; cursor:pointer;">Gửi</button>
+    </div>
+  </div>
+
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+const socket = io();
+
+// Danh sách user online & user đang chat
+let usersOnline = [];
+let currentUser = null;
+
+const userList = document.getElementById("userList");
+const chatAdminBody = document.getElementById("chatAdminBody");
+const adminInput = document.getElementById("adminInput");
+const adminSend = document.getElementById("adminSend");
+
+// Cập nhật danh sách user online
+socket.on("updateUserList", data => {
+  usersOnline = data;
+  userList.innerHTML = "";
+  usersOnline.forEach(u => {
+    const li = document.createElement("li");
+    li.innerText = `User ${u.MaNguoiDung}`;
+    li.style.padding = "8px 10px";
+    li.style.cursor = "pointer";
+    li.style.borderBottom = "1px solid #eee";
+
+    li.addEventListener("click", () => {
+      currentUser = u.MaNguoiDung;
+      chatAdminBody.innerHTML = ""; // reset chat khi chọn user
+      socket.emit("loadHistory", { MaNguoiDung: currentUser });
+    });
+
+    userList.appendChild(li);
+  });
+});
+
+// Nhận tin nhắn từ user
+socket.on("userMessage", data => {
+  if(data.MaNguoiDung === currentUser){
+    addMessage(`User: ${data.NoiDung}`, "user");
+  }
+});
+
+// Nhận lịch sử chat
+socket.on("chatHistory", messages => {
+  chatAdminBody.innerHTML = "";
+  messages.forEach(msg => {
+    addMessage(
+      msg.GuiBoi === "admin" ? `Bạn: ${msg.NoiDung}` : `User: ${msg.NoiDung}`, 
+      msg.GuiBoi === "admin" ? "admin" : "user"
+    );
+  });
+});
+
+// Gửi tin nhắn từ admin
+adminSend.addEventListener("click", () => {
+  const msg = adminInput.value.trim();
+  if(!msg || !currentUser) return;
+
+  const data = { GuiBoi: "admin", NoiDung: msg, MaNguoiDung: currentUser };
+  socket.emit("adminSend", data);
+
+  addMessage(`Bạn: ${msg}`, "admin");
+  adminInput.value = "";
+});
+
+// Hàm hiển thị tin nhắn
+function addMessage(msg, type){
+  const div = document.createElement("div");
+  div.innerText = msg;
+  div.style.padding = "8px 12px";
+  div.style.borderRadius = "16px";
+  div.style.maxWidth = "75%";
+  div.style.alignSelf = type === "user" ? "flex-start" : "flex-end";
+  div.style.background = type === "user" ? "#d1e7ff" : "#e2e2e2";
+  div.style.wordWrap = "break-word";
+
+  chatAdminBody.appendChild(div);
+  chatAdminBody.scrollTop = chatAdminBody.scrollHeight;
+}
+</script>
+
+<%- include('./layout/footer') %>
