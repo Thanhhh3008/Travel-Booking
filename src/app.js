@@ -18,7 +18,7 @@ const GoogleStrategy = require("passport-google-oauth20").Strategy;
 
 
 const path = require('path');
-
+const checkRoleUpdate = require('./middlewares/checkRoleUpdate');
 
 
 
@@ -36,7 +36,7 @@ app.use(session({
     fileExtension: '.json',
     retries: 0,
     retryInterval: 50,
-    useTempFiles: false   // <── QUAN TRỌNG NHẤT
+    useTempFiles: false   
 }),
 
     secret: 'phattrienungdunghihi',
@@ -44,7 +44,7 @@ app.use(session({
     saveUninitialized: false,
 
 }));
-
+app.use(checkRoleUpdate); 
 
 // Khởi tạo Passport
 app.use(passport.initialize());
@@ -126,6 +126,12 @@ app.use((req, res, next) => {
     next();
 });
 
+app.use((req, res, next) => {
+    res.locals.login = req.session.login || null;  
+    res.locals.currentUser = req.session.login || null;  
+    res.locals.thongbao = req.session.thongbao || [];  
+    next();
+});
 
 // app.use((req, res, next) => {
 //     const idrole = req.session.login?.role_id ?? null;
@@ -165,4 +171,5 @@ app.use('/admin/duyetphong', phongrouters);
 
 app.listen(port, () => {
     console.log(`Example app listening on port http://127.0.0.1:${port}`)
+    console.log(`Admin dashoboard: http://127.0.0.1:${port}/admin/dashboard`)
 });

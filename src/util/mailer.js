@@ -7,7 +7,7 @@ const transporter = nodemailer.createTransport({
         user: process.env.GMAIL_FROM,
         pass: process.env.GMAIL_PASSWORD
     },
-    tls: {
+     tls: {
         rejectUnauthorized: false // FIX lỗi self-signed certificate
     }
 });

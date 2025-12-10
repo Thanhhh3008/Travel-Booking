@@ -30,7 +30,7 @@ getAllRooms: async () => {
   return rows;
 },
 
-  // 📘 Lấy chi tiết 1 phòng (kèm thông tin loại phòng)
+  //  Lấy chi tiết 1 phòng (kèm thông tin loại phòng)
 getById: async (id) => {
   const [rows] = await pool.query(`
     SELECT 
@@ -58,7 +58,7 @@ getById: async (id) => {
 approveRoom: async (id) => {
     await pool.query(`
       UPDATE phong
-      SET TrangThaiPhong = 'Đã duyệt'
+      SET TrangThaiPhong = 'Trống'
       WHERE MaPhong = ?
     `, [id]);
   },

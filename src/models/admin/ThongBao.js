@@ -1,7 +1,7 @@
 const pool = require('../../config/db');
 
 const ThongBaoModel = {
-  // 📋 Lấy tất cả thông báo
+  //  Lấy tất cả thông báo
 getAll: async () => {
   const [rows] = await pool.query(`
     SELECT tb.*, 
@@ -25,7 +25,7 @@ updateFull: async (id, TieuDe, NoiDung, LoaiThongBao, MaNguoiDung = null) => {
   );
 },
 
-  // 🔍 Tìm kiếm thông báo theo tiêu đề + lọc đối tượng
+  //  Tìm kiếm thông báo theo tiêu đề + lọc đối tượng
   async search(search) {
     let sql = `
       SELECT tb.*, nd.Email AS EmailNguoiNhan, vt.TenVaiTro AS VaiTroNguoiNhan

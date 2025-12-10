@@ -1,18 +1,113 @@
+// src/routers/clientRouters.js
+
 const express = require('express');
-const passport = require('passport');
+const path = require('path');
+const fs = require('fs');
+const multer = require('multer');
 const router = express.Router();
+const { requireLogin } = require('../middlewares/authMiddleware');
 const HomeController = require('../controllers/client/HomeController');
-const AuthController = require('../controllers/client/AuthController')
+const AuthController = require('../controllers/client/AuthController');
+const RoomController = require('../controllers/client/RoomController');
+const BookingController = require('../controllers/client/BookingController');
+const RevenueController = require('../controllers/client/RevenueController');
+
+// ================== CẤU HÌNH UPLOAD ẢNH ==================
+
+const uploadDir = path.join(__dirname, '..', '..', 'public', 'admin', 'uploads', 'anhphong');
+
+// Tạo thư mục nếu chưa tồn tại
+if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir, { recursive: true });
+}
+
+const storage = multer.diskStorage({
+    destination: (_req, file, cb) => {
+        let dir = path.join(__dirname, '..', '..', 'public', 'admin', 'uploads', 'anhphong'); // mặc định ảnh phòng
+
+        if (file.fieldname === 'GiayToPhong') {
+            dir = path.join(__dirname, '..', '..', 'public', 'admin', 'uploads', 'anhphaply'); // nếu là giấy tờ
+        }
+
+        // Tạo thư mục nếu chưa tồn tại
+        if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+
+        cb(null, dir);
+    },
+
+    filename: (_req, file, cb) => {
+        const timestamp = Date.now();
+        const ext = path.extname(file.originalname) || '.jpg';
+        const random = Math.round(Math.random() * 1e9);
+
+        const prefix = file.fieldname === 'GiayToPhong' ? 'giayto' : 'anhphong';
+        cb(null, `${prefix}-${timestamp}-${random}${ext}`);
+    }
+});
 
 
+// Chỉ cho phép file ảnh
+const fileFilter = (_req, file, cb) => {
+    if (/^image\//i.test(file.mimetype)) cb(null, true);
+    else cb(new Error('Chỉ hỗ trợ tải lên tập tin hình ảnh.'));
+};
+
+const upload = multer({ storage, fileFilter });
+
+// Upload 2 field: HinhAnh[] và GiayToPhong[]
+const uploadRoomImage = (req, res, next) => {
+    upload.fields([
+        { name: 'HinhAnh', maxCount: 10 },
+        { name: 'GiayToPhong', maxCount: 10 }
+    ])(req, res, (err) => {
+        if (!err) return next();
+
+        req.session.message = {
+            mess: err.message || 'Tập tin tải lên không hợp lệ.',
+            type: 'danger',
+        };
+        req.session.save(() => res.redirect('/rooms/add'));
+    });
+};
+
+
+
+// ================== ROUTES ==================
+
+// Trang chủ
 router.get('/', HomeController.index);
-router.get('/login.html', HomeController.login_view)
-router.get('/register.html', HomeController.register_view)
+
+// Auth
+router.get('/login.html', HomeController.login_view);
+router.get('/register.html', HomeController.register_view);
 router.get('/xac-thuc.html', AuthController.setActiveAccount);
+router.post('/register', AuthController.register);
+router.post('/login', AuthController.login);
+router.get('/logout.html', AuthController.logout);
 
+// Room
+router.get('/rooms', RoomController.index);
+router.get('/rooms/add',requireLogin, RoomController.createView);
+router.post('/rooms', uploadRoomImage,requireLogin, RoomController.store);
+router.get('/rooms/city/:city', RoomController.listByCity);
+// NEW: sửa phòng
+router.get('/rooms/:id/edit', RoomController.editView);
+router.post('/rooms/:id', uploadRoomImage, RoomController.update);
 
-router.post('/register', AuthController.register)
-router.post('/login', AuthController.login)
-router.get('/logout.html', AuthController.logout)
+router.get('/rooms/:id', RoomController.detail);
+
+router.get('/bookings.html', AuthController.bookingHistoryView)
+router.post('/bookings/:id/pay', AuthController.createURLVNpay)
+router.get('/checkout/:id_detail', AuthController.checkout)
+router.get('/store-packgage-vnpay', AuthController.storePackageVNPay)
+// Booking
+router.post('/rooms/:roomId/book', BookingController.store);
+router.get('/rooms/:roomId/book', BookingController.bookView);
+// Revenue
+router.get('/revenues', RevenueController.index);
+router.get('/revenues/add', RevenueController.createView);
+router.post('/revenues', RevenueController.store);
+router.get('/revenues/:id/edit', RevenueController.editView);
+router.post('/revenues/:id', RevenueController.update);
 
 module.exports = router;

@@ -1,0 +1,62 @@
+<%- include('../layout/header.ejs') %>
+<main class="page-add-room">
+    <section class="container section">
+        <header class="section-head with-action">
+            <h2>Chỉnh sửa doanh thu</h2>
+            <a class="btn secondary" href="/revenues">← Quay lại danh sách</a>
+        </header>
+
+        <% if (message) { %>
+        <div class="alert <%= message.type %>">
+            <span class="alert-icon"><%= message.type === 'success' ? '✅' : '⚠️'
+                %></span>
+            <span><%= message.mess %></span>
+        </div>
+        <% } %>
+
+        <form action="/revenues/<%= revenue.MaDoanhThu %>" method="POST"
+            class="form-layout">
+            <div class="form-grid">
+                <label class="form-field">
+                    <span class="label">Tên doanh thu *</span>
+                    <input type="text" name="TenDoanhThu" required
+                        value="<%= revenue.TenDoanhThu || '' %>">
+                </label>
+
+                <label class="form-field">
+                    <span class="label">Ngày lập</span>
+                    <input type="datetime-local" name="NgayLap"
+                        value="<%= ngayLapInput %>">
+                </label>
+            </div>
+
+            <div class="form-grid">
+                <label class="form-field">
+                    <span class="label">Doanh thu từ phòng (VND)</span>
+                    <input type="number" min="0" step="1000"
+                        name="DoanhThuTuPhong"
+                        value="<%= revenue.DoanhThuTuPhong || 0 %>">
+                </label>
+
+                <label class="form-field">
+                    <span class="label">Doanh thu từ dịch vụ (VND)</span>
+                    <input type="number" min="0" step="1000"
+                        name="DoanhThuTuDichVu"
+                        value="<%= revenue.DoanhThuTuDichVu || 0 %>">
+                </label>
+            </div>
+
+            <label class="form-field">
+                <span class="label">Mô tả</span>
+                <textarea name="MoTa"
+                    rows="3"><%= revenue.MoTa || '' %></textarea>
+            </label>
+
+            <div class="form-actions">
+                <button type="submit" class="btn primary">Cập nhật</button>
+                <a class="btn" href="/revenues">Huỷ</a>
+            </div>
+        </form>
+    </section>
+</main>
+<%- include('../layout/footer.ejs') %>

@@ -4,8 +4,11 @@ const dayjs = require('dayjs');
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 const customerModels = require('../../services/CustomerService');
-
-
+const bookingService = require('../../services/BookingService');
+const roomService = require('../../services/RoomService');
+const transactionService = require('../../services/TransactionService');
+const { VNPay, ignoreLogger, ProductCode, VnpLocale, dateFormat } = require('vnpay')
+const { v4: uuidv4 } = require('uuid');
 require('dotenv').config();
 
 class AuthController {
@@ -160,10 +163,8 @@ class AuthController {
         console.log(data)
 
         const user = await mCustomer.findByEmail(data.email);
-        // console.log(user)
-        console.log("req.body.password =", data.password);
-console.log("user.Password =", user.password);
-
+        console.log(user);
+   
         if (!user) {
             req.session.message = {
                 mess: `Username không tồn tại`,
@@ -524,5 +525,236 @@ const hash = user.password.toString();  // default là 'utf8'
             return;
         }
     }
+
+
+    static bookingHistoryView = async (req, res) => {
+        const message = req.session.message;
+        delete req.session.message;
+        const stas = req.query['status'] || null
+
+        try {
+            // Check if user is logged in
+            if (!req.session.login) {
+                req.session.message = {
+                    mess: 'Vui lòng đăng nhập để xem lịch sử đặt phòng',
+                    type: 'danger'
+                };
+                req.session.save(() => {
+                    res.redirect('/login.html');
+                });
+                return;
+            }
+
+            const mBooking = new bookingService();
+            const bookings = await mBooking.getBookingHistory(req.session.login.maNguoiDung, stas);
+
+            // const newBookings = bookings.map(row => {
+            //     return {
+            //         ...row,
+            //         total_
+            //     }
+            // })
+
+            res.render('client/home/booking-history', { message, bookings });
+        } catch (error) {
+            console.error('Error fetching booking history:', error);
+            req.session.message = {
+                mess: 'Có lỗi xảy ra khi tải lịch sử đặt phòng',
+                type: 'danger'
+            };
+            req.session.save(() => {
+                res.redirect('/');
+            });
+        }
+    }
+
+    static updatePaymentStatus = async (req, res) => {
+        try {
+            // Check if user is logged in
+            if (!req.session.login) {
+                return res.status(401).json({ success: false, message: 'Vui lòng đăng nhập' });
+            }
+
+            const bookingId = req.params.id;
+            const userId = req.session.login.id;
+
+            const bookingService = new BookingService();
+            const success = await bookingService.updatePaymentStatus(bookingId, userId);
+
+            if (success) {
+                req.session.message = {
+                    mess: 'Thanh toán thành công!',
+                    type: 'success'
+                };
+                res.json({ success: true, message: 'Thanh toán thành công' });
+            } else {
+                res.status(400).json({ success: false, message: 'Không thể cập nhật trạng thái thanh toán' });
+            }
+        } catch (error) {
+            console.error('Error updating payment status:', error);
+            res.status(500).json({ success: false, message: 'Có lỗi xảy ra khi thanh toán' });
+        }
+    }
+
+
+    static checkout = async (req, res) => {
+        if (!req.session.login) {
+            return res.status(401).json({ success: false, message: 'Vui lòng đăng nhập' });
+        }
+
+        const bookingModels = new bookingService();
+
+        const id_detail_dp = req.params['id_detail'];
+
+        const ctdp = await bookingModels.getBookingByiD(id_detail_dp);
+
+        // console.log(ctdp)
+        return res.render('client/home/check-out', { booking: ctdp })
+
+    }
+
+
+    static createURLVNpay = async (req, res) => {
+        const id = req.params['id'];
+
+        // const mPackage = new packageModels()
+        // const data = req.body;
+        // const id = data.id_package;
+
+
+        const mDP = new bookingService();
+        const rs = await mDP.getBookingByiD(id);
+
+        const username = 'TRIPSTAYNEVERDIE ';
+        const idod = username + uuidv4();
+
+
+        const vnpay = new VNPay({
+            // ⚡ Cấu hình bắt buộc
+            tmnCode: process.env.VNP_TMN_CODE,
+            secureSecret: process.env.VNP_HASH_SECRET,
+            vnpayHost: 'https://sandbox.vnpayment.vn',
+
+            // 🔧 Cấu hình tùy chọn
+            testMode: true,                     // Chế độ test
+            hashAlgorithm: 'SHA512',           // Thuật toán mã hóa
+            // enableLog: true,                   // Bật/tắt log
+            loggerFn: ignoreLogger,            // Custom logger
+        })
+
+        // const 
+
+        const vnpayResponse = await vnpay.buildPaymentUrl({
+            vnp_Amount: Number(rs['TongTien']),                    // 100,000 VND
+            vnp_IpAddr: '127.0.0.1',
+            // vnp_ReturnUrl: `${process.env.DOMAIN}/store-order-vnpay`,
+            vnp_ReturnUrl: `${process.env.DOMAIN}/store-packgage-vnpay`,
+            vnp_TxnRef: idod,
+            vnp_OrderInfo: 'Thanh Toán Đơn Hàng',
+            vnp_Locale: VnpLocale.VN,
+        });
+
+        req.session.data_dp = rs;
+
+        req.session.save(() => {
+            res.redirect(vnpayResponse)
+        })
+
+
+    }
+
+    static storePackageVNPay = async (req, res) => {
+
+        // const mCustomer = new customerModels()
+        // const cus = await mCustomer.find(req.session.user.id);
+
+        let verify;
+        const vnpay = new VNPay({
+            // ⚡ Cấu hình bắt buộc
+            tmnCode: process.env.VNP_TMN_CODE,
+            secureSecret: process.env.VNP_HASH_SECRET,
+            vnpayHost: 'https://sandbox.vnpayment.vn',
+
+            testMode: true,                     // Chế độ test
+            hashAlgorithm: 'SHA512',           // Thuật toán mã hóa
+            loggerFn: ignoreLogger,            // Custom logger
+        })
+
+        try {
+            // Sử dụng try-catch để bắt lỗi nếu query không hợp lệ hoặc thiếu dữ liệu
+            verify = vnpay.verifyReturnUrl(req.query);
+            if (!verify.isVerified) {
+                req.session.message = {
+                    mess: `Thanh Toán Thất Bại`,
+                    type: 'danger'
+                };
+                req.session.save(() => {
+                    res.redirect('/');
+                }
+                );
+                return;
+            }
+            if (!verify.isSuccess) {
+                req.session.message = {
+                    mess: `Thanh Toán Thất Bại`,
+                    type: 'danger'
+                };
+                req.session.save(() => {
+                    res.redirect('/');
+                }
+                );
+                return;
+            }
+        } catch (error) {
+            console.log(error)
+            req.session.message = {
+                mess: `Thanh Toán Thất Bại`,
+                type: 'danger'
+            };
+            req.session.save(() => {
+                res.redirect('/');
+            }
+            );
+            return;
+        }
+        const mDP = new bookingService();
+        const mR = new roomService();
+        const mT = new transactionService();
+
+
+
+        const rs = req.session.data_dp;
+
+        const mdp = rs['MaChiTietDatPhong'];
+        const mp = rs['MaPhong'];
+        const mND = req.session.login.maNguoiDung;
+
+
+        // console.log(req.session.login)
+        // console.log(mND, ' ', mdp)
+
+        await mR.updateStatus(mp, 'Đã Đặt Trước');
+        await mDP.updatePaymentStatus(mdp, mND);
+        await mT.saveTranSacTion({
+            MaNguoiDung: mND,
+            MaPhong: mp,
+            NgayThanhToan: Date.now(),
+            TongTien: rs['TongTien']
+        })
+
+        // ========================================== //
+        req.session.message = {
+            mess: `Thanh Toán Thành Công`,
+            type: 'success'
+        };
+        req.session.save(
+            () => {
+                res.redirect('/')
+            }
+        );
+        return;
+    }
+
+
 }
 module.exports = AuthController;

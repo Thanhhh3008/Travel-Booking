@@ -1,0 +1,215 @@
+<%- include('../layout/header.ejs') %>
+
+
+
+<style>
+  :root {
+    --primary-color: #2563eb;
+    --light-gray: #f3f4f6;
+    --medium-gray: #e5e7eb;
+    --dark-gray: #4b5563;
+    --text-dark: #111827;
+    --text-light: #6b7280;
+    --card-bg: #ffffff;
+    --border-radius: 12px;
+    --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  }
+
+  .checkout-page {
+    background-color: var(--light-gray);
+    padding: 2rem 1rem;
+  }
+
+  .checkout-container {
+    max-width: 1000px;
+    margin: auto;
+    display: grid;
+    grid-template-columns: 1fr 400px;
+    gap: 2rem;
+    align-items: flex-start;
+  }
+
+  .checkout-main {
+    background: var(--card-bg);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    padding: 2rem;
+  }
+
+  .checkout-sidebar .summary-card {
+    background: var(--card-bg);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    position: sticky;
+    top: 2rem;
+  }
+
+  .section-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--medium-gray);
+  }
+
+  .info-group {
+    margin-bottom: 2rem;
+  }
+
+  .info-group h3 {
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+  }
+
+  .info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  .info-item {
+    background-color: var(--light-gray);
+    padding: 1rem;
+    border-radius: 8px;
+  }
+
+  .info-item .label {
+    display: block;
+    font-size: 0.875rem;
+    color: var(--text-light);
+    margin-bottom: 0.25rem;
+  }
+
+  .info-item .value {
+    font-weight: 600;
+    color: var(--text-dark);
+  }
+
+  .price-details .price-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+    font-size: 1rem;
+  }
+
+  .price-details .price-row.total {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--medium-gray);
+  }
+
+  .payment-button {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    width: 100%;
+    padding: 1rem;
+    font-size: 1.125rem;
+    font-weight: 700;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    margin-top: 2rem;
+  }
+
+  .payment-button:hover {
+    background-color: #1d4ed8;
+  }
+
+  .summary-card .room-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+  }
+
+  .summary-card .summary-body {
+    padding: 1.5rem;
+  }
+
+  .summary-card .room-type {
+    font-size: 0.875rem;
+    color: var(--text-light);
+  }
+
+  .summary-card .room-name {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin: 0.25rem 0 1rem 0;
+  }
+
+  .summary-card .room-features {
+    color: var(--text-light);
+  }
+
+  @media (max-width: 992px) {
+    .checkout-container {
+      grid-template-columns: 1fr;
+    }
+
+    .checkout-sidebar {
+      order: -1;
+      /* Move sidebar to top on mobile */
+    }
+
+    .checkout-sidebar .summary-card {
+      position: static;
+    }
+  }
+</style>
+
+<main class="checkout-page">
+  <div class="checkout-container">
+
+    <!-- Cột chính: Thông tin thanh toán -->
+    <div class="checkout-main">
+      <h2 class="section-title">Xác nhận và thanh toán</h2>
+
+      <!-- Thông tin đặt phòng -->
+      <div class="info-group">
+        <h3>Thông tin chuyến đi của bạn</h3>
+        <div class="info-grid">
+          <div class="info-item">
+            <%- console.log(booking) %>
+            <span class="label">Ngày nhận phòng</span>
+            <span class="value"><%= new Date(booking['NgayNhanPhong']).toLocaleDateString('vi-VN') %></span>
+          </div>
+          <div class="info-item">
+            <span class="label">Ngày trả phòng</span>
+            <span class="value"><%= new Date(booking['NgayTraPhong']).toLocaleDateString('vi-VN') %></span>
+          </div>
+          <div class="info-item">
+            <span class="label">Số lượng khách</span>
+            <span class="value"><%= booking['SoLuongKhach'] %> người</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Chi tiết giá -->
+      <div class="info-group price-details">
+        <div class="price-row total">
+          <span>Tổng cộng</span>
+          <span><%= helpers.formatMoney(booking['TongTien']) %>đ</span>
+        </div>
+      </div>
+
+      <!-- Nút thanh toán -->
+      <form action="/bookings/<%= booking['MaChiTietDatPhong'] %>/pay" method="POST">
+        <button type="submit" class="payment-button">
+          Xác nhận thanh toán
+        </button>
+      </form>
+    </div>
+
+
+
+  </div>
+</main>
+
+<%- include('../layout/footer.ejs') %>

@@ -6,9 +6,94 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>TripStay | Nơi Nghỉ Ngơi Sau Những Cuộc Vui</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css">
+ <link rel="stylesheet" href="/styles.css">
   <link rel="shortcut icon" href="/image/logo.ico" type="image/x-icon">
- 
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+
+.room-section {
+  display: flex;
+  overflow-x: auto;
+  gap: 12px;                    
+  padding-bottom: 10px;
+  
+}
+
+.room-section {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);  
+  gap: 14px;                                
+  margin-bottom: 25px;
+  overflow: hidden;                         
+}
+
+/* Card nhỏ hơn */
+.card {
+  border-radius: 16px;
+  background: #fff;
+  overflow: hidden;
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Ảnh nhỏ lại */
+.card .thumb img {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 16px;
+}
+
+/* Badge */
+.card .badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: rgba(255,255,255,0.85);
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* Icon trái tim */
+.wish {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: #fff;
+  padding: 6px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* ====== NỘI DUNG ====== */
+.card-body {
+  padding: 8px 4px;
+}
+
+.card-body .title {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.card-body .meta {
+  color: #555;
+  font-size: 12px;
+}
+
+/* XÓA NÚT ĐẶT PHÒNG — card là link */
+.btn.primary.small {
+  display: none !important;
+}
+</style>
+
+
 </head>
 
 <body>
@@ -17,9 +102,31 @@
     <div class="container nav">
       <a class="brand" href="/"><span class="mark">🏠</span><span class="text">tripstay</span></a>
       <nav class="tabs">
-        <a class="tab-link " href="/"><span class="emoji">🏠</span> Nơi lưu trú</a>
-        <a class="tab-link" href="experiences.html"><span class="emoji">🎈</span> Trải nghiệm</a>
-        <a class="tab-link" href="services.html"><span class="emoji">🛎️</span> Dịch vụ</a>
+        <a class="tab-link " href="/rooms"><span class="emoji">🏠</span> Nơi lưu trú</a>
+        <a class="tab-link" href="/experiences.html"><span class="emoji">🎈</span> Trải nghiệm</a>
+        <a class="tab-link" href="/services.html"><span class="emoji">🛎️</span> Dịch vụ</a>
+          <!-- Thêm phòng (trở thành đối tác) -->
+          <% if (currentUser && currentUser.MaVaiTro == 2) { %>
+
+    <!-- Nhà cung cấp -->
+    <a class="tab-link" href="/rooms/add">
+        <span class="emoji">🏨</span> Thêm phòng
+    </a>
+
+<% } else { %>
+
+    <!-- Khách du lịch -->
+    <a class="tab-link" href="/rooms/add">
+        <span class="emoji">🤝</span> Trở thành đối tác
+    </a>
+
+<% } %>
+
+
+          <!-- Doanh thu: vào trang danh sách doanh thu -->
+          <a class="tab-link" href="/revenues">
+            <span class="emoji">💰</span> Doanh thu
+          </a>
       </nav>
       <div class="nav-actions">
         <% if(login == null) { %>
@@ -49,7 +156,17 @@
             <% if (thongbao && thongbao.length > 0) { %>
               <% thongbao.forEach(n => { %>
                 <div class="notify-item">
-                  <img src="admin/uploads/thumbnail_thongbao/<%= n.Thumbnail %>" class="notify-thumb" alt="Chưa có ảnh">
+                 <% 
+                        let imgPath = '/admin/uploads/thumbnail_thongbao/failed.jpg'; // mặc định thất bại
+                        if (n.Thumbnail && n.Thumbnail.trim() !== '') {
+                            imgPath = '/admin/uploads/thumbnail_thongbao/' + n.Thumbnail;
+                        } else if (n.TieuDe && n.TieuDe.includes('Phòng được phê duyệt')) {
+                            imgPath = '/admin/uploads/thumbnail_thongbao/success.jpg';
+                        }
+                %>
+
+<img src="<%= imgPath %>" class="notify-thumb" alt="Chưa có ảnh">
+
 
                   <div class="notify-content">
                     <h4><%= n.TieuDe %></h4>

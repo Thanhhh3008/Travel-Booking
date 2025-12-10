@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TripStay | Nơi Nghỉ Ngơi Sau Những Cuộc Vui</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+ <link rel="stylesheet" href="/styles.css">
+  <link rel="shortcut icon" href="/image/logo.ico" type="image/x-icon">
+<style>
+/* GRID 3 CỘT */
+.room-section {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 32px;
+  margin-top: 30px;
+}
+
+/* Card phòng lớn */
+.card {
+  display: block;
+  text-decoration: none;
+  color: #000;
+}
+
+/* Ảnh phòng to + bo góc */
+.card .thumb {
+  width: 100%;
+  height: 260px;
+  border-radius: 18px;
+  overflow: hidden;
+  position: relative;
+}
+
+.card .thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Badge "Được khách yêu thích" */
+.card .badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: white;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Icon trái tim */
+.card .wish {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: rgba(255,255,255,0.8);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+ .wish:hover {
+    background: var(--brand); /* Highlight on hover */
+    transform: scale(1.1); /* Pop effect */
+  }
+
+  .wish svg {
+    stroke: #111827; /* Default stroke color */
+    transition: stroke 0.2s ease;
+  }
+
+  .wish:hover svg {
+    stroke: #fff; /* White stroke on hover */
+  }
+
+/* Title */
+.card .title {
+  font-size: 17px;
+  font-weight: 600;
+  margin-top: 12px;
+  margin-bottom: 6px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+/* Meta info */
+.card .info {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 6px;
+}
+
+/* Giá */
+.card .price {
+  font-weight: 700;
+  font-size: 16px;
+}
+
+</style>
+
+
+</head>
+
+<body>
+  <!-- Header chung -->
+  <header class="header">
+    <div class="container nav">
+      <a class="brand" href="/"><span class="mark">🏠</span><span class="text">tripstay</span></a>
+      <nav class="tabs">
+        <a class="tab-link " href="/rooms"><span class="emoji">🏠</span> Nơi lưu trú</a>
+        <a class="tab-link" href="/experiences.html"><span class="emoji">🎈</span> Trải nghiệm</a>
+        <a class="tab-link" href="/services.html"><span class="emoji">🛎️</span> Dịch vụ</a>
+          <!-- Thêm phòng (trở thành đối tác) -->
+          <% if (currentUser && currentUser.MaVaiTro == 2) { %>
+
+    <!-- Nhà cung cấp -->
+    <a class="tab-link" href="/rooms/add">
+        <span class="emoji">🏨</span> Thêm phòng
+    </a>
+
+<% } else { %>
+
+    <!-- Khách du lịch -->
+    <a class="tab-link" href="/rooms/add">
+        <span class="emoji">🤝</span> Trở thành đối tác
+    </a>
+
+<% } %>
+
+
+          <!-- Doanh thu: vào trang danh sách doanh thu -->
+          <a class="tab-link" href="/revenues">
+            <span class="emoji">💰</span> Doanh thu
+          </a>
+      </nav>
+      <div class="nav-actions">
+        <% if(login == null) { %>
+        <a class="link" href="/login.html">Đăng nhập</a>
+        <a class="link" href="/register.html">Đăng ký</a>
+        <% } %>
+
+        <% if(login != null) { %>
+        <div class="user-dropdown">
+          <button class="user-btn">
+            👋 Xin chào, <%= login.username %> ▾
+          </button>
+          <div class="dropdown-menu">
+            <a href="/profile.html">👤 Thông tin cá nhân</a>
+            <a href="/bookings.html">🧾 Lịch sử đặt phòng</a>
+            <a href="/logout.html" class="logout">🚪 Đăng xuất</a>
+          </div>
+        </div>
+        
+
+        <div class="notification-dropdown">
+          <button class="notify-btn">
+            🔔 Thông báo <span id="notify-count" class="badge-noti">0</span> ▾
+          </button>
+
+          <div class="notify-menu">
+            <% if (thongbao && thongbao.length > 0) { %>
+              <% thongbao.forEach(n => { %>
+                <div class="notify-item">
+                 <% 
+                        let imgPath = '/admin/uploads/thumbnail_thongbao/failed.jpg'; // mặc định thất bại
+                        if (n.Thumbnail && n.Thumbnail.trim() !== '') {
+                            imgPath = '/admin/uploads/thumbnail_thongbao/' + n.Thumbnail;
+                        } else if (n.TieuDe && n.TieuDe.includes('Phòng được phê duyệt')) {
+                            imgPath = '/admin/uploads/thumbnail_thongbao/success.jpg';
+                        }
+                %>
+
+<img src="<%= imgPath %>" class="notify-thumb" alt="Chưa có ảnh">
+
+
+                  <div class="notify-content">
+                    <h4><%= n.TieuDe %></h4>
+                    <p><%= n.NoiDung %></p>
+                   
+                  </div>
+                </div>
+              <% }) %>
+            <% } else { %>
+              <div class="notify-empty">Không có thông báo nào</div>
+            <% } %>
+          </div>
+        </div>
+
+        
+
+
+        <% } %>
+      </div>
+
+  </header>
+  <div class="toast-container" aria-live="polite" aria-atomic="true"></div>
+
+<main class="page-room-list">
+  <section class="container section">
+
+    <header class="section-head">
+      <h2 style="font-size: 28px; margin-bottom: 4px;">Tất cả phòng trống tại <%= city %></h2>
+      <p class="section-subtitle" style="font-size: 16px; color:#666;">
+        Danh sách phòng đang sẵn sàng và có thể đặt ngay.
+      </p>
+    </header>
+
+    <div class="room-section">
+
+      <% rooms.forEach(room => { %>
+
+      <a class="card" href="/rooms/<%= room.MaPhong %>">
+
+        <!-- Ảnh phòng -->
+        <div class="thumb">
+          <% const firstImage = room.HinhAnh ? room.HinhAnh.split(',')[0] : 'default.jpg'; %>
+          <img src="/admin/uploads/anhphong/<%= firstImage.trim() %>" alt="">
+
+          <span class="badge">
+            🏆 Được khách yêu thích
+          </span>
+
+          <span class="wish">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+              stroke="#111827" stroke-width="1.8">
+              <path d="M12 21s-7-4.73-9.33-7.06a5.5 5.5 
+                0 1 1 7.78-7.78L12 5.72l1.55-1.56a5.5 
+                5.5 0 1 1 7.78 7.78C19 16.27 12 21 12 21Z"/>
+            </svg>
+          </span>
+        </div>
+
+        <div class="card-body">
+          <!-- Tiêu đề -->
+          <h3 class="title">
+            <%= room.TenLoaiPhong %> tại <%= room.DiaChi %>
+          </h3>
+
+          <!-- Thông tin phụ -->
+          <div class="info">
+            1 phòng ngủ · 1 giường · ★ <%= room.Rating || "Chưa có" %>
+          </div>
+
+          <!-- Giá -->
+          <div class="price">
+            <%= helpers.formatMoney(room.Gia) %>đ / đêm
+          </div>
+        </div>
+
+      </a>
+
+      <% }) %>
+
+    </div>
+
+  </section>
+</main>
+<footer class="footer">
+    <div class="container footer-main">
+      <div class="footer-section">
+        <h4>Hỗ trợ</h4>
+        <ul>
+          <li><a href="#">Trung tâm trợ giúp</a></li>
+          <li><a href="#">Yêu cầu trợ giúp về vấn đề an toàn</a></li>
+          <li><a href="#">AirCover</a></li>
+          <li><a href="#">Chống phân biệt đối xử</a></li>
+          <li><a href="#">Hỗ trợ người khuyết tật</a></li>
+          <li><a href="#">Các tuỳ chọn huỷ</a></li>
+          <li><a href="#">Báo cáo lo ngại của khu dân cư</a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h4>Đón tiếp khách</h4>
+        <ul>
+          <li><a href="#">Cho thuê nhà trên TripStay</a></li>
+          <li><a href="#">Đưa trải nghiệm của bạn lên TripStay</a></li>
+          <li><a href="#">Đưa dịch vụ của bạn lên TripStay</a></li>
+          <li><a href="#">AirCover cho host</a></li>
+          <li><a href="#">Tài nguyên về đón tiếp khách</a></li>
+          <li><a href="#">Diễn đàn cộng đồng</a></li>
+          <li><a href="#">Đón tiếp khách có trách nhiệm</a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h4>TripStay</h4>
+        <ul>
+          <li><a href="#">Bản phát hành Mùa hè 2025</a></li>
+          <li><a href="#">Trang tin tức</a></li>
+          <li><a href="#">Cơ hội nghề nghiệp</a></li>
+          <li><a href="#">Nhà đầu tư</a></li>
+          <li><a href="#">Chỗ ở khẩn cấp TripStay.org</a></li>
+        </ul>
+      </div>
+      <div class="footer-section footer-social">
+        <h4>Theo dõi chúng tôi</h4>
+        <div class="social-links">
+          <a href="#" class="social-icon" aria-label="Facebook">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2.04C6.5 2.04 2 6.53 2 12.04c0 5.08 3.7 9.31 8.55 9.96v-7.05H7.3v-2.91h3.25V9.03c0-3.22 1.96-4.99 4.84-4.99 1.39 0 2.58.1 2.93.15v3.38h-2c-1.58 0-1.89.75-1.89 1.85v2.42h3.76l-.6 3.91h-3.16v7.05c4.85-.65 8.55-4.88 8.55-9.96 0-5.51-4.5-10-10-10z"/>
+            </svg>
+          </a>
+          <a href="#" class="social-icon" aria-label="Twitter">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M22.46 6c-.77.35-1.6.58-2.46.69.88-.53 1.56-1.37 1.88-2.37-.83.5-1.75.85-2.72 1.05C18.37 4.5 17.26 4 16 4c-2.35 0-4.27 1.92-4.27 4.29 0 .34.04.67.11.98C8.28 9.09 5.4 7.5 3.53 4.7c-.36.62-.56 1.35-.56 2.13 0 1.49.75 2.81 1.88 3.59-.69-.02-1.34-.21-1.91-.53v.03c0 2.08 1.48 3.82 3.44 4.21-.36.1-.74.15-1.13.15-.28 0-.55-.03-.81-.08.55 1.71 2.13 2.95 4.01 2.98-1.48 1.16-3.35 1.85-5.38 1.85-.35 0-.69-.02-1.03-.06C3.17 20.16 5.32 21 7.59 21c8.62 0 13.34-7.14 13.34-13.34 0-.2-.01-.4-.02-.6.92-.66 1.72-1.48 2.35-2.42z"/>
+            </svg>
+          </a>
+          <a href="#" class="social-icon" aria-label="Instagram">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2.163c3.204 0 3.584.012 4.85.07 1.265.06 1.73.249 2.078.387.4.163.746.398 1.087.738.34.34.575.687.738 1.088.138.348.327.813.387 2.078.058 1.265.07 1.646.07 4.85s-.012 3.584-.07 4.85c-.06 1.265-.249 1.73-.387 2.078-.163.4-.398.746-.738 1.087-.34.34-.687.575-1.088.738-.348.138-.813.327-2.078.387-1.265.058-1.646.07-4.85.07s-3.584-.012-4.85-.07c-1.265-.06-1.73-.249-2.078-.387-.4-.163-.746-.398-1.087-.738-.34-.34-.575-.687-.738-1.088-.138-.348-.327-.813-.387-2.078-.058-1.265-.07-1.646-.07-4.85s.012-3.584.07-4.85c.06-1.265.249-1.73.387-2.078.163-.4.398-.746.738-1.087.34-.34.687-.575.738-1.088.138-.348.327-.813.387-2.078.058-1.265.07-1.646.07-4.85zM12 4.32c-3.179 0-3.584.012-4.849.07c-1.17.055-1.58.217-1.817.313-.24.1-.438.23-.64.433-.2.2-.333.4-.432.64-.097.237-.26.647-.315 1.817-.058 1.265-.07 1.67-.07 4.85s.012 3.584.07 4.85c.055 1.17.217 1.58.313 1.817.1.24.23.438.433.64.2.2.4.333.64.432.237.097.647.26 1.817.315 1.265.058 1.67.07 4.85.07s3.584-.012 4.85-.07c1.17-.055 1.58-.217 1.817-.313.24-.1.438-.23.64-.433.2-.2.333-.4.432-.64.097-.237.26-.647.315-1.817.058-1.265.07-1.67.07-4.85s-.012-3.584-.07-4.85c-.055-1.17-.217-1.58-.313-1.817-.1-.24-.23-.438-.433-.64-.2-.2-.4-.333-.64-.432-.237-.097-.647-.26-1.817-.315-1.265-.058-1.67-.07-4.85-.07zm0 3.673c2.481 0 4.5 2.019 4.5 4.5s-2.019 4.5-4.5 4.5-4.5-2.019-4.5-4.5 2.019-4.5 4.5-4.5zm0 2.019c-1.379 0-2.5 1.121-2.5 2.5s1.121 2.5 2.5 2.5 2.5-1.121 2.5-2.5-1.121-2.5-2.5-2.5zm6.54-.964c0 .796-.646 1.442-1.442 1.442s-1.442-.646-1.442-1.442.646-1.442 1.442-1.442 1.442.646 1.442 1.442z"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="container footer-bottom">
+      <div class="footer-copyright">© 2025 TripStay, Inc. · <a href="#">Quyền riêng tư</a> · <a href="#">Điều khoản</a> · <a href="#">Sơ đồ trang web</a></div>
+      <div class="footer-locale">
+        <a class="link" href="#">Tiếng Việt (VN)</a>
+        <a class="link" href="#">₫ VND</a>
+      </div>
+    </div>
+  </footer>
+  <script src="/vendor/jquery/jquery.min.js"></script>
+  <script src="/vendor/jquery-validation-1.19.3/dist/jquery.validate.min.js"></script>
+  <script src="/script.js"></script>
+
+<!-- Thành -->
+<script>
+  const notifyCountEl = document.getElementById("notify-count");
+
+  <% if (typeof thongbao !== 'undefined' && thongbao) { %>
+      if (notifyCountEl) notifyCountEl.innerText = "<%= thongbao.length %>";
+  <% } else { %>
+      if (notifyCountEl) notifyCountEl.innerText = "0";
+  <% } %>
+</script>
+
+
+<script>
+     document.addEventListener('click', (e) => {
+      const dropdown = document.querySelector('.user-dropdown');
+      const btn = e.target.closest('.user-btn');
+
+      // Click vào nút user
+      if (btn) {
+        dropdown.classList.toggle('open');
+      } else if (!e.target.closest('.dropdown-menu')) {
+        // Click ra ngoài thì đóng
+        dropdown?.classList.remove('open');
+      }
+    });
+  document.addEventListener("DOMContentLoaded", function () {
+    const btn = document.querySelector(".notify-btn");
+    const menu = document.querySelector(".notify-menu");
+
+    btn.addEventListener("click", function (e) {
+      e.stopPropagation();
+      menu.classList.toggle("show");
+    });
+
+    document.addEventListener("click", function () {
+      menu.classList.remove("show");
+    });
+  });
+</script>
+
+ <!-- Thành -->
+  </body>
+
+  </html>

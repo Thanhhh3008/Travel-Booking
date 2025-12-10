@@ -28,10 +28,10 @@
               <td>
                 <% if (room.TrangThaiPhong === 'Chờ xét duyệt') { %>
                   <span class="badge bg-secondary">Chờ xét duyệt</span>
-                <% } else if (room.TrangThaiPhong === 'Đã duyệt') { %>
-                  <span class="badge bg-success">Đã duyệt</span>
-                <% } else if (room.TrangThaiPhong === ' Đã từ chối') { %>
-                  <span class="badge bg-danger">Từ chối</span>
+                <% } else if (room.TrangThaiPhong === 'Trống') { %>
+                  <span class="badge bg-success">Trống</span>
+                <% } else if (room.TrangThaiPhong === 'Đã từ chối') { %>
+                  <span class="badge bg-danger">Đã Từ chối</span>
                 <% } else { %>
                   <span class="badge bg-warning text-dark"><%= room.TrangThaiPhong %></span>
                 <% } %>
