@@ -13,7 +13,8 @@ class nguoidung {
         rating,
         discriminator,
         email,
-        status
+        status,
+        MaVaiTro  
     ) {
         this.maNguoiDung = maNguoiDung;
         this.hoTen = hoTen;           // Ánh xạ từ 'HoTen'
@@ -29,6 +30,7 @@ class nguoidung {
         this.discriminator = discriminator;
         this.email = email;
         this.status = status;
+        this.MaVaiTro = MaVaiTro;
     }
 }
 

@@ -157,7 +157,7 @@ exports.hideRoom = async (req, res) => {
 exports.showRoom = async (req, res) => {
   try {
     const roomId = req.params.id;
-    await PhongModel.updateTrangThai(roomId, 'Đã duyệt');
+    await PhongModel.updateTrangThai(roomId, 'Trống');
     res.redirect(`/admin/duyetphong/${roomId}?shown=1`);
   } catch (err) {
     console.error('Lỗi khi hiển thị lại phòng:', err);

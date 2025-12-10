@@ -5,8 +5,8 @@ const pool = mysql.createPool({
     user: process.env.DB_USERNAME,
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME,
-    port: process.env.DB_PORT,
-    dateStrings: ['DATE', 'DATETIME', 'TIMESTAMP']
+    dateStrings: ['DATE', 'DATETIME', 'TIMESTAMP'],
+    port:3307
 })
 
 module.exports = pool;

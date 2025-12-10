@@ -1,3 +1,5 @@
+// src/models/phong.js
+
 class Phong {
     constructor(
         MaPhong,
@@ -10,19 +12,21 @@ class Phong {
         Rating,
         MoTa,
         HinhAnh,
-        MaThietBi
+        MaThietBi,
+        //MaNguoiDung,   // chủ phòng (người đăng)
     ) {
-        this.MaPhong = MaPhong;                     // int (Primary Key)
-        this.SoPhong = SoPhong;                     // varchar(255)
-        this.ViTriTang = ViTriTang;                 // int
-        this.TrangThaiPhong = TrangThaiPhong;       // varchar(255)
-        this.MaLoaiPhong = MaLoaiPhong;             // int (Foreign Key)
-        this.View = View;                           // varchar(255)
-        this.DiaChi = DiaChi;                       // varchar(255)
-        this.Rating = Rating;                       // float
-        this.MoTa = MoTa;                           // varchar(255)
-        this.HinhAnh = HinhAnh;                     // varchar(255)
-        this.MaThietBi = MaThietBi;                 // int (Có thể là Foreign Key)
+        this.MaPhong = MaPhong;
+        this.SoPhong = SoPhong;
+        this.ViTriTang = ViTriTang;
+        this.TrangThaiPhong = TrangThaiPhong;
+        this.MaLoaiPhong = MaLoaiPhong;
+        this.View = View;
+        this.DiaChi = DiaChi;
+        this.Rating = Rating;
+        this.MoTa = MoTa;
+        this.HinhAnh = HinhAnh;
+        this.MaThietBi = MaThietBi;
+        //this.MaNguoiDung = MaNguoiDung;
     }
 }
 

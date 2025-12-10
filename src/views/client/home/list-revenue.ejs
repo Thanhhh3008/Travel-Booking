@@ -1,0 +1,56 @@
+<%- include('../layout/header.ejs') %>
+
+<main class="container section page-rooms">
+    <header class="section-head with-action">
+        <h2>Danh sách doanh thu</h2>
+        <a class="btn primary" href="/revenues/add">+ Thêm doanh thu</a>
+    </header>
+
+    <% if (message) { %>
+    <div class="alert <%= message.type %>">
+        <span class="alert-icon"><%= message.type === 'success' ? '✅' : '⚠️'
+            %></span>
+        <span><%= message.mess %></span>
+    </div>
+    <% } %>
+
+    <% if (!revenues || revenues.length === 0) { %>
+    <div class="empty-state">Hiện chưa có bản ghi doanh thu nào.</div>
+    <% } else { %>
+    <div class="table-wrapper">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Mã</th>
+                    <th>Tên doanh thu</th>
+                    <th>Ngày lập</th>
+                    <th>DT từ phòng</th>
+                    <th>DT từ dịch vụ</th>
+                    <th>Tổng</th>
+                    <th>Ghi chú</th>
+                    <th>Hành động</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% revenues.forEach(r => { %>
+                <tr>
+                    <td><%= r.MaDoanhThu %></td>
+                    <td><%= r.TenDoanhThu %></td>
+                    <td><%= helpers.formatDateTime(r.NgayLap) %></td>
+                    <td><%= helpers.formatMoney(r.DoanhThuTuPhong) %></td>
+                    <td><%= helpers.formatMoney(r.DoanhThuTuDichVu) %></td>
+                    <td><%= helpers.formatMoney(helpers.calcTotal(r)) %></td>
+                    <td><%= r.MoTa || '' %></td>
+                    <td>
+                        <a class="btn small"
+                            href="/revenues/<%= r.MaDoanhThu %>/edit">Sửa</a>
+                    </td>
+                </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    </div>
+    <% } %>
+</main>
+
+<%- include('../layout/footer.ejs') %>

@@ -1,0 +1,175 @@
+<%- include('../layout/header.ejs') %>
+
+<main class="page-add-room">
+    <section class="container section">
+        <header class="section-head with-action">
+            <h2>Sửa phòng: <%= room.SoPhong %></h2>
+            <a class="btn secondary" href="/rooms">← Quay lại danh sách
+                phòng</a>
+        </header>
+
+        <% if (message) { %>
+        <div class="alert <%= message.type %>">
+            <span class="alert-icon">
+                <%= message.type === 'success' ? '✅' : '⚠️' %>
+            </span>
+            <span><%= message.mess %></span>
+        </div>
+        <% } %>
+
+        <form
+            class="form"
+            action="/rooms/<%= room.MaPhong %>"
+            method="post"
+            enctype="multipart/form-data">
+            <div class="form-grid">
+                <label class="form-field">
+                    <span class="label">Số phòng *</span>
+                    <input
+                        type="text"
+                        name="SoPhong"
+                        required
+                        placeholder="Ví dụ: P101"
+                        value="<%= room.SoPhong || '' %>">
+                </label>
+
+                <label class="form-field">
+                    <span class="label">Vị trí tầng</span>
+                    <input
+                        type="number"
+                        name="ViTriTang"
+                        min="0"
+                        placeholder="Ví dụ: 5"
+                        value="<%= room.ViTriTang != null ? room.ViTriTang : '' %>">
+                </label>
+            </div>
+
+            <div class="form-grid">
+                <label class="form-field">
+                    <span class="label">Trạng thái</span>
+                    <select name="TrangThaiPhong">
+                        <option value="Trống"
+                            <%=room.TrangThaiPhong === 'Trống' ? 'selected' : ''
+                            %>>
+                            Trống
+                        </option>
+                        <option value="Đang sử dụng"
+                            <%=room.TrangThaiPhong === 'Đang sử dụng' ?
+                            'selected' : '' %>>
+                            Đang sử dụng
+                        </option>
+                        <option value="Bảo trì"
+                            <%=room.TrangThaiPhong === 'Bảo trì' ? 'selected' :
+                            '' %>>
+                            Bảo trì
+                        </option>
+                    </select>
+                </label>
+
+                <label class="form-field">
+                    <span class="label">Loại phòng *</span>
+                    <select name="MaLoaiPhong" required>
+                        <option value disabled>-- Chọn loại phòng --</option>
+                        <% roomTypes.forEach(type => { %>
+                        <option
+                            value="<%= type.MaLoaiPhong %>"
+                            <%=type.MaLoaiPhong === room.MaLoaiPhong ?
+                            'selected' : '' %>>
+                            <%= type.TenLoaiPhong %>
+                        </option>
+                        <% }) %>
+                    </select>
+                </label>
+            </div>
+
+            <div class="form-grid">
+                <label class="form-field">
+                    <span class="label">View</span>
+                    <input
+                        type="text"
+                        name="View"
+                        placeholder="Ví dụ: Hướng biển"
+                        value="<%= room.View || '' %>">
+                </label>
+
+                <label class="form-field">
+                    <span class="label">Địa chỉ</span>
+                    <input
+                        type="text"
+                        name="DiaChi"
+                        placeholder="Địa chỉ phòng"
+                        value="<%= room.DiaChi || '' %>">
+                </label>
+            </div>
+
+            <div class="form-grid">
+                <label class="form-field">
+                    <span class="label">Đánh giá</span>
+                    <input
+                        type="number"
+                        step="0.1"
+                        min="0"
+                        max="5"
+                        name="Rating"
+                        placeholder="Ví dụ: 4.5"
+                        value="<%= room.Rating != null ? room.Rating : '' %>">
+                </label>
+
+                <label class="form-field">
+                    <span class="label">Giá phòng (VND) *</span>
+                    <input
+                        type="number"
+                        min="0"
+                        step="1000"
+                        name="Gia"
+                        required
+                        placeholder="Ví dụ: 1200000"
+                        value="<%= room.Gia != null ? room.Gia : '' %>">
+                </label>
+            </div>
+
+            <div class="form-grid">
+                <label class="form-field">
+                    <span class="label">Mã thiết bị</span>
+                    <input
+                        type="number"
+                        min="0"
+                        name="MaThietBi"
+                        placeholder="Nhập mã thiết bị (nếu có)"
+                        value="<%= room.MaThietBi != null ? room.MaThietBi : '' %>">
+                </label>
+
+                <label class="form-field">
+                    <span class="label">Hình ảnh</span>
+                    <% if (room.HinhAnh) { %>
+                    <div class="current-image">
+                        <img
+                            src="<%= room.HinhAnh %>"
+                            alt="Ảnh phòng <%= room.SoPhong %>"
+                            style="max-width: 200px; border-radius: 12px; display: block; margin-bottom: 8px;">
+                        <small>Ảnh hiện tại. Nếu chọn ảnh mới, ảnh cũ sẽ được
+                            thay thế.</small>
+                    </div>
+                    <% } %>
+                    <input type="file" name="HinhAnh" accept="image/*">
+                </label>
+            </div>
+
+            <label class="form-field">
+                <span class="label">Mô tả</span>
+                <textarea
+                    name="MoTa"
+                    rows="4"
+                    placeholder="Mô tả chi tiết về phòng"><%= room.MoTa || '' %></textarea>
+            </label>
+
+            <div class="form-actions">
+                <button type="submit" class="btn primary">Cập nhật
+                    phòng</button>
+                <a class="btn" href="/rooms">Huỷ</a>
+            </div>
+        </form>
+    </section>
+</main>
+
+<%- include('../layout/footer.ejs') %>

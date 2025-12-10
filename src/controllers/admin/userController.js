@@ -1,6 +1,7 @@
 const User = require('../../models/admin/NguoiDung');
 const Notification = require('../../models/admin/ThongBao');
 const Room = require('../../models/admin/Phong');
+const VaiTro = require('../../models/admin/VaiTro');
 // 📋 Lấy danh sách người dùng (có tìm kiếm)
 exports.getAllUsers = async (req, res) => {
   try {
@@ -24,15 +25,22 @@ exports.getAllUsers = async (req, res) => {
   }
 };
 
-// 👁️ Xem chi tiết người dùng
+//  Xem chi tiết người dùng
 exports.getUserDetail = async (req, res) => {
   try {
     const id = req.params.id;
+
+    // Lấy thông tin người dùng
     const user = await User.getById(id);
     if (!user) return res.status(404).send('Không tìm thấy người dùng');
+
+    // Lấy danh sách vai trò
+    const roles = await VaiTro.getAll(); 
+
     res.render('admin/user_detail', { 
       title: 'Chi tiết người dùng',
-      user
+      user,
+      roles
     });
   } catch (err) {
     console.error(err);
@@ -52,7 +60,7 @@ exports.updateUser = async (req, res) => {
   }
 };
 
-// ❌ Xóa người dùng
+//  Xóa người dùng
 exports.deleteUser = async (req, res) => {
   try {
     const id = req.params.id;

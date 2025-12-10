@@ -3,7 +3,6 @@ const pool = require('../database/client');
 const bcrypt = require('bcrypt');
 const nguoidung = require('../models/nguoidung');
 
-require('dotenv').config();
 
 class CustomerService {
     getAll = async (cond = null) => {
@@ -29,7 +28,8 @@ class CustomerService {
                     row.Rating,
                     row.Discriminator,
                     row.Email,
-                    row.status
+                    row.status,
+                    row.MaVaiTro  
                 );
             });
         } catch (err) {
@@ -73,31 +73,26 @@ class CustomerService {
     // thêm mới khách hàng
     save = async (customerData) => {
 
-         try {
-        const [result] = await pool.execute(
-            `INSERT INTO nguoidung 
-            (HoTen, NgaySinh, CCCD, Username, Password, Email, DiaChi, SDT, QuocTich, Rating, Discriminator, Status)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-            [
+        try {
+            const [result] = await pool.execute(`INSERT INTO nguoidung (HoTen, NgaySinh, CCCD, Username, Password, ThongTinLienHe, DiaChi, SDT, QuocTich, Rating, Discriminator, Email , status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? , ?)`, [
                 customerData.name,
                 customerData.birthday || null,
                 customerData.cccd || null,
                 customerData.username,
                 customerData.password,
-                customerData.email,
+                customerData.information || null,
                 customerData.address || null,
                 customerData.phone || null,
                 customerData.country || null,
                 customerData.rating || null,
                 customerData.discriminator || null,
+                customerData.email,
                 customerData.status || 0
-            ]
-        );
-        return result.insertId;
-    } catch (err) {
-        console.error(err);
-        return false;
-
+            ]);
+            return result.insertId;;
+        } catch (err) {
+            console.error(err);
+            return false;
         }
     }
 

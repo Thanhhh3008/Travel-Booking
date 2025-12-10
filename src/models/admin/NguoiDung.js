@@ -1,17 +1,17 @@
 const pool = require('../../config/db');
 
 const NguoiDungModel = {
-  // 📋 Lấy danh sách người dùng (chỉ hiển thị Username, Họ tên, Email, SĐT)
+  // Lấy danh sách người dùng (chỉ hiển thị Username, Họ tên, Email, SĐT)
   getAll: async () => {
     const [rows] = await pool.query(`
-      SELECT MaNguoiDung, Username, HoTen, Email, SDT
+      SELECT *
       FROM nguoidung
       ORDER BY MaNguoiDung DESC
     `);
     return rows;
   },
 
-  // 🔍 Tìm kiếm theo họ tên, SĐT hoặc email
+  //  Tìm kiếm theo họ tên, SĐT hoặc email
   search: async (keyword) => {
     if (!keyword) {
       const [rows] = await pool.query('SELECT * FROM nguoidung ORDER BY MaNguoiDung DESC');
@@ -28,11 +28,10 @@ const NguoiDungModel = {
   },
 
 
-  // 🔍 Xem chi tiết 1 người dùng
+  // Xem chi tiết 1 người dùng
   getById: async (id) => {
     const [rows] = await pool.query(`
-      SELECT MaNguoiDung, HoTen, NgaySinh, CCCD, Username, Password,
-             Email, DiaChi, SDT, QuocTich, Rating
+      SELECT *
       FROM nguoidung
       WHERE MaNguoiDung = ?
     `, [id]);
@@ -40,25 +39,25 @@ const NguoiDungModel = {
   },
 
   
-  // 📝 Cập nhật người dùng
-  update: async (id, data) => {
-    const { HoTen, NgaySinh, CCCD, Email, DiaChi, SDT, QuocTich, Rating } = data;
-    await pool.query(`
-      UPDATE nguoidung 
-      SET HoTen=?, NgaySinh=?, CCCD=?, 
-          Email=?, DiaChi=?, SDT=?, QuocTich=?, Rating=?
-      WHERE MaNguoiDung=?
-    `, [HoTen, NgaySinh, CCCD, Email, DiaChi, SDT, QuocTich, Rating, id]);
-  },
+//  Cập nhật người dùng
+update: async (id, data) => {
+  const { HoTen, NgaySinh, CCCD, Email, DiaChi, SDT, QuocTich, Rating, MaVaiTro } = data;
+  await pool.query(`
+    UPDATE nguoidung 
+    SET HoTen=?, NgaySinh=?, CCCD=?, 
+        Email=?, DiaChi=?, SDT=?, QuocTich=?, Rating=?, MaVaiTro=?
+    WHERE MaNguoiDung=?
+  `, [HoTen, NgaySinh, CCCD, Email, DiaChi, SDT, QuocTich, Rating, MaVaiTro, id]);
+},
 
-  // ❌ Xóa người dùng
+  //  Xóa người dùng
   delete: async (id) => {
     await pool.query('DELETE FROM nguoidung WHERE MaNguoiDung=?', [id]);
   },
 
   findByEmail: async (email) => {
     const [rows] = await pool.query(
-      'SELECT MaNguoiDung, Email FROM nguoidung WHERE Email = ?',
+      'SELECT * FROM nguoidung WHERE Email = ?',
       [email]
     );
     return rows[0] || null;

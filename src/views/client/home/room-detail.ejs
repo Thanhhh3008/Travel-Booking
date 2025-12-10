@@ -1,0 +1,260 @@
+<%- include('../layout/header.ejs') %>
+ <link rel="stylesheet" href="/style-roomdetail.css">
+<main class="container section page-room-detail">
+  <!-- Thông báo flash -->
+  <% if (message) { %>
+  <div class="alert <%= message.type %>">
+    <span class="alert-icon">
+      <%= message.type === 'success' ? '✅' : '⚠️' %>
+    </span>
+    <span class="alert-text"><%= message.mess %></span>
+    <button class="alert-close" onclick="this.parentElement.style.display='none';">&times;</button>
+  </div>
+  <% } %>
+
+  <!-- Room Header -->
+  <div class="room-header">
+    <div>
+      <h1>Phòng <%= room.TenChoO || 'Chưa rõ' %> <%= room.TenLoaiPhong || 'Chưa rõ' %> <%= room.SoPhong ? '- Phòng ' + room.SoPhong : '' %></h1>
+      <div class="room-subtitle">
+        <% if (room.Rating) { %>
+        <span class="rating">⭐ <%= room.Rating %></span>
+        <span class="divider">·</span>
+        <% } %>
+        <span><%= room.View || 'Chưa rõ' %></span>
+        <span class="divider">·</span>
+        <span><%= room.DiaChi || 'Chưa rõ' %></span>
+      </div>
+    </div>
+   <div class="room-header-actions">
+  <a href="">
+    <i class="fa-solid fa-arrow-up-right-from-square"></i> Chia sẻ
+  </a>
+
+  <a href="">
+    <i class="fa-regular fa-heart"></i> Lưu
+  </a>
+</div>
+
+  </div>
+
+  <!-- Room Gallery -->
+  <div class="room-gallery">
+    <% 
+      const images = room.HinhAnh ? room.HinhAnh.split(',') : [];
+      const displayImages = images.slice(0, 5);
+    %>
+    
+    <% if (displayImages.length > 0) { %>
+      <img src="/admin/uploads/anhphong/<%= displayImages[0].trim() %>" 
+           alt="<%= room.TenLoaiPhong %>" 
+           class="gallery-main">
+      
+      <% for(let i = 1; i < displayImages.length && i < 5; i++) { %>
+        <img src="/admin/uploads/anhphong/<%= displayImages[i].trim() %>" 
+             alt="<%= room.TenLoaiPhong %>">
+      <% } %>
+    <% } else { %>
+      <img src="/admin/uploads/anhphong/default.jpg" 
+           alt="Phòng" 
+           class="gallery-main">
+    <% } %>
+    
+    <% if (images.length > 5) { %>
+    <button class="show-all-photos" onclick="alert('Mở thư viện ảnh đầy đủ')">
+      <span>⊞</span> Hiển thị tất cả ảnh
+    </button>
+    <% } %>
+  </div>
+
+  <!-- Room Content -->
+  <div class="room-content">
+    <!-- Left side - Room info -->
+    <div class="room-info-section">
+      <!-- Title Section -->
+      <div class="room-title-section">
+        <h2>Toàn bộ nhà nghỉ <%= room.TenChoO || 'Chưa rõ' %>  tại <%= room.DiaChi ? room.DiaChi.split(',')[0] : 'Liên Sơn' %>, Việt Nam</h2>
+        <div class="room-meta-inline">
+          <span>3 khách</span>
+          <span>1 phòng ngủ</span>
+          <span>1 giường</span>
+          <span>1 phòng tắm</span>
+        </div>
+      </div>
+
+      <!-- Host Section -->
+      <div class="host-section">
+        <img src="/admin/uploads/avatar/default-host.jpg" alt="Host" class="host-avatar" onerror="this.style.display='none'">
+        <div class="host-info">
+          <h3>Host: <%= room.Username || 'Chưa rõ' %></h3>
+          <p class="host-meta">11 năm làm host trên TripStay</p>
+        </div>
+      </div>
+
+      <!-- Description -->
+      <% if (room.MoTa || room.description) { %>
+      <div class="room-desc-block">
+        <p><%= room.MoTa || room.description %></p>
+        <button class="show-more-btn" onclick="alert('Hiển thị thêm mô tả')">Hiển thị thêm ></button>
+      </div>
+      <% } %>
+
+      <!-- Amenities -->
+     <!-- Amenities -->
+<div class="amenities-section">
+  <h3>Nơi này có những gì cho bạn</h3>
+
+  <div class="amenities-grid">
+
+    <div class="amenity-item">
+      <i class="fa-solid fa-kitchen-set amenity-icon"></i>
+      <span class="amenity-text">Bếp</span>
+    </div>
+
+    <div class="amenity-item">
+      <i class="fa-solid fa-wifi amenity-icon"></i>
+      <span class="amenity-text">Wi-fi</span>
+    </div>
+
+    <div class="amenity-item">
+      <i class="fa-solid fa-briefcase amenity-icon"></i>
+      <span class="amenity-text">Không gian riêng để làm việc</span>
+    </div>
+
+    <div class="amenity-item">
+      <i class="fa-solid fa-car amenity-icon"></i>
+      <span class="amenity-text">Chỗ đỗ xe miễn phí tại nơi ở</span>
+    </div>
+
+    <div class="amenity-item">
+      <i class="fa-solid fa-person-swimming amenity-icon"></i>
+      <span class="amenity-text">Bể bơi</span>
+    </div>
+
+    <div class="amenity-item">
+      <i class="fa-solid fa-hot-tub-person amenity-icon"></i>
+      <span class="amenity-text">Bồn tắm nước nóng</span>
+    </div>
+
+    <div class="amenity-item">
+      <i class="fa-solid fa-dog amenity-icon"></i>
+      <span class="amenity-text">Cho phép thú cưng</span>
+    </div>
+
+    <div class="amenity-item">
+      <i class="fa-solid fa-video amenity-icon"></i>
+      <span class="amenity-text">Camera an ninh ngoài nhà</span>
+    </div>
+
+    <div class="amenity-item amenity-unavailable">
+      <i class="fa-solid fa-ban amenity-icon"></i>
+      <span class="amenity-text">Máy phát hiện khí CO</span>
+    </div>
+
+    <div class="amenity-item amenity-unavailable">
+      <i class="fa-solid fa-ban amenity-icon"></i>
+      <span class="amenity-text">Cho phép thuốc lá</span>
+    </div>
+
+  </div>
+</div>
+
+
+      <!-- Reviews -->
+      <div class="reviews-section">
+        <div class="reviews-header">
+          <h3>⭐ <%= room.Rating || '5.0' %></h3>
+          <span>· 2 đánh giá</span>
+        </div>
+        
+        <div class="reviews-grid">
+          <div class="review-item">
+            <div class="review-header">
+              <div class="reviewer-avatar">D</div>
+              <div class="reviewer-info">
+                <h4>Delphine</h4>
+                <p class="reviewer-meta">11 năm hoạt động trên Airbnb</p>
+              </div>
+            </div>
+            <div class="review-rating">⭐⭐⭐⭐⭐</div>
+            <p class="reviewer-meta">2 ngày trước</p>
+            <p class="review-text">Très bon accueil, même si on a vraiment eu du mal à trouver et une personne nous a guidé avec son scooter. Nous étions à vélo. Il y a une belle côte à la fin. Sans réseau, j'ai réservé en...</p>
+            <button class="show-more-btn" onclick="alert('Hiển thị thêm đánh giá')">Hiển thị thêm</button>
+          </div>
+
+          <div class="review-item">
+            <div class="review-header">
+              <div class="reviewer-avatar">Г</div>
+              <div class="reviewer-info">
+                <h4>Георгий</h4>
+                <p class="reviewer-meta">7 năm hoạt động trên Airbnb</p>
+              </div>
+            </div>
+            <div class="review-rating">⭐⭐⭐⭐⭐</div>
+            <p class="reviewer-meta">1 tuần trước</p>
+            <p class="review-text">amazing place, very beautiful surroundings, definitely will come back</p>
+            <button class="show-more-btn" onclick="alert('Hiển thị thêm đánh giá')">Hiển thị thêm</button>
+          </div>
+        </div>
+
+        <button class="show-more-btn" style="margin-top: 24px;">Quy trình đánh giá</button>
+      </div>
+
+      <!-- Host Profile -->
+      <div class="room-desc-block">
+        <h3>Gặp gỡ host của bạn</h3>
+        <div class="host-section">
+          <img src="/admin/uploads/avatar/default-host.jpg" alt="Host" class="host-avatar" onerror="this.style.display='none'">
+          <div class="host-info">
+            <h3>Lê Thị</h3>
+            <p class="host-meta">Host</p>
+            <div style="margin-top: 12px;">
+              <p><strong>11</strong> Đánh giá</p>
+              <p><strong>4,82★</strong> Xếp hạng</p>
+              <p><strong>1</strong> Tháng kinh nghiệm đón tiếp khách</p>
+            </div>
+          </div>
+        </div>
+        <p style="margin-top: 16px; line-height: 1.6;">
+          📍 Sinh ra vào thập niên 80<br>
+          💼 Công việc của tôi: The Moon Villa
+        </p>
+        <p style="margin-top: 16px; line-height: 1.6;">
+          Xin chào, mình là Thúy Lê – một người yêu thiên nhiên, yêu biển và đặc biệt đam mê những ngôi nhà đẹp mang hơi thở bình yên...
+        </p>
+        <button class="show-more-btn">Nhắn tin cho host</button>
+      </div>
+
+      <!-- Additional Info -->
+      <div class="room-desc-block">
+        <h3>Thông tin Chủ nhà</h3>
+        <p><strong>Tỉ lệ phản hồi:</strong> 100%</p>
+        <p><strong>Phản hồi trong vòng:</strong> 1 giờ</p>
+        <button class="show-more-btn" style="margin-top: 16px;">Nhắn tin cho host</button>
+        <p style="font-size: 12px; color: #717171; margin-top: 24px;">
+          🛡️ Để bảo vệ khoản thanh toán của bạn, hãy luôn sử dụng Airbnb để chuyển tiền và liên lạc với host.
+        </p>
+      </div>
+    </div>
+
+    <!-- Right side - Booking card -->
+    <div class="booking-card">
+      <div class="booking-price">
+        <span class="price"><%= helpers.formatMoney(room.Gia || room.price) %></span>
+        <span class="per-night">/đêm</span>
+      </div>
+
+     
+ <!-- Nút đặt phòng -->
+            <div class="room-actions">
+                <a href="/rooms/<%= room.MaPhong || room.id %>/book"
+                    class="btn primary">
+                    Đặt phòng ngay
+                </a>
+                <a href="/" class="btn">Quay lại trang chủ</a>
+            </div>
+    </div>
+  </div>
+</main>
+
+<%- include('../layout/footer.ejs') %>

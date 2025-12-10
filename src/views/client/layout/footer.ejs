@@ -92,7 +92,6 @@
           once: true
         });
       }
-
       function escapeHtml(s) {
         return String(s)
           .replace(/&/g, '&amp;')
@@ -102,7 +101,7 @@
           .replace(/'/g, '&#039;');
       }
 
-      // 👇 Chèn biến từ EJS xuống
+      //  Chèn biến từ EJS xuống
       <% if (typeof message !== 'undefined' ) { %>
       showToast('<%= message.mess ?? "" %>', 3000);
       <% } %>

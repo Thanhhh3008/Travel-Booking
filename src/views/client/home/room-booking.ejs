@@ -1,0 +1,88 @@
+<%- include('../layout/header.ejs') %>
+<main class="container-fluid section page-room-booking">
+ <!-- Thông báo flash -->
+<% if (message) { %>
+<div class="alert <%= message.type %>">
+  <span class="alert-icon">
+    <%= message.type === 'success' ? '✅' : '⚠️' %>
+  </span>
+  <span class="alert-text"><%= message.mess %></span>
+  <button class="alert-close" onclick="this.parentElement.style.display='none';">&times;</button>
+</div>
+<% } %>
+
+
+  <section class="room-detail-layout">
+    <div class="room-info">
+      <h1><%= room.TenPhong || room.name || 'Phòng' %></h1>
+
+      <% if (room.HinhAnh || room.image) { %>
+       <div class="room-image">
+                  <% const firstImage = room.HinhAnh ? room.HinhAnh.split(',')[0] : 'default.jpg'; %>
+                <img src="/admin/uploads/anhphong/<%= firstImage.trim() %>" alt="<%= room.TenLoaiPhong %>" >
+            </div>
+      <% } %>
+
+      <p class="room-price">
+        Giá: <strong><%= helpers.formatMoney(room.Gia || room.price)
+                    %>/đêm</strong>
+      </p>
+
+      <% if (room.MoTa || room.description) { %>
+      <p class="room-desc"><%= room.MoTa || room.description %></p>
+      <% } %>
+    </div>
+
+    <div class="booking-panel">
+      <h2>Đặt phòng này</h2>
+      <form action="/rooms/<%= room.MaPhong || room.id %>/book" method="POST" class="form-layout">
+        <input type="hidden" name="MaPhong" value="<%= room.MaPhong || room.id %>">
+
+        <label class="form-field">
+          <span class="label">Họ tên *</span>
+          <input type="text" name="HoTen" required placeholder="Nguyễn Văn A" value="<%= (currentUser && currentUser.HoTen) ? currentUser.HoTen : '' %>">
+        </label>
+
+        <label class="form-field">
+          <span class="label">Email</span>
+          <input type="email" name="Email" placeholder="you@example.com" value="<%= (currentUser && currentUser.Email) ? currentUser.Email : '' %>">
+        </label>
+
+        <label class="form-field">
+          <span class="label">Số điện thoại *</span>
+          <input type="tel" name="SoDienThoai" required placeholder="090xxxxxxx" value="<%= (currentUser && currentUser.SDT) ? currentUser.SDT : '' %>">
+        </label>
+
+        <div class="form-grid">
+          <label class="form-field">
+            <span class="label">Ngày nhận phòng *</span>
+            <input type="date" name="NgayNhanPhong" required>
+          </label>
+
+          <label class="form-field">
+            <span class="label">Ngày trả phòng *</span>
+            <input type="date" name="NgayTraPhong" required>
+          </label>
+        </div>
+
+        <label class="form-field">
+          <span class="label">Số khách</span>
+          <input type="number" min="1" name="SoLuongKhach" value="1">
+        </label>
+
+        <label class="form-field">
+          <span class="label">Ghi chú</span>
+          <textarea name="GhiChu" rows="3" placeholder="Yêu cầu thêm (nếu có)"></textarea>
+        </label>
+
+        <div class="form-actions">
+          <button type="submit" class="btn primary">Xác nhận đặt
+            phòng</button>
+          <a href="/rooms/<%= room.MaPhong || room.id %>" class="btn">Quay lại chi tiết phòng</a>
+        </div>
+      </form>
+    </div>
+  </section>
+</main>
+
+<%- include('../layout/footer.ejs') %>

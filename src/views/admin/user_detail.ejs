@@ -15,6 +15,16 @@
       <tr><th>SĐT</th><td class="editable" data-field="SDT"><%= user.SDT %></td></tr>
       <tr><th>Quốc tịch</th><td class="editable" data-field="QuocTich"><%= user.QuocTich %></td></tr>
       <tr><th>Đánh giá</th><td class="editable" data-field="Rating"><%= user.Rating %></td></tr>
+      
+      <tr>
+        <th>Vai trò</th>
+        <td class="editable" data-field="MaVaiTro" data-type="select" data-current="<%= user.MaVaiTro %>">
+          <!-- Hiển thị text role hiện tại -->
+          <span class="role-text">
+            <%= roles.find(r => String(r.MaVaiTro) === String(user.MaVaiTro))?.TenVaiTro || 'Chưa có vai trò' %>
+          </span>
+        </td>
+      </tr>
     </table>
 
     <div class="d-flex justify-content-end gap-2 mt-3">
@@ -33,10 +43,22 @@
   const table = document.getElementById('userTable');
   const userId = "<%= user.MaNguoiDung %>";
 
+  const roles = <%- JSON.stringify(roles) %>;
+  
+
+
   editBtn.addEventListener('click', () => {
     table.querySelectorAll('.editable').forEach(td => {
-      const value = td.textContent.trim();
-      td.innerHTML = `<input type="text" class="form-control" name="${td.dataset.field}" value="${value}">`;
+      if (td.dataset.type === "select") {
+        const current = td.dataset.current;
+        let options = roles.map(r => 
+          `<option value="${r.MaVaiTro}" ${String(r.MaVaiTro) === String(current) ? 'selected' : ''}>${r.TenVaiTro}</option>`
+        ).join('');
+        td.innerHTML = `<select class="form-select" name="${td.dataset.field}">${options}</select>`;
+      } else {
+        const value = td.textContent.trim();
+        td.innerHTML = `<input type="text" class="form-control" name="${td.dataset.field}" value="${value}">`;
+      }
     });
     editBtn.classList.add('d-none');
     saveBtn.classList.remove('d-none');
@@ -47,11 +69,10 @@
     let valid = true;
     let errorMsg = "";
 
-    table.querySelectorAll('.editable input').forEach(input => {
+    table.querySelectorAll('.editable input, .editable select').forEach(input => {
       const name = input.name;
       const value = input.value.trim();
 
-      // ✅ Ràng buộc đơn giản
       if (!value) {
         valid = false;
         errorMsg = "Không được để trống các trường bắt buộc.";
@@ -95,8 +116,6 @@
       alert('❌ Lỗi cập nhật: ' + result.message);
     }
   });
-
-  
 </script>
 
 <%- include('./layout/footer') %>

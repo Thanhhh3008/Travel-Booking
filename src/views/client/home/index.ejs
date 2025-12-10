@@ -1,63 +1,127 @@
 <%- include('../layout/header.ejs') %>
-<main>
+
+<main class="page-room-list">
   <section class="container section">
-    <header class="section-head">
-      <h2>Những Loại Nơi Lưu Trú</h2>
-      <a class="more" href="#">›</a>
+
+    <!-- Tiêu đề -->
+    <header class="section-head with-action">
+      <div>
+        <!-- <h2>Những Nơi Lưu Trú Còn Trống</h2> -->
+        <p class="section-subtitle">
+          Danh sách phòng đang sẵn sàng và có thể đặt ngay tại TripStay.
+        </p>
+      </div>
     </header>
-        <div class="controls-center">
-          <div class="controls">
-            <button class="btn filter-btn active" data-filter="Tất cả">Tất cả</button>
-            <% roomTypes.forEach(type => { %>
-              <button class="btn filter-btn" data-filter="<%= type.TenLoaiPhong %>"><%= type.TenLoaiPhong %></button>
-            <% }); %>
+
+<!-- Thông báo flash -->
+<% if (message) { %>
+<div class="alert <%= message.type %>">
+  <span class="alert-icon">
+    <%= message.type === 'success' ? '✅' : '⚠️' %>
+  </span>
+  <span class="alert-text"><%= message.mess %></span>
+  <button class="alert-close" onclick="this.parentElement.style.display='none';">&times;</button>
+</div>
+<% } %>
+
+
+    <!-- THÔNG BÁO LỌC PHÒNG TRỐNG -->
+    <div style="margin-bottom: 20px;">
+      <!-- <span class="badge badge-success"
+        style="padding: 8px 14px; font-size: 14px;">
+        Đang hiển thị: Chỉ phòng Trống
+      </span> -->
+    </div>
+
+    <!-- Bộ lọc theo loại phòng -->
+   
+
+    <!-- Danh sách phòng -->
+   <!-- Lặp theo từng thành phố -->
+<% for (const city in roomsByCity) { %>
+
+  <% if (roomsByCity[city] && roomsByCity[city].length > 0) { %>
+
+  <!-- H2 có link xem tất cả phòng trống tại thành phố -->
+ <h2 style="margin-top: 40px;">
+  <a href="/rooms/city/<%=city%>" style="color: #333; text-decoration:none;">
+    Khám phá nơi lưu trú tại <%= city %> >
+  </a>
+</h2>
+
+  <div class="room-section">
+
+    <% roomsByCity[city].slice(0, 7).forEach(room => { %> <!-- CHỈ LẤY 7 PHÒNG -->
+
+      <a class="card" href="/rooms/<%= room.MaPhong %>" data-type="<%= room.TenLoaiPhong %>">
+
+        <div class="thumb" style="position: relative;">
+          <% const firstImage = room.HinhAnh ? room.HinhAnh.split(',')[0] : 'default.jpg'; %>
+
+          <img src="admin/uploads/anhphong/<%= firstImage.trim() %>" alt="<%= room.TenLoaiPhong %>">
+
+          <span class="badge">Được khách yêu thích</span>
+
+          <span class="wish">
+            <svg width="18" height="18" viewBox="0 0 24 24"
+              fill="none" stroke="#111827" stroke-width="1.6">
+              <path
+                d="M12 21s-7-4.73-9.33-7.06a5.5 5.5 0 1 1 7.78-7.78L12 5.72l1.55-1.56a5.5 5.5 0 1 1 7.78 7.78C19 16.27 12 21 12 21Z" />
+            </svg>
+          </span>
+        </div>
+
+        <div class="card-body">
+          <h3 class="title">Phòng <%= room.TenLoaiPhong %> tại <%= room.DiaChi %></h3>
+
+          <div class="meta">
+            <%= helpers.formatMoney(room.Gia) %>đ / đêm · ★
+            <%= room.Rating || 'Chưa có' %>
           </div>
         </div>
-    
-        <div class="row" id="room-list">
-          <% rooms.forEach(room => { %>
-            <article class="card" data-type="<%= room.TenLoaiPhong %>">
-              <div class="thumb">
-                <% const firstImage = room.HinhAnh ? room.HinhAnh.split(',')[0] : 'default.jpg'; %>
-                <img src="admin/uploads/anhphong/<%= firstImage.trim() %>" alt="<%= room.TenLoaiPhong %>" >
 
-                <span class="badge">Được khách yêu thích</span>
-                <span class="wish"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#111827" stroke-width="1.6">
-                    <path d="M12 21s-7-4.73-9.33-7.06a5.5 5.5 0 1 1 7.78-7.78L12 5.72l1.55-1.56a5.5 5.5 0 1 1 7.78 7.78C19 16.27 12 21 12 21Z" />
-                  </svg></span>
-              </div>
-              <div class="card-body">
-                <h3 class="title"><%= room.TenLoaiPhong %> tại <%= room.DiaChi %></h3>
-                <div class="meta">₫<%= room.Gia %> cho 2 đêm · ★ <%= room.Rating %></div>
-              </div>
-            </article>
-          <% }); %>
-        </div>
-    <script>
-      document.addEventListener('DOMContentLoaded', () => {
-        const filterButtons = document.querySelectorAll('.filter-btn');
-        const roomCards = document.querySelectorAll('#room-list .card');
-    
-        filterButtons.forEach(button => {
-          button.addEventListener('click', () => {
-            // Remove active class from all buttons
-            filterButtons.forEach(btn => btn.classList.remove('active'));
-            // Add active class to the clicked button
-            button.classList.add('active');
-    
-            const filter = button.getAttribute('data-filter');
-    
-            roomCards.forEach(card => {
-              if (filter === 'Tất cả' || card.getAttribute('data-type') === filter) {
-                card.style.display = 'flex'; // Use flex to maintain card layout
-              } else {
-                card.style.display = 'none';
-              }
-            });
+      </a>
+
+    <% }) %>
+
+  </div>
+
+  <% } %>
+
+<% } %>
+
+
+  </section>
+
+  <!-- Script filter theo loại phòng -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const filterButtons = document.querySelectorAll('.filter-btn');
+      const roomCards = document.querySelectorAll('#room-list .card');
+
+      if (!filterButtons.length || !roomCards.length) return;
+
+      filterButtons.forEach(button => {
+        button.addEventListener('click', () => {
+          // active state
+          filterButtons.forEach(btn => btn.classList.remove('active'));
+          button.classList.add('active');
+
+          const filter = button.getAttribute('data-filter');
+
+          roomCards.forEach(card => {
+            const type = card.getAttribute('data-type') || '';
+
+            if (filter === 'Tất cả' || type === filter) {
+              card.style.display = 'flex';
+            } else {
+              card.style.display = 'none';
+            }
           });
         });
       });
-    </script>
-      </section>
+    });
+  </script>
 </main>
+
 <%- include('../layout/footer.ejs') %>
