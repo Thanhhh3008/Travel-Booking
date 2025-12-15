@@ -57,7 +57,6 @@ class RoomService {
                     row.MaThietBi,
                     row.MaNguoiDung
                 );
-
                 room.ThanhPho = row.ThanhPho;
                 room.TenChoO = row.TenChoO;
                 room.TenLoaiPhong = row.TenLoaiPhong;
@@ -72,194 +71,144 @@ class RoomService {
     };
 
     /**
-     * ✅ NEW: Lấy phòng của owner + danh sách đơn đặt (chitietdatphong)
-     * Mỗi phòng có thể có nhiều booking.
+     * Lấy tất cả phòng của 1 người dùng
+     * @param {number} ownerId
      */
-    getOwnerRoomsWithBookings = async (ownerId) => {
-        try {
-            const query = `
-                SELECT
-                    p.MaPhong,
-                    p.SoPhong,
-                    p.ViTriTang,
-                    p.TrangThaiPhong,
-                    p.MaLoaiPhong,
-                    p.View,
-                    p.DiaChi,
-                    p.Rating,
-                    p.MoTa,
-                    p.HinhAnh,
-                    p.MaThietBi,
-                    p.MaNguoiDung,
-                    p.gia AS GiaPhong,
-                    p.ThanhPho,
-                    p.TenChoO,
-                    lp.TenLoaiPhong,
-
-                    ctdp.MaChiTietDatPhong,
-                    ctdp.MaNguoiDung AS BookingUserId,
-                    ctdp.NgayNhanPhong,
-                    ctdp.NgayTraPhong,
-                    ctdp.SoLuongKhach,
-                    ctdp.TrangThai AS TrangThaiDat,
-                    ctdp.MaKhuyenMai,
-                    ctdp.TongTien,
-                    ctdp.LichSu,
-                    ctdp.DanhGia
-                FROM phong p
-                JOIN loaiphong lp ON p.MaLoaiPhong = lp.MaLoaiPhong
-                LEFT JOIN chitietdatphong ctdp 
-                    ON ctdp.MaPhong = p.MaPhong
-                WHERE p.MaNguoiDung = ?
-                ORDER BY 
-                    p.MaPhong DESC,
-                    ctdp.NgayNhanPhong DESC,
-                    ctdp.MaChiTietDatPhong DESC
-            `;
-
-            const [rows] = await pool.execute(query, [ownerId]);
-
-            // Gom rows thành rooms[], mỗi room có bookings[]
-            const map = new Map();
-
-            for (const r of rows) {
-                if (!map.has(r.MaPhong)) {
-                    map.set(r.MaPhong, {
-                        MaPhong: r.MaPhong,
-                        SoPhong: r.SoPhong,
-                        ViTriTang: r.ViTriTang,
-                        TrangThaiPhong: r.TrangThaiPhong,
-                        MaLoaiPhong: r.MaLoaiPhong,
-                        View: r.View,
-                        DiaChi: r.DiaChi,
-                        Rating: r.Rating,
-                        MoTa: r.MoTa,
-                        HinhAnh: r.HinhAnh,
-                        MaThietBi: r.MaThietBi,
-                        MaNguoiDung: r.MaNguoiDung,
-                        Gia: r.GiaPhong ?? null,
-                        ThanhPho: r.ThanhPho,
-                        TenChoO: r.TenChoO,
-                        TenLoaiPhong: r.TenLoaiPhong,
-                        bookings: [],
-                    });
-                }
-
-                // Nếu có booking thì push vào bookings
-                if (r.MaChiTietDatPhong != null) {
-                    map.get(r.MaPhong).bookings.push({
-                        MaChiTietDatPhong: r.MaChiTietDatPhong,
-                        BookingUserId: r.BookingUserId,
-                        NgayNhanPhong: r.NgayNhanPhong,
-                        NgayTraPhong: r.NgayTraPhong,
-                        SoLuongKhach: r.SoLuongKhach,
-                        TrangThaiDat: r.TrangThaiDat,
-                        MaKhuyenMai: r.MaKhuyenMai,
-                        TongTien: r.TongTien,
-                        LichSu: r.LichSu,
-                        DanhGia: r.DanhGia,
-                    });
-                }
-            }
-
-            return Array.from(map.values());
-        } catch (err) {
-            console.error('RoomService.getOwnerRoomsWithBookings error:', err);
-            return [];
-        }
+    getByOwner = async (ownerId) => {
+        return this.getAll('WHERE p.MaNguoiDung = ?', [ownerId]);
     };
 
     /**
-     * Tìm phòng theo MaPhong
+     * Tìm phòng theo MaPhong (không check chủ)
+     * @param {number} id
      */
     findById = async (id) => {
-        try {
-            const query = `
-                SELECT 
-                    p.*,
-                    lp.TenLoaiPhong,
-                    nd.Username,
-                    nd.HoTen,
-                    p.gia AS GiaPhong,
-                    p.TenChoO,
-                    p.ThanhPho,
-                    p.MaNguoiDung
-                FROM phong p
-                JOIN loaiphong lp ON p.MaLoaiPhong = lp.MaLoaiPhong
-                JOIN nguoidung nd ON p.MaNguoiDung = nd.MaNguoiDung
-                WHERE p.MaPhong = ?
-            `;
+    try {
+        const query = `
+            SELECT 
+                p.*,
+                lp.TenLoaiPhong,
+                nd.Username,
+                nd.HoTen,
+                p.gia AS GiaPhong,
+                p.TenChoO,
+                p.ThanhPho,
+                p.MaNguoiDung
+            FROM phong p
+            JOIN loaiphong lp ON p.MaLoaiPhong = lp.MaLoaiPhong
+            JOIN nguoidung nd ON p.MaNguoiDung = nd.MaNguoiDung
+            WHERE p.MaPhong = ?
+        `;
 
-            const [rows] = await pool.execute(query, [id]);
-            if (!rows.length) return null;
+        const [rows] = await pool.execute(query, [id]);
 
-            const row = rows[0];
+        if (!rows.length) return null;
 
-            const room = new Phong(
-                row.MaPhong,
-                row.SoPhong,
-                row.ViTriTang,
-                row.TrangThaiPhong,
-                row.MaLoaiPhong,
-                row.View,
-                row.DiaChi,
-                row.Rating,
-                row.MoTa,
-                row.HinhAnh,
-                row.MaThietBi,
-                row.MaNguoiDung
-            );
+        const row = rows[0];
 
-            room.TenLoaiPhong = row.TenLoaiPhong;
-            room.Gia = row.GiaPhong ?? null;
-            room.Username = row.Username;
-            room.HoTen = row.HoTen;
-            room.TenChoO = row.TenChoO;
-            room.ThanhPho = row.ThanhPho;
-            room.MaNguoiDung = row.MaNguoiDung;
-            room.TrangThaiPhong = row.TrangThaiPhong;
+        const room = new Phong(
+            row.MaPhong,
+            row.SoPhong,
+            row.ViTriTang,
+            row.TrangThaiPhong,
+            row.MaLoaiPhong,
+            row.View,
+            row.DiaChi,
+            row.Rating,
+            row.MoTa,
+            row.HinhAnh,
+            row.MaThietBi,
+            row.MaNguoiDung,
+            
+        );
 
-            return room;
-        } catch (err) {
-            console.error("RoomService.findById error:", err);
-            return null;
-        }
+        room.TenLoaiPhong = row.TenLoaiPhong;
+        room.Gia = row.GiaPhong ?? null;
+        room.Username = row.Username;
+        room.HoTen = row.HoTen;       
+        room.TenChoO = row.TenChoO;  
+        room.ThanhPho = row.ThanhPho;  
+        room.MaNguoiDung = row.MaNguoiDung; 
+        room.TrangThaiPhong = row.TrangThaiPhong; 
+        return room;
+
+    } catch (err) {
+        console.error("RoomService.findById error:", err);
+        return null;
+    }
+};
+
+
+    /**
+     * Tìm phòng theo MaPhong & MaNguoiDung (chỉ chủ phòng)
+     * @param {number} id
+     * @param {number} ownerId
+     */
+    findByIdForOwner = async (id, ownerId) => {
+        const rooms = await this.getAll(
+            'WHERE p.MaPhong = ? AND p.MaNguoiDung = ?',
+            [id, ownerId]
+        );
+        return rooms.length ? rooms[0] : null;
     };
 
-    create = async (data) => {
-        try {
-            const query = `
-                INSERT INTO phong
-                    (SoPhong, ViTriTang, TrangThaiPhong, MaLoaiPhong, View, DiaChi,
-                     Rating, Gia, MoTa, GiayToPhong, HinhAnh, MaThietBi, MaNguoiDung)
-                VALUES
-                    (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            `;
+    /**
+     * @param {Object} data
+     * @returns {Promise<number>} 
+     */
+   create = async (data) => {
+    try {
+        const query = `
+            INSERT INTO phong (
+                SoPhong,
+                ViTriTang,
+                TrangThaiPhong,
+                MaLoaiPhong,
+                View,
+                DiaChi,
+                ThanhPho,
+                Rating,
+                Gia,
+                MoTa,
+                GiayToPhong,
+                HinhAnh,
+                MaThietBi,
+                MaNguoiDung
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `;
 
-            const params = [
-                data.SoPhong,
-                data.ViTriTang ?? null,
-                data.TrangThaiPhong ?? 'Chờ xét duyệt',
-                data.MaLoaiPhong,
-                data.View ?? null,
-                data.DiaChi ?? null,
-                data.Rating ?? null,
-                data.Gia ?? null,
-                data.MoTa ?? null,
-                data.GiayToPhong ?? null,
-                data.HinhAnh ?? null,
-                data.MaThietBi ?? null,
-                data.MaNguoiDung,
-            ];
+        const params = [
+            data.SoPhong,
+            data.ViTriTang ?? null,
+            data.TrangThaiPhong ?? 'Chờ xét duyệt',
+            data.MaLoaiPhong,
+            data.View ?? null,
+            data.DiaChi ?? null,
+            data.ThanhPho ?? null,   
+            data.Rating ?? null,
+            data.Gia ?? null,
+            data.MoTa ?? null,
+            data.GiayToPhong ?? null,
+            data.HinhAnh ?? null,
+            data.MaThietBi ?? null,
+            data.MaNguoiDung,
+        ];
 
-            const [result] = await pool.execute(query, params);
-            return result.insertId;
-        } catch (err) {
-            console.error('RoomService.create error:', err);
-            throw err;
-        }
-    };
+        const [result] = await pool.execute(query, params);
+        return result.insertId;
+    } catch (err) {
+        console.error('RoomService.create error:', err);
+        throw err;
+    }
+};
 
+    /**
+     * @param {number} id       
+     * @param {number} ownerId  
+     * @param {Object} data
+     * @returns {Promise<boolean>}
+     */
     update = async (id, ownerId, data) => {
         try {
             const query = `
@@ -302,22 +251,27 @@ class RoomService {
             throw err;
         }
     };
+delete = async (id) => {
+    try {
+        const query = `
+            DELETE FROM phong
+            WHERE MaPhong = ?
+        `;
 
-    delete = async (id) => {
-        try {
-            const query = `
-                DELETE FROM phong
-                WHERE MaPhong = ?
-            `;
+        const [result] = await pool.execute(query, [id]);
 
-            const [result] = await pool.execute(query, [id]);
-            return result.affectedRows > 0;
-        } catch (err) {
-            console.error('RoomService.delete error:', err);
-            throw err;
-        }
-    };
-
+        return result.affectedRows > 0;
+    } catch (err) {
+        console.error('RoomService.delete error:', err);
+        throw err;
+    }
+};
+    /**
+     * Cập nhật trạng thái phòng theo ID
+     * @param {number} id - MaPhong
+     * @param {string} newStatus - Trạng thái mới ('Trống', 'Đã đặt', 'Đang sử dụng', etc.)
+     * @returns {Promise<boolean>}
+     */
     updateStatus = async (id, newStatus) => {
         try {
             const query = `
@@ -326,13 +280,147 @@ class RoomService {
                 WHERE MaPhong = ?
             `;
 
-            const [result] = await pool.execute(query, [newStatus, id]);
+            const params = [newStatus, id];
+
+            const [result] = await pool.execute(query, params);
             return result.affectedRows > 0;
         } catch (err) {
             console.error('RoomService.updateStatus error:', err);
             throw err;
         }
     };
+    /**
+     * Tìm kiếm và lọc phòng
+     * @param {Object} filters - Các tiêu chí lọc
+     * @returns {Promise<Array>}
+     */
+    searchAndFilter = async (filters = {}) => {
+        try {
+            let conditions = ["p.TrangThaiPhong = 'Trống'"];
+            let params = [];
+
+            // Tìm theo từ khóa (tên phòng, địa chỉ, mô tả)
+            if (filters.keyword && filters.keyword.trim()) {
+                conditions.push("(p.SoPhong LIKE ? OR p.DiaChi LIKE ? OR p.MoTa LIKE ? OR lp.TenLoaiPhong LIKE ?)");
+                const kw = `%${filters.keyword.trim()}%`;
+                params.push(kw, kw, kw, kw);
+            }
+
+            // Lọc theo thành phố
+            if (filters.city && filters.city.trim()) {
+                conditions.push("p.DiaChi LIKE ?");
+                params.push(`%${filters.city.trim()}%`);
+            }
+
+            // Lọc theo loại phòng
+            if (filters.roomType && filters.roomType !== '') {
+                conditions.push("p.MaLoaiPhong = ?");
+                params.push(filters.roomType);
+            }
+
+            // Lọc theo khoảng giá
+            if (filters.minPrice && !isNaN(filters.minPrice)) {
+                conditions.push("p.gia >= ?");
+                params.push(parseFloat(filters.minPrice));
+            }
+            if (filters.maxPrice && !isNaN(filters.maxPrice)) {
+                conditions.push("p.gia <= ?");
+                params.push(parseFloat(filters.maxPrice));
+            }
+
+            // Lọc theo rating tối thiểu
+            if (filters.minRating && !isNaN(filters.minRating)) {
+                conditions.push("p.Rating >= ?");
+                params.push(parseFloat(filters.minRating));
+            }
+
+            let query = `
+                SELECT
+                    p.MaPhong,
+                    p.SoPhong,
+                    p.ViTriTang,
+                    p.TrangThaiPhong,
+                    p.MaLoaiPhong,
+                    p.View,
+                    p.DiaChi,
+                    p.Rating,
+                    p.MoTa,
+                    p.HinhAnh,
+                    p.MaThietBi,
+                    p.MaNguoiDung,
+                    p.gia AS GiaPhong,
+                    lp.TenLoaiPhong
+                FROM phong p
+                JOIN loaiphong lp ON p.MaLoaiPhong = lp.MaLoaiPhong
+                WHERE ${conditions.join(' AND ')}
+            `;
+
+            // Sắp xếp
+            if (filters.sortBy) {
+                switch (filters.sortBy) {
+                    case 'price_asc':
+                        query += ' ORDER BY p.gia ASC';
+                        break;
+                    case 'price_desc':
+                        query += ' ORDER BY p.gia DESC';
+                        break;
+                    case 'rating_desc':
+                        query += ' ORDER BY p.Rating DESC';
+                        break;
+                    default:
+                        query += ' ORDER BY p.MaPhong DESC';
+                }
+            } else {
+                query += ' ORDER BY p.MaPhong DESC';
+            }
+
+            const [rows] = await pool.execute(query, params);
+
+            return rows.map((row) => {
+                const room = new Phong(
+                    row.MaPhong,
+                    row.SoPhong,
+                    row.ViTriTang,
+                    row.TrangThaiPhong,
+                    row.MaLoaiPhong,
+                    row.View,
+                    row.DiaChi,
+                    row.Rating,
+                    row.MoTa,
+                    row.HinhAnh,
+                    row.MaThietBi,
+                    row.MaNguoiDung
+                );
+                room.TenLoaiPhong = row.TenLoaiPhong;
+                room.Gia = row.GiaPhong ?? null;
+                return room;
+            });
+        } catch (err) {
+            console.error('RoomService.searchAndFilter error:', err);
+            return [];
+        }
+    };
+
+    /**
+     * Lấy danh sách thành phố có phòng
+     */
+    getCities = async () => {
+        try {
+            const [rows] = await pool.execute(`
+                SELECT DISTINCT 
+                    SUBSTRING_INDEX(DiaChi, ',', -1) AS City
+                FROM phong 
+                WHERE DiaChi IS NOT NULL AND TrangThaiPhong = 'Trống'
+                ORDER BY City
+            `);
+            return rows.map(r => r.City?.trim()).filter(Boolean);
+        } catch (err) {
+            console.error('RoomService.getCities error:', err);
+            return [];
+        }
+    };
+
+
 }
 
 module.exports = RoomService;

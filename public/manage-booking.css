@@ -1,0 +1,321 @@
+
+  /* Stats Container */
+  .stats-container {
+    margin-top: 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 14px;
+  }
+
+  .stat-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 18px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    box-shadow: 0 4px 12px rgba(0,0,0,.06);
+    border: 1px solid #eee;
+  }
+
+  .stat-icon {
+    width: 54px;
+    height: 54px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+  }
+
+  .stat-card.primary .stat-icon {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #fff;
+  }
+
+  .stat-card.success .stat-icon {
+    background: linear-gradient(135deg, #00c853 0%, #00a152 100%);
+    color: #fff;
+  }
+
+  .stat-card.warning .stat-icon {
+    background: linear-gradient(135deg, #ffa726 0%, #fb8c00 100%);
+    color: #fff;
+  }
+
+  .stat-card.revenue .stat-icon {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: #fff;
+  }
+
+  .stat-content {
+    flex: 1;
+  }
+
+  .stat-value {
+    font-size: 24px;
+    font-weight: 900;
+    line-height: 1.2;
+  }
+
+  .stat-label {
+    font-size: 13px;
+    font-weight: 700;
+    opacity: .7;
+    margin-top: 2px;
+  }
+
+  /* Tabs */
+  .tabs-container {
+    margin-top: 24px;
+    display: flex;
+    gap: 10px;
+    border-bottom: 2px solid #eee;
+  }
+
+  .tab-btn {
+    background: none;
+    border: none;
+    padding: 12px 20px;
+    font-weight: 900;
+    font-size: 14px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 3px solid transparent;
+    transition: all .2s;
+    color: #666;
+  }
+
+  .tab-btn:hover {
+    color: #333;
+    background: rgba(0,0,0,.02);
+  }
+
+  .tab-btn.active {
+    color: #667eea;
+    border-bottom-color: #667eea;
+  }
+
+  .tab-content {
+    display: none;
+    animation: fadeIn .3s;
+  }
+
+  .tab-content.active {
+    display: block;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Tab Stats */
+  .tab-stats {
+    margin-top: 16px;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    padding: 12px;
+    background: #f8f9fa;
+    border-radius: 12px;
+  }
+
+  .mini-stat {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 700;
+    font-size: 13px;
+    padding: 8px 12px;
+    background: #fff;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+  }
+
+  .mini-stat i {
+    color: #667eea;
+  }
+
+  /* Empty State */
+  .empty-state {
+    margin-top: 22px;
+    padding: 40px 18px;
+    border: 1px dashed #ddd;
+    border-radius: 14px;
+    text-align: center;
+  }
+
+  /* Booking Grid */
+  .booking-grid {
+    margin-top: 18px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 14px;
+  }
+
+  .booking-card {
+    border: 1px solid #eee;
+    border-radius: 16px;
+    background: #fff;
+    box-shadow: 0 10px 24px rgba(0,0,0,.06);
+    overflow: hidden;
+  }
+
+  .booking-head {
+    padding: 12px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    border-bottom: 1px solid #f1f1f1;
+  }
+
+  .booking-head .left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .badge-id {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 900;
+    padding: 7px 10px;
+    border-radius: 999px;
+    background: rgba(102,126,234,.12);
+    color: #3b4cca;
+    font-size: 12px;
+  }
+
+  .badge-life {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 900;
+    padding: 7px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    border: 1px solid #eee;
+  }
+
+  .badge-life.booked { background: rgba(0,0,0,.04); }
+  .badge-life.checkedin { background: rgba(102,126,234,.12); color: #3b4cca; }
+  .badge-life.checkedout { background: rgba(245,87,108,.12); color: #c21f35; }
+  .badge-life.reset { background: rgba(0,200,83,.12); color: #0d7a37; }
+  .badge-life.cancelled { background: rgba(244,67,54,.12); color: #b71c1c; }
+
+  .btn-view-room {
+    text-decoration: none;
+    font-weight: 900;
+    border: 1px solid #eee;
+    border-radius: 12px;
+    padding: 8px 10px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #fafafa;
+  }
+
+  .booking-body {
+    padding: 12px 12px 14px;
+  }
+
+  .room-mini {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .room-mini img {
+    width: 54px;
+    height: 54px;
+    border-radius: 12px;
+    object-fit: cover;
+    border: 1px solid #eee;
+  }
+
+  .rows {
+    margin-top: 12px;
+  }
+
+  .row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 6px 0;
+    font-weight: 700;
+  }
+
+  .row i {
+    width: 18px;
+    opacity: .9;
+  }
+
+  .row.total {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px dashed #eee;
+    font-weight: 900;
+  }
+
+  .actions {
+    margin-top: 12px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    border: none;
+    border-radius: 12px;
+    padding: 10px 12px;
+    font-weight: 900;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .btn-checkin {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #fff;
+  }
+
+  .btn-checkout {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: #fff;
+  }
+
+  .btn-reset {
+    background: linear-gradient(135deg, #00c853 0%, #00a152 100%);
+    color: #fff;
+  }
+
+  .completion-badge {
+    margin-top: 12px;
+    padding: 10px 12px;
+    background: linear-gradient(135deg, #00c853 0%, #00a152 100%);
+    color: #fff;
+    border-radius: 10px;
+    font-weight: 900;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    justify-content: center;
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .stats-container {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .stat-value {
+      font-size: 20px;
+    }
+  }

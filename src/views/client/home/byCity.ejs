@@ -1,13 +1,4 @@
-<!DOCTYPE html>
-<html lang="vi">
-
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>TripStay | Nơi Nghỉ Ngơi Sau Những Cuộc Vui</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
- <link rel="stylesheet" href="/styles.css">
-  <link rel="shortcut icon" href="/image/logo.ico" type="image/x-icon">
+<%- include('../layout/header.ejs') %>
 <style>
 /* GRID 3 CỘT */
 .room-section {
@@ -107,103 +98,6 @@
 
 </style>
 
-
-</head>
-
-<body>
-  <!-- Header chung -->
-  <header class="header">
-    <div class="container nav">
-      <a class="brand" href="/"><span class="mark">🏠</span><span class="text">tripstay</span></a>
-      <nav class="tabs">
-        <a class="tab-link " href="/rooms"><span class="emoji">🏠</span> Nơi lưu trú</a>
-        <a class="tab-link" href="/experiences.html"><span class="emoji">🎈</span> Trải nghiệm</a>
-        <a class="tab-link" href="/services.html"><span class="emoji">🛎️</span> Dịch vụ</a>
-          <!-- Thêm phòng (trở thành đối tác) -->
-          <% if (currentUser && currentUser.MaVaiTro == 2) { %>
-
-    <!-- Nhà cung cấp -->
-    <a class="tab-link" href="/rooms/add">
-        <span class="emoji">🏨</span> Thêm phòng
-    </a>
-
-<% } else { %>
-
-    <!-- Khách du lịch -->
-    <a class="tab-link" href="/rooms/add">
-        <span class="emoji">🤝</span> Trở thành đối tác
-    </a>
-
-<% } %>
-
-
-          <!-- Doanh thu: vào trang danh sách doanh thu -->
-          <a class="tab-link" href="/revenues">
-            <span class="emoji">💰</span> Doanh thu
-          </a>
-      </nav>
-      <div class="nav-actions">
-        <% if(login == null) { %>
-        <a class="link" href="/login.html">Đăng nhập</a>
-        <a class="link" href="/register.html">Đăng ký</a>
-        <% } %>
-
-        <% if(login != null) { %>
-        <div class="user-dropdown">
-          <button class="user-btn">
-            👋 Xin chào, <%= login.username %> ▾
-          </button>
-          <div class="dropdown-menu">
-            <a href="/profile.html">👤 Thông tin cá nhân</a>
-            <a href="/bookings.html">🧾 Lịch sử đặt phòng</a>
-            <a href="/logout.html" class="logout">🚪 Đăng xuất</a>
-          </div>
-        </div>
-        
-
-        <div class="notification-dropdown">
-          <button class="notify-btn">
-            🔔 Thông báo <span id="notify-count" class="badge-noti">0</span> ▾
-          </button>
-
-          <div class="notify-menu">
-            <% if (thongbao && thongbao.length > 0) { %>
-              <% thongbao.forEach(n => { %>
-                <div class="notify-item">
-                 <% 
-                        let imgPath = '/admin/uploads/thumbnail_thongbao/failed.jpg'; // mặc định thất bại
-                        if (n.Thumbnail && n.Thumbnail.trim() !== '') {
-                            imgPath = '/admin/uploads/thumbnail_thongbao/' + n.Thumbnail;
-                        } else if (n.TieuDe && n.TieuDe.includes('Phòng được phê duyệt')) {
-                            imgPath = '/admin/uploads/thumbnail_thongbao/success.jpg';
-                        }
-                %>
-
-<img src="<%= imgPath %>" class="notify-thumb" alt="Chưa có ảnh">
-
-
-                  <div class="notify-content">
-                    <h4><%= n.TieuDe %></h4>
-                    <p><%= n.NoiDung %></p>
-                   
-                  </div>
-                </div>
-              <% }) %>
-            <% } else { %>
-              <div class="notify-empty">Không có thông báo nào</div>
-            <% } %>
-          </div>
-        </div>
-
-        
-
-
-        <% } %>
-      </div>
-
-  </header>
-  <div class="toast-container" aria-live="polite" aria-atomic="true"></div>
-
 <main class="page-room-list">
   <section class="container section">
 
@@ -264,7 +158,8 @@
 
   </section>
 </main>
-<footer class="footer">
+  <!-- Footer dùng chung -->
+  <footer class="footer">
     <div class="container footer-main">
       <div class="footer-section">
         <h4>Hỗ trợ</h4>
@@ -324,16 +219,32 @@
     <div class="container footer-bottom">
       <div class="footer-copyright">© 2025 TripStay, Inc. · <a href="#">Quyền riêng tư</a> · <a href="#">Điều khoản</a> · <a href="#">Sơ đồ trang web</a></div>
       <div class="footer-locale">
-        <a class="link" href="#">Tiếng Việt (VN)</a>
-        <a class="link" href="#">₫ VND</a>
+        <!-- <a class="link" href="#">Tiếng Việt (VN)</a>
+        <a class="link" href="#">₫ VND</a> -->
       </div>
     </div>
   </footer>
   <script src="/vendor/jquery/jquery.min.js"></script>
   <script src="/vendor/jquery-validation-1.19.3/dist/jquery.validate.min.js"></script>
   <script src="/script.js"></script>
+  <script>
+    
 
-<!-- Thành -->
+    document.addEventListener('click', (e) => {
+      const dropdown = document.querySelector('.user-dropdown');
+      const btn = e.target.closest('.user-btn');
+
+      // Click vào nút user
+      if (btn) {
+        dropdown.classList.toggle('open');
+      } else if (!e.target.closest('.dropdown-menu')) {
+        // Click ra ngoài thì đóng
+        dropdown?.classList.remove('open');
+      }
+    });
+  </script>
+
+  <!-- Thành -->
 <script>
   const notifyCountEl = document.getElementById("notify-count");
 
@@ -346,18 +257,6 @@
 
 
 <script>
-     document.addEventListener('click', (e) => {
-      const dropdown = document.querySelector('.user-dropdown');
-      const btn = e.target.closest('.user-btn');
-
-      // Click vào nút user
-      if (btn) {
-        dropdown.classList.toggle('open');
-      } else if (!e.target.closest('.dropdown-menu')) {
-        // Click ra ngoài thì đóng
-        dropdown?.classList.remove('open');
-      }
-    });
   document.addEventListener("DOMContentLoaded", function () {
     const btn = document.querySelector(".notify-btn");
     const menu = document.querySelector(".notify-menu");
@@ -377,3 +276,4 @@
   </body>
 
   </html>
+

@@ -93,7 +93,7 @@ router.post('/login', AuthController.login);
 router.get('/logout.html', AuthController.logout);
 
 // Room
-router.get('/rooms', RoomController.index);
+// router.get('/rooms', RoomController.index);
 router.get('/rooms/add',requireLogin, RoomController.createView);
 router.post('/rooms', uploadRoomImage,requireLogin, RoomController.store);
 router.get('/rooms/city/:city', RoomController.listByCity);
@@ -107,7 +107,7 @@ router.post('/rooms/:id/reset', RoomController.resetRoom);
 
 
 // NEW: sửa phòng
-router.get('/rooms/:id/edit', RoomController.editView);
+// router.get('/rooms/:id/edit', RoomController.editView);
 router.post('/rooms/:id', uploadRoomImage, RoomController.update);
 
 router.get('/rooms/:id', RoomController.detail);

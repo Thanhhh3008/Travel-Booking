@@ -1,252 +1,308 @@
 <%- include('../layout/header.ejs') %>
 
-<link rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
+<link rel="stylesheet"href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="/manage-booking.css">
 <main class="container" style="padding: 24px 0;">
-    <div
-        style="display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;">
+    <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;">
         <h2 style="margin:0; font-weight:900;">
             <i class="fas fa-receipt"></i>
             Quản lý đơn đặt phòng
         </h2>
 
-        <a href="/rooms/my-rooms"
-            style="text-decoration:none; font-weight:800;">
+        <a href="/rooms/my-rooms" style="text-decoration:none; font-weight:800;">
             <i class="fas fa-building"></i> Quản lý phòng của tôi
         </a>
     </div>
 
-  <% if (typeof message !== 'undefined' && message) { %>
-    <div class="alert <%= message.type %>">
-        <span class="alert-icon">
-            <%= message.type === 'success' ? '✅' : '⚠️' %>
-        </span>
-        <span><%= message.mess %></span>
-    </div>
-    <% } %>
-    <% if (!bookings || bookings.length === 0) { %>
-    <div
-        style="margin-top:22px; padding:18px; border:1px dashed #ddd; border-radius:14px; text-align:center;">
-        <div style="font-size:40px; margin-bottom:8px;">📭</div>
-        <div style="font-weight:900;">Chưa có đơn đặt nào</div>
-        <div style="opacity:.75; margin-top:6px;">Khi có khách đặt phòng, đơn sẽ
-            hiển thị ở đây.</div>
-    </div>
-    <% } else { %>
+ <!-- Thông báo flash -->
+<% if (message) { %>
+<div class="alert <%= message.type %>">
+  <span class="alert-icon">
+    <%= message.type === 'success' ? '✅' : '⚠️' %>
+  </span>
+  <span class="alert-text"><%= message.mess %></span>
+  <button class="alert-close" onclick="this.parentElement.style.display='none';">&times;</button>
+</div>
+<% } %>
 
-    <div class="booking-grid">
-        <% bookings.forEach((b) => { %>
-        <% const img = b.HinhAnh ? b.HinhAnh.split(',')[0].trim() :
-        'default.jpg'; %>
-        <% const life = (b.LichSu || 'BOOKED').toUpperCase().trim(); %>
+    <% 
+    // Phân loại đơn theo TrangThai
+    const completedBookings = bookings ? bookings.filter(b => b.TrangThai === 'Đã hoàn thành') : [];
+    const pendingBookings = bookings ? bookings.filter(b => b.TrangThai !== 'Đã hoàn thành') : [];
+    
+    // Tính thống kê
+    const totalBookings = bookings ? bookings.length : 0;
+    const totalRevenue = bookings ? bookings.reduce((sum, b) => sum + (parseFloat(b.TongTien) || 0), 0) : 0;
+    const completedRevenue = completedBookings.reduce((sum, b) => sum + (parseFloat(b.TongTien) || 0), 0);
+    const pendingRevenue = pendingBookings.reduce((sum, b) => sum + (parseFloat(b.TongTien) || 0), 0);
+    
+    // Thống kê theo trạng thái
+    const statusCounts = {};
+    if (bookings) {
+        bookings.forEach(b => {
+            const status = (b.LichSu || 'BOOKED').toUpperCase().trim();
+            statusCounts[status] = (statusCounts[status] || 0) + 1;
+        });
+    }
+    %>
 
-        <div class="booking-card">
-            <div class="booking-head">
-                <div class="left">
-                    <div class="badge-id">
-                        <i class="fas fa-receipt"></i>
-                        Đơn #<%= b.MaChiTietDatPhong %>
-                    </div>
-                    <div class="badge-life <%= helpers.lifeClass(b.LichSu) %>">
-                        <i class="fas fa-info-circle"></i>
-                        <%= helpers.mapLife(b.LichSu) %>
-                    </div>
-                </div>
-
-                <a class="btn-view-room" href="/rooms/<%= b.MaPhong %>">
-                    <i class="fas fa-eye"></i> Xem phòng
-                </a>
+    <!-- Thống kê tổng quan -->
+    <div class="stats-container">
+        <div class="stat-card primary">
+            <div class="stat-icon">
+                <i class="fas fa-receipt"></i>
             </div>
-
-            <div class="booking-body">
-                <div class="room-mini">
-                    <img src="/admin/uploads/anhphong/<%= img %>"
-                        onerror="this.src='/images/default-room.jpg'"
-                        alt="room">
-                    <div>
-                        <div style="font-weight:900; font-size:15px;">
-                            <%= b.TenLoaiPhong || 'Phòng' %> - Số <%= b.SoPhong
-                            || b.MaPhong %>
-                        </div>
-                        <div
-                            style="opacity:.75; font-weight:700; margin-top:2px;">
-                            Người đặt: <b><%= b.Username || '---'
-                                %></b>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="rows">
-                    <div class="row">
-                        <i class="fas fa-calendar-plus"></i>
-                        Nhận: <b><%= helpers.formatDate(b.NgayNhanPhong) %></b>
-                    </div>
-                    <div class="row">
-                        <i class="fas fa-calendar-minus"></i>
-                        Trả: <b><%= helpers.formatDate(b.NgayTraPhong) %></b>
-                    </div>
-                    <div class="row">
-                        <i class="fas fa-users"></i>
-                        Khách: <b><%= b.SoLuongKhach || 1 %></b>
-                    </div>
-                    <div class="row total">
-                        <i class="fas fa-money-bill-wave"></i>
-                        Tổng tiền: <b><%= helpers.formatMoney(b.TongTien)
-                            %>đ</b>
-                    </div>
-                </div>
-
-                <div class="actions">
-                    <% if (life === 'BOOKED' || life === 'RESET') { %>
-                    <button class="btn btn-checkin"
-                        onclick="confirmCheckIn(<%= b.MaChiTietDatPhong %>)">
-                        <i class="fas fa-sign-in-alt"></i> Check-in
-                    </button>
-                    <% } %>
-
-                    <% if (life === 'CHECKED_IN') { %>
-                    <button class="btn btn-checkout"
-                        onclick="confirmCheckOut(<%= b.MaChiTietDatPhong %>)">
-                        <i class="fas fa-sign-out-alt"></i> Check-out
-                    </button>
-                    <% } %>
-
-                    <% if (life === 'CHECKED_OUT') { %>
-                    <button class="btn btn-reset"
-                        onclick="confirmReset(<%= b.MaChiTietDatPhong %>)">
-                        <i class="fas fa-redo"></i> Cho đặt tiếp
-                    </button>
-                    <% } %>
-                </div>
+            <div class="stat-content">
+                <div class="stat-value"><%= totalBookings %></div>
+                <div class="stat-label">Tổng đơn</div>
             </div>
         </div>
-        <% }) %>
+
+        <div class="stat-card success">
+            <div class="stat-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="stat-content">
+                <div class="stat-value"><%= completedBookings.length %></div>
+                <div class="stat-label">Đã hoàn thành</div>
+            </div>
+        </div>
+
+        <div class="stat-card warning">
+            <div class="stat-icon">
+                <i class="fas fa-clock"></i>
+            </div>
+            <div class="stat-content">
+                <div class="stat-value"><%= pendingBookings.length %></div>
+                <div class="stat-label">Chưa hoàn thành</div>
+            </div>
+        </div>
+
+        <div class="stat-card revenue">
+            <div class="stat-icon">
+                <i class="fas fa-money-bill-wave"></i>
+            </div>
+            <div class="stat-content">
+                <div class="stat-value"><%= helpers.formatMoney(totalRevenue) %>đ</div>
+                <div class="stat-label">Tổng doanh thu dự kiến</div>
+            </div>
+        </div>
     </div>
 
-    <% } %>
+    <!-- Tab Navigation -->
+    <div class="tabs-container">
+        <button class="tab-btn active" onclick="switchTab('pending')">
+            <i class="fas fa-clock"></i>
+            Chưa hoàn thành (<%= pendingBookings.length %>)
+        </button>
+        <button class="tab-btn" onclick="switchTab('completed')">
+            <i class="fas fa-check-circle"></i>
+            Đã hoàn thành (<%= completedBookings.length %>)
+        </button>
+    </div>
+
+    <!-- Tab Content: Chưa hoàn thành -->
+    <div id="tab-pending" class="tab-content active">
+        <div class="tab-stats">
+            <div class="mini-stat">
+                <i class="fas fa-dollar-sign"></i>
+                <span>Doanh thu: <b><%= helpers.formatMoney(pendingRevenue) %>đ</b></span>
+            </div>
+            
+           
+        </div>
+
+        <% if (pendingBookings.length === 0) { %>
+        <div class="empty-state">
+            <div style="font-size:40px; margin-bottom:8px;">📭</div>
+            <div style="font-weight:900;">Không có đơn chưa hoàn thành</div>
+            <div style="opacity:.75; margin-top:6px;">Tất cả đơn đặt phòng đã được hoàn thành.</div>
+        </div>
+        <% } else { %>
+        <div class="booking-grid">
+            <% pendingBookings.forEach((b) => { %>
+            <% const img = b.HinhAnh ? b.HinhAnh.split(',')[0].trim() : 'default.jpg'; %>
+            <% const life = (b.LichSu || 'BOOKED').toUpperCase().trim(); %>
+
+            <div class="booking-card">
+                <div class="booking-head">
+                    <div class="left">
+                        <div class="badge-id">
+                            <i class="fas fa-receipt"></i>
+                            Đơn #<%= b.MaChiTietDatPhong %>
+                        </div>
+                        <div class="badge-life <%= helpers.lifeClass(b.LichSu) %>">
+                            <i class="fas fa-info-circle"></i>
+                            <%= helpers.mapLife(b.LichSu) %>
+                        </div>
+                    </div>
+
+                    <a class="btn-view-room" href="/rooms/<%= b.MaPhong %>">
+                        <i class="fas fa-eye"></i> Xem phòng
+                    </a>
+                </div>
+
+                <div class="booking-body">
+                    <div class="room-mini">
+                        <img src="/admin/uploads/anhphong/<%= img %>"
+                            onerror="this.src='/images/default-room.jpg'"
+                            alt="room">
+                        <div>
+                            <div style="font-weight:900; font-size:15px;">
+                                <%= b.TenLoaiPhong || 'Phòng' %> - Số <%= b.SoPhong || b.MaPhong %>
+                            </div>
+                            <div style="opacity:.75; font-weight:700; margin-top:2px;">
+                                Người đặt: <b><%= b.Username || '---' %></b>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="rows">
+                        <div class="row">
+                            <i class="fas fa-calendar-plus"></i>
+                            Nhận: <b><%= helpers.formatDate(b.NgayNhanPhong) %></b>
+                        </div>
+                        <div class="row">
+                            <i class="fas fa-calendar-minus"></i>
+                            Trả: <b><%= helpers.formatDate(b.NgayTraPhong) %></b>
+                        </div>
+                        <div class="row">
+                            <i class="fas fa-users"></i>
+                            Khách: <b><%= b.SoLuongKhach || 1 %></b>
+                        </div>
+                        <div class="row total">
+                            <i class="fas fa-money-bill-wave"></i>
+                            Tổng tiền: <b><%= helpers.formatMoney(b.TongTien) %>đ</b>
+                        </div>
+                    </div>
+
+                    <div class="actions">
+                        <% if (life === 'BOOKED' || life === 'RESET') { %>
+                        <button class="btn btn-checkin"
+                            onclick="confirmCheckIn(<%= b.MaChiTietDatPhong %>)">
+                            <i class="fas fa-sign-in-alt"></i> Check-in
+                        </button>
+                        <% } %>
+
+                        <% if (life === 'CHECKED_IN') { %>
+                        <button class="btn btn-checkout"
+                            onclick="confirmCheckOut(<%= b.MaChiTietDatPhong %>)">
+                            <i class="fas fa-sign-out-alt"></i> Check-out
+                        </button>
+                        <% } %>
+
+                        
+                    </div>
+                </div>
+            </div>
+            <% }) %>
+        </div>
+        <% } %>
+    </div>
+
+    <!-- Tab Content: Đã hoàn thành -->
+    <div id="tab-completed" class="tab-content">
+        <div class="tab-stats">
+            <div class="mini-stat">
+                <i class="fas fa-dollar-sign"></i>
+                <span>Doanh thu: <b><%= helpers.formatMoney(completedRevenue) %>đ</b></span>
+            </div>
+            <div class="mini-stat">
+                <i class="fas fa-percentage"></i>
+                <span>Tỷ lệ: <b><%= totalBookings > 0 ? Math.round(completedBookings.length / totalBookings * 100) : 0 %>%</b></span>
+            </div>
+        </div>
+
+        <% if (completedBookings.length === 0) { %>
+        <div class="empty-state">
+            <div style="font-size:40px; margin-bottom:8px;">📋</div>
+            <div style="font-weight:900;">Chưa có đơn hoàn thành</div>
+            <div style="opacity:.75; margin-top:6px;">Các đơn đã hoàn thành sẽ hiển thị ở đây.</div>
+        </div>
+        <% } else { %>
+        <div class="booking-grid">
+            <% completedBookings.forEach((b) => { %>
+            <% const img = b.HinhAnh ? b.HinhAnh.split(',')[0].trim() : 'default.jpg'; %>
+            <% const life = (b.LichSu || 'BOOKED').toUpperCase().trim(); %>
+
+            <div class="booking-card">
+                <div class="booking-head">
+                    <div class="left">
+                        <div class="badge-id">
+                            <i class="fas fa-receipt"></i>
+                            Đơn #<%= b.MaChiTietDatPhong %>
+                        </div>
+                       
+                    </div>
+
+                    <a class="btn-view-room" href="/rooms/<%= b.MaPhong %>">
+                        <i class="fas fa-eye"></i> Xem phòng
+                    </a>
+                </div>
+
+                <div class="booking-body">
+                    <div class="room-mini">
+                        <img src="/admin/uploads/anhphong/<%= img %>"
+                            onerror="this.src='/images/default-room.jpg'"
+                            alt="room">
+                        <div>
+                            <div style="font-weight:900; font-size:15px;">
+                                <%= b.TenLoaiPhong || 'Phòng' %> - Số <%= b.SoPhong || b.MaPhong %>
+                            </div>
+                            <div style="opacity:.75; font-weight:700; margin-top:2px;">
+                                Người đặt: <b><%= b.Username || '---' %></b>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="rows">
+                        <div class="row">
+                            <i class="fas fa-calendar-plus"></i>
+                            Nhận: <b><%= helpers.formatDate(b.NgayNhanPhong) %></b>
+                        </div>
+                        <div class="row">
+                            <i class="fas fa-calendar-minus"></i>
+                            Trả: <b><%= helpers.formatDate(b.NgayTraPhong) %></b>
+                        </div>
+                        <div class="row">
+                            <i class="fas fa-users"></i>
+                            Khách: <b><%= b.SoLuongKhach || 1 %></b>
+                        </div>
+                        <div class="row total">
+                            <i class="fas fa-money-bill-wave"></i>
+                            Tổng tiền: <b><%= helpers.formatMoney(b.TongTien) %>đ</b>
+                        </div>
+                    </div>
+
+                    <div class="completion-badge">
+                        <i class="fas fa-check-double"></i>
+                        Đã hoàn thành
+                    </div>
+                </div>
+            </div>
+            <% }) %>
+        </div>
+        <% } %>
+    </div>
 </main>
 
-<style>
-  .booking-grid{
-    margin-top:18px;
-    display:grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 14px;
-  }
-  .booking-card{
-    border:1px solid #eee;
-    border-radius:16px;
-    background:#fff;
-    box-shadow: 0 10px 24px rgba(0,0,0,.06);
-    overflow:hidden;
-  }
-  .booking-head{
-    padding:12px 12px;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:10px;
-    border-bottom:1px solid #f1f1f1;
-  }
-  .booking-head .left{
-    display:flex;
-    align-items:center;
-    gap:10px;
-    flex-wrap:wrap;
-  }
-  .badge-id{
-    display:inline-flex; align-items:center; gap:8px;
-    font-weight:900;
-    padding:7px 10px;
-    border-radius:999px;
-    background: rgba(102,126,234,.12);
-    color:#3b4cca;
-    font-size:12px;
-  }
-  .badge-life{
-    display:inline-flex; align-items:center; gap:8px;
-    font-weight:900;
-    padding:7px 10px;
-    border-radius:999px;
-    font-size:12px;
-    border:1px solid #eee;
-  }
-  .badge-life.booked{ background: rgba(0,0,0,.04); }
-  .badge-life.checkedin{ background: rgba(102,126,234,.12); color:#3b4cca; }
-  .badge-life.checkedout{ background: rgba(245,87,108,.12); color:#c21f35; }
-  .badge-life.reset{ background: rgba(0,200,83,.12); color:#0d7a37; }
-  .badge-life.cancelled{ background: rgba(244,67,54,.12); color:#b71c1c; }
-
-  .btn-view-room{
-    text-decoration:none;
-    font-weight:900;
-    border:1px solid #eee;
-    border-radius:12px;
-    padding:8px 10px;
-    display:inline-flex; align-items:center; gap:8px;
-    background:#fafafa;
-  }
-
-  .booking-body{ padding:12px 12px 14px; }
-  .room-mini{
-    display:flex;
-    align-items:center;
-    gap:10px;
-  }
-  .room-mini img{
-    width:54px; height:54px;
-    border-radius:12px;
-    object-fit:cover;
-    border:1px solid #eee;
-  }
-
-  .rows{ margin-top:12px; }
-  .row{
-    display:flex;
-    align-items:center;
-    gap:10px;
-    margin:6px 0;
-    font-weight:700;
-  }
-  .row i{ width:18px; opacity:.9; }
-  .row.total{
-    margin-top:10px;
-    padding-top:10px;
-    border-top:1px dashed #eee;
-    font-weight:900;
-  }
-
-  .actions{
-    margin-top:12px;
-    display:flex;
-    gap:10px;
-    flex-wrap:wrap;
-  }
-  .btn{
-    border:none;
-    border-radius:12px;
-    padding:10px 12px;
-    font-weight:900;
-    cursor:pointer;
-    display:inline-flex; align-items:center; gap:8px;
-  }
-  .btn-checkin{
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color:#fff;
-  }
-  .btn-checkout{
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-    color:#fff;
-  }
-  .btn-reset{
-    background: linear-gradient(135deg, #00c853 0%, #00a152 100%);
-    color:#fff;
-  }
-</style>
 
 <script>
-  function postTo(url){
+  function switchTab(tabName) {
+    // Remove active class from all tabs
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.classList.remove('active');
+    });
+    document.querySelectorAll('.tab-content').forEach(content => {
+      content.classList.remove('active');
+    });
+
+    // Add active class to selected tab
+    event.target.classList.add('active');
+    document.getElementById('tab-' + tabName).classList.add('active');
+  }
+
+  function postTo(url) {
     const form = document.createElement('form');
     form.method = 'POST';
     form.action = url;
@@ -254,20 +310,20 @@
     form.submit();
   }
 
-  function confirmCheckIn(bookingId){
-    if(confirm(`Xác nhận CHECK-IN cho đơn #${bookingId}?\n\n- Booking sẽ chuyển sang "Đã check-in"\n- Phòng sẽ chuyển sang "Đang sử dụng"`)){
+  function confirmCheckIn(bookingId) {
+    if (confirm(`Xác nhận CHECK-IN cho đơn #${bookingId}?`)) {
       postTo(`/owner/bookings/${bookingId}/checkin`);
     }
   }
 
-  function confirmCheckOut(bookingId){
-    if(confirm(`Xác nhận CHECK-OUT cho đơn #${bookingId}?\n\n- Booking sẽ chuyển sang "Đã check-out"\n- Phòng sẽ chuyển sang "Hoàn thành kỳ"`)){
+  function confirmCheckOut(bookingId) {
+    if (confirm(`Xác nhận CHECK-OUT cho đơn #${bookingId}?`)) {
       postTo(`/owner/bookings/${bookingId}/checkout`);
     }
   }
 
-  function confirmReset(bookingId){
-    if(confirm(`Cho đặt tiếp theo đơn #${bookingId}?\n\n- Booking sẽ lưu "RESET"\n- Phòng sẽ chuyển sang "Trống"`)){
+  function confirmReset(bookingId) {
+    if (confirm(`Hoàn thành kỳ cho đơn #${bookingId}?`)) {
       postTo(`/owner/bookings/${bookingId}/reset-room`);
     }
   }

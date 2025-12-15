@@ -61,32 +61,43 @@ class BookingService {
      *  LẤY DANH SÁCH NGÀY ĐÃ ĐƯỢC ĐẶT (để disable lịch)
      */
     async getBookedDates(roomId) {
-        const sql = `
-            SELECT
-                DATE(NgayNhanPhong) AS startDate,
-                DATE(NgayTraPhong) AS endDate
-            FROM chitietdatphong
-            WHERE MaPhong = ?
-              AND TrangThai = '0'
-        `;
+    const sql = `
+        SELECT
+            DATE(NgayNhanPhong) AS startDate,
+            DATE(NgayTraPhong) AS endDate
+        FROM chitietdatphong
+        WHERE MaPhong = ?
+          AND TrangThai != 'Đã hoàn thành'
+    `;
 
-        const [rows] = await pool.execute(sql, [roomId]);
+    const [rows] = await pool.execute(sql, [roomId]);
 
-        const disabled = [];
-        rows.forEach(r => {
-            if (!r.startDate || !r.endDate) return;
+    const disabled = [];
 
-            let cur = new Date(r.startDate);
-            const end = new Date(r.endDate);
+    rows.forEach(r => {
+        if (!r.startDate || !r.endDate) return;
 
-            while (cur < end) {
-                disabled.push(cur.toISOString().split('T')[0]);
-                cur.setDate(cur.getDate() + 1);
-            }
-        });
+        let cur = new Date(r.startDate);
+        const end = new Date(r.endDate);
 
-        return Array.from(new Set(disabled));
-    }
+        while (cur < end) {
+            disabled.push(cur.toISOString().split('T')[0]);
+            cur.setDate(cur.getDate() + 1);
+        }
+    });
+
+    return [...new Set(disabled)];
+}
+
+async markCompleted(bookingId) {
+    const sql = `
+        UPDATE chitietdatphong
+        SET TrangThai = 'Đã hoàn thành'
+        WHERE MaChiTietDatPhong = ?
+    `;
+    const [result] = await pool.execute(sql, [bookingId]);
+    return result.affectedRows > 0;
+}
 
     async getBookingHistory(userId, stas) {
         try {

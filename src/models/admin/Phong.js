@@ -58,7 +58,7 @@ getById: async (id) => {
 approveRoom: async (id) => {
     await pool.query(`
       UPDATE phong
-      SET TrangThaiPhong = 'Trống'
+      SET TrangThaiPhong = 'Đang hoạt động'
       WHERE MaPhong = ?
     `, [id]);
   },

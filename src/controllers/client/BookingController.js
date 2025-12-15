@@ -44,7 +44,7 @@ class BookingController {
                 return req.session.save(() => res.redirect('/'));
             }
 
-            // ✅ Lấy danh sách ngày đã được đặt để disable lịch
+            // Lấy danh sách ngày đã được đặt để disable lịch
             const bookingService = new BookingService();
             const bookedDates = await bookingService.getBookedDates(roomId);
 
@@ -141,7 +141,7 @@ class BookingController {
                 return req.session.save(() => res.redirect('/'));
             }
 
-            // ✅ CHẶN TRÙNG LỊCH (backend)
+            // CHẶN TRÙNG LỊCH (backend)
             const isAvailable = await bookingService.isRoomAvailable(roomId, checkinDate, checkoutDate);
             if (!isAvailable) {
                 req.session.message = { type: 'danger', mess: 'Phòng đã được đặt trong khoảng thời gian bạn chọn.' };
@@ -153,7 +153,7 @@ class BookingController {
             const totalPrice = stayDuration * Number(room['Gia'] || 0);
 
             // trạng thái phòng: đã đặt trước
-            await roomService.updateStatus(roomId, 'Đã đặt trước');
+            // await roomService.updateStatus(roomId, 'Đã đặt trước');
 
             await bookingService.create({
                 MaNguoiDung: currentUser.maNguoiDung,
@@ -162,7 +162,7 @@ class BookingController {
                 NgayTraPhong: checkoutDate,
                 NgayDatPhong: new Date(),
                 TongTien: totalPrice,
-                TrangThai: '0',
+                TrangThai: 'Chưa hoàn thành',
                 SoLuongKhach: SoLuongKhach
             });
 

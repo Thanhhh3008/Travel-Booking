@@ -7,15 +7,16 @@
         <!-- <a class="btn primary" href="/rooms/add">+ Thêm phòng mới</a> -->
     </header>
 
-    <% if (typeof message !== 'undefined' && message) { %>
-    <div class="alert <%= message.type %>">
-        <span class="alert-icon">
-            <%= message.type === 'success' ? '✅' : '⚠️' %>
-        </span>
-        <span><%= message.mess %></span>
-    </div>
-    <% } %>
-
+ <!-- Thông báo flash -->
+<% if (message) { %>
+<div class="alert <%= message.type %>">
+  <span class="alert-icon">
+    <%= message.type === 'success' ? '✅' : '⚠️' %>
+  </span>
+  <span class="alert-text"><%= message.mess %></span>
+  <button class="alert-close" onclick="this.parentElement.style.display='none';">&times;</button>
+</div>
+<% } %>
     <br>
 
     <% if (!rooms || rooms.length === 0) { %>

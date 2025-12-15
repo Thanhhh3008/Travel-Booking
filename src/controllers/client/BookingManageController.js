@@ -7,7 +7,7 @@ const RevenueService = require('../../services/RevenueService');
 
 class BookingManageController {
     // =========================
-    // ✅ TRANG QUẢN LÝ ĐƠN ĐẶT
+    //  TRANG QUẢN LÝ ĐƠN ĐẶT
     // =========================
     static async index(req, res) {
         const message = req.session.message;
@@ -108,7 +108,7 @@ class BookingManageController {
             }
 
             await bookingService.updateBookingLifeStatus(bookingId, 'CHECKED_IN');
-            await roomService.updateStatus(booking.MaPhong, 'Đang sử dụng');
+            // await roomService.updateStatus(booking.MaPhong, 'Đang sử dụng');
 
             req.session.message = { type: 'success', mess: `Check-in đơn #${bookingId} thành công!` };
             req.session.save(() => res.redirect('/owner/bookings'));
@@ -120,7 +120,7 @@ class BookingManageController {
     }
 
     // =========================
-    // ✅ CHECK-OUT THEO BOOKING
+    //  CHECK-OUT THEO BOOKING
     // - update LichSu = CHECKED_OUT
     // - update room status = Hoàn thành kỳ
     // - ghi doanh thu (giống logic bạn đang làm)
@@ -170,8 +170,8 @@ class BookingManageController {
             };
 
             await revenueService.create(doanhThu);
-
-            req.session.message = { type: 'success', mess: `Check-out đơn #${bookingId} thành công!` };
+            await bookingService.markCompleted(bookingId)
+            req.session.message = { type: 'success', mess: `Check-out đơn #${bookingId} thành công! Doanh thu phòng sẽ được cập nhật` };
             req.session.save(() => res.redirect('/owner/bookings'));
         } catch (err) {
             console.error('BookingManageController.checkOut error:', err);
@@ -181,7 +181,7 @@ class BookingManageController {
     }
 
     // =========================
-    // ✅ CHO ĐẶT TIẾP THEO BOOKING
+    //  CHO ĐẶT TIẾP THEO BOOKING
     // - update LichSu = RESET
     // - update room status = Trống
     // =========================
@@ -210,7 +210,7 @@ class BookingManageController {
             }
 
             await bookingService.updateBookingLifeStatus(bookingId, 'RESET');
-            await roomService.updateStatus(booking.MaPhong, 'Trống');
+            // await roomService.updateStatus(booking.MaPhong, 'Trống');
 
             req.session.message = { type: 'success', mess: `Phòng đã TRỐNG để cho đặt tiếp (đơn #${bookingId}).` };
             req.session.save(() => res.redirect('/owner/bookings'));
