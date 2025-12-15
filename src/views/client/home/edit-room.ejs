@@ -8,14 +8,15 @@
                 phòng</a>
         </header>
 
-        <% if (message) { %>
-        <div class="alert <%= message.type %>">
-            <span class="alert-icon">
-                <%= message.type === 'success' ? '✅' : '⚠️' %>
-            </span>
-            <span><%= message.mess %></span>
-        </div>
-        <% } %>
+         <% if (message) { %>
+    <div class="alert <%= message.type %>">
+      <span class="alert-icon">
+        <%= message.type === 'success' ? '✅ : '⚠️' %>
+      </span>
+      <span class="alert-text"><%= message.mess %></span>
+      <button class="alert-close" onclick="this.parentElement.style.display='none';">&times;</button>
+    </div>
+    <% } %>
 
         <form
             class="form"
@@ -58,11 +59,7 @@
                             'selected' : '' %>>
                             Đang sử dụng
                         </option>
-                        <option value="Bảo trì"
-                            <%=room.TrangThaiPhong === 'Bảo trì' ? 'selected' :
-                            '' %>>
-                            Bảo trì
-                        </option>
+                        
                     </select>
                 </label>
 

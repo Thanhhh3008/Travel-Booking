@@ -2,6 +2,7 @@ const BookingService = require('../../services/BookingService');
 const RoomService = require('../../services/RoomService');
 const ThongBao = require('../../models/admin/ThongBao');
 const User = require('../../models/admin/NguoiDung');
+
 class BookingController {
 
     /**
@@ -13,23 +14,24 @@ class BookingController {
         delete req.session.message;
 
         const roomId = Number(req.params.roomId);
-const thongbao = req.session.login  ? await ThongBao.getByUser(req.session.login.maNguoiDung) : [];
+        const thongbao = req.session.login ? await ThongBao.getByUser(req.session.login.maNguoiDung) : [];
+
         // BẮT BUỘC ĐĂNG NHẬP
         if (!req.session.login) {
             req.session.message = {
                 type: 'danger',
                 mess: 'Bạn phải đăng nhập để đặt phòng.'
             };
-            return req.session.save(() => res.redirect(`/rooms/${roomId}`),{thongbao});
+            return req.session.save(() => res.redirect(`/rooms/${roomId}`));
         }
 
-        // const currentUser = req.session.login; // chứa name, email, ...
- let currentUser = null;
-            console.log("ma nguoi dung",req.session.login.maNguoiDung)
-            if (req.session.login) {
-                currentUser = await User.getById(req.session.login.maNguoiDung);
-      }
-      console.log("currentUser",currentUser)
+        let currentUser = null;
+        console.log("ma nguoi dung", req.session.login.maNguoiDung);
+        if (req.session.login) {
+            currentUser = await User.getById(req.session.login.maNguoiDung);
+        }
+        console.log("currentUser", currentUser);
+
         try {
             const roomService = new RoomService();
             const room = await roomService.findById(roomId);
@@ -42,11 +44,16 @@ const thongbao = req.session.login  ? await ThongBao.getByUser(req.session.login
                 return req.session.save(() => res.redirect('/'));
             }
 
+            // ✅ Lấy danh sách ngày đã được đặt để disable lịch
+            const bookingService = new BookingService();
+            const bookedDates = await bookingService.getBookedDates(roomId);
+
             res.render('client/home/room-booking', {
                 message,
                 room,
                 currentUser,
                 thongbao,
+                bookedDates,
                 helpers: {
                     formatMoney: (value) =>
                         Number(value || 0).toLocaleString('vi-VN', {
@@ -94,6 +101,12 @@ const thongbao = req.session.login  ? await ThongBao.getByUser(req.session.login
 
         const checkinDate = new Date(NgayNhanPhong);
         const checkoutDate = new Date(NgayTraPhong);
+
+        if (Number.isNaN(checkinDate.getTime()) || Number.isNaN(checkoutDate.getTime())) {
+            req.session.message = { type: 'danger', mess: 'Ngày nhận/trả phòng không hợp lệ.' };
+            return req.session.save(() => res.redirect(`/rooms/${roomId}`));
+        }
+
         const today = new Date();
         today.setHours(0, 0, 0, 0);
 
@@ -128,40 +141,36 @@ const thongbao = req.session.login  ? await ThongBao.getByUser(req.session.login
                 return req.session.save(() => res.redirect('/'));
             }
 
-
-           
+            // ✅ CHẶN TRÙNG LỊCH (backend)
+            const isAvailable = await bookingService.isRoomAvailable(roomId, checkinDate, checkoutDate);
+            if (!isAvailable) {
+                req.session.message = { type: 'danger', mess: 'Phòng đã được đặt trong khoảng thời gian bạn chọn.' };
+                return req.session.save(() => res.redirect(`/rooms/${roomId}/book`));
+            }
 
             // Tính tổng tiền
             const stayDuration = Math.ceil((checkoutDate - checkinDate) / (1000 * 60 * 60 * 24));
+            const totalPrice = stayDuration * Number(room['Gia'] || 0);
 
-            const totalPrice = stayDuration * Number(room['Gia']);
+            // trạng thái phòng: đã đặt trước
+            await roomService.updateStatus(roomId, 'Đã đặt trước');
 
-            // console.log(stayDuration, ' ', room['Gia'])
-
-            // room.TrangThaiPhong = 'Đã Đặt Trước'
-
-            // await roomService.updateStatus(roomId, 'Đã Đặt Trước')
-
-
-await roomService.updateStatus(roomId, 'Đã Đặt Trước');
-
-            const newBooking = await bookingService.create({
+            await bookingService.create({
                 MaNguoiDung: currentUser.maNguoiDung,
                 MaPhong: roomId,
                 NgayNhanPhong: checkinDate,
                 NgayTraPhong: checkoutDate,
-                 NgayDatPhong: new Date(), 
+                NgayDatPhong: new Date(),
                 TongTien: totalPrice,
-                TrangThai: 0,
+                TrangThai: '0',
                 SoLuongKhach: SoLuongKhach
             });
 
             req.session.message = { type: 'success', mess: 'Đặt phòng thành công!' };
-req.session.save(err => {
-    if (err) console.error('Lỗi lưu session:', err);
-    res.redirect('/');
-});
-
+            req.session.save(err => {
+                if (err) console.error('Lỗi lưu session:', err);
+                res.redirect('/');
+            });
 
         } catch (e) {
             console.error('Error create booking:', e);
@@ -169,9 +178,6 @@ req.session.save(err => {
             req.session.save(() => res.redirect(`/rooms/${roomId}`));
         }
     }
-
-
-
 }
 
 module.exports = BookingController;

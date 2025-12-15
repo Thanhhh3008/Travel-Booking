@@ -58,7 +58,7 @@ class AuthController {
         try {
             const data = jwt.verify(token, process.env.KEY_JWT);
             const tmp = data.email;
-            // console.log(tmp)
+            console.log(tmp)
             if (await mCustomer.setActiveStatus(tmp)) {
                 req.session.message = {
                     mess: `Kích hoạt tài khoản thành công, bạn có thể đăng nhập ngay bây giờ`,
@@ -172,7 +172,7 @@ class AuthController {
             };
 
             req.session.save(() => {
-                res.redirect('/');
+                res.redirect('/login.html');
             });
             return;
         }
@@ -184,7 +184,7 @@ class AuthController {
             };
 
             req.session.save(() => {
-                res.redirect('/');
+                res.redirect('/login.html');
             });
             return;
         }
@@ -198,7 +198,7 @@ const hash = user.password.toString();  // default là 'utf8'
             };
 
             req.session.save(() => {
-                res.redirect('/');
+                res.redirect('/login.html');
             });
             return;
         }

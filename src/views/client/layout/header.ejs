@@ -1,191 +1,139 @@
 <!DOCTYPE html>
 <html lang="vi">
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>TripStay | Nơi Nghỉ Ngơi Sau Những Cuộc Vui</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
- <link rel="stylesheet" href="/styles.css">
-  <link rel="shortcut icon" href="/image/logo.ico" type="image/x-icon">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
-<style>
-
-.room-section {
-  display: flex;
-  overflow-x: auto;
-  gap: 12px;                    
-  padding-bottom: 10px;
-  
-}
-
-.room-section {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);  
-  gap: 14px;                                
-  margin-bottom: 25px;
-  overflow: hidden;                         
-}
-
-/* Card nhỏ hơn */
-.card {
-  border-radius: 16px;
-  background: #fff;
-  overflow: hidden;
-  cursor: pointer;
-  text-decoration: none;
-  color: inherit;
-}
-
-/* Ảnh nhỏ lại */
-.card .thumb img {
-  width: 100%;
-  height: 150px;
-  object-fit: cover;
-  border-radius: 16px;
-}
-
-/* Badge */
-.card .badge {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  background: rgba(255,255,255,0.85);
-  padding: 4px 10px;
-  border-radius: 12px;
-  font-size: 12px;
-  font-weight: 600;
-}
-
-/* Icon trái tim */
-.wish {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background: #fff;
-  padding: 6px;
-  border-radius: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-/* ====== NỘI DUNG ====== */
-.card-body {
-  padding: 8px 4px;
-}
-
-.card-body .title {
-  font-size: 14px;
-  font-weight: 600;
-  margin-bottom: 4px;
-}
-
-.card-body .meta {
-  color: #555;
-  font-size: 12px;
-}
-
-/* XÓA NÚT ĐẶT PHÒNG — card là link */
-.btn.primary.small {
-  display: none !important;
-}
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>TripStay | Nơi Nghỉ Ngơi Sau Những Cuộc Vui</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap"
+      rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+    <link rel="shortcut icon" href="/image/logo.ico" type="image/x-icon">
+    <link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+  .header {
+    background:linear-gradient(180deg, #ffffff 39.9%, #f8f8f8 100%);
+  }
 </style>
+  </head>
 
+  <body>
 
-</head>
+    <header class="header">
+      <div class="container nav">
 
-<body>
-  <!-- Header chung -->
-  <header class="header">
-    <div class="container nav">
-      <a class="brand" href="/"><span class="mark">🏠</span><span class="text">tripstay</span></a>
-      <nav class="tabs">
-        <a class="tab-link " href="/rooms"><span class="emoji">🏠</span> Nơi lưu trú</a>
-        <a class="tab-link" href="/experiences.html"><span class="emoji">🎈</span> Trải nghiệm</a>
-        <a class="tab-link" href="/services.html"><span class="emoji">🛎️</span> Dịch vụ</a>
-          <!-- Thêm phòng (trở thành đối tác) -->
+        <!-- Logo -->
+        <a class="brand" href="/">
+          <i class="fa-solid fa-house-chimney"></i>
+          <span class="text">tripstay</span>
+        </a>
+
+        <!-- Menu -->
+        <nav class="tabs">
+          <a class="tab-link" href="/"><i class="fa-solid fa-bed"></i> Nơi lưu
+            trú</a>
+
+          <!-- <a class="tab-link" href="/services.html"><i class="fa-solid fa-bell-concierge"></i> Dịch vụ</a> -->
+
+          <!-- Thêm phòng / Trở thành đối tác -->
           <% if (currentUser && currentUser.MaVaiTro == 2) { %>
-
-    <!-- Nhà cung cấp -->
-    <a class="tab-link" href="/rooms/add">
-        <span class="emoji">🏨</span> Thêm phòng
-    </a>
-
-<% } else { %>
-
-    <!-- Khách du lịch -->
-    <a class="tab-link" href="/rooms/add">
-        <span class="emoji">🤝</span> Trở thành đối tác
-    </a>
-
-<% } %>
-
-
-          <!-- Doanh thu: vào trang danh sách doanh thu -->
-          <a class="tab-link" href="/revenues">
-            <span class="emoji">💰</span> Doanh thu
+          <a class="tab-link" href="/rooms/add">
+            <i class="fa-solid fa-hotel"></i> Thêm phòng
           </a>
-      </nav>
-      <div class="nav-actions">
-        <% if(login == null) { %>
-        <a class="link" href="/login.html">Đăng nhập</a>
-        <a class="link" href="/register.html">Đăng ký</a>
-        <% } %>
+          <% } else { %>
+          <a class="tab-link" href="/rooms/add">
+            <i class="fa-solid fa-handshake-angle"></i> Trở thành đối tác
+          </a>
+          <% } %>
+        </nav>
 
-        <% if(login != null) { %>
-        <div class="user-dropdown">
-          <button class="user-btn">
-            👋 Xin chào, <%= login.username %> ▾
-          </button>
-          <div class="dropdown-menu">
-            <a href="/profile.html">👤 Thông tin cá nhân</a>
-            <a href="/bookings.html">🧾 Lịch sử đặt phòng</a>
-            <a href="/logout.html" class="logout">🚪 Đăng xuất</a>
+        <!-- User Section -->
+        <div class="nav-actions">
+
+          <% if (login == null) { %>
+          <a class="link" href="/login.html"><i
+              class="fa-solid fa-right-to-bracket"></i> Đăng nhập</a>
+          <a class="link" href="/register.html"><i
+              class="fa-solid fa-user-plus"></i> Đăng ký</a>
+          <% } %>
+
+          <% if (login != null) { %>
+
+          <!-- User Dropdown -->
+          <div class="user-dropdown">
+            <button class="user-btn">
+              <i class="fa-solid fa-user"></i>
+              Xin chào, <%= login.username %> ▾
+            </button>
+
+            <div class="dropdown-menu">
+              <a href="/profile.html"><i class="fa-solid fa-id-card"></i> Thông
+                tin cá nhân</a>
+              <a href="/bookings.html"><i class="fa-solid fa-receipt"></i> Lịch
+                sử đặt phòng</a>
+
+              <% if (currentUser && currentUser.MaVaiTro == 2) { %>
+              <a href="/rooms/my-rooms"><i class="fa-solid fa-hotel"></i> Quản
+                lý chỗ ở</a>
+
+              <!-- ✅ THÊM: Quản lý đơn đặt phòng (chủ phòng) -->
+              <a href="/owner/bookings"><i
+                  class="fa-solid fa-clipboard-list"></i> Quản lý đơn đặt
+                phòng</a>
+
+              <a href="/revenues"><i class="fa-solid fa-coins"></i> Doanh
+                thu</a>
+              <% } %>
+
+              <a href="/logout.html" class="logout">
+                <i class="fa-solid fa-door-open"></i> Đăng xuất
+              </a>
+            </div>
           </div>
-        </div>
-        
 
-        <div class="notification-dropdown">
-          <button class="notify-btn">
-            🔔 Thông báo <span id="notify-count" class="badge-noti">0</span> ▾
-          </button>
+          <!-- Notification Dropdown -->
+          <div class="notification-dropdown">
+            <button class="notify-btn">
+              <i class="fa-solid fa-bell"></i> Thông báo
+              <span id="notify-count" class="badge-noti">0</span> ▾
+            </button>
 
-          <div class="notify-menu">
-            <% if (thongbao && thongbao.length > 0) { %>
+            <div class="notify-menu">
+              <% if (thongbao && thongbao.length > 0) { %>
               <% thongbao.forEach(n => { %>
-                <div class="notify-item">
-                 <% 
-                        let imgPath = '/admin/uploads/thumbnail_thongbao/failed.jpg'; // mặc định thất bại
-                        if (n.Thumbnail && n.Thumbnail.trim() !== '') {
-                            imgPath = '/admin/uploads/thumbnail_thongbao/' + n.Thumbnail;
-                        } else if (n.TieuDe && n.TieuDe.includes('Phòng được phê duyệt')) {
-                            imgPath = '/admin/uploads/thumbnail_thongbao/success.jpg';
-                        }
+
+              <div class="notify-item">
+                <%
+                let imgPath = '/admin/uploads/thumbnail_thongbao/failed.jpg';
+                if (n.Thumbnail && n.Thumbnail.trim() !== '') {
+                imgPath = '/admin/uploads/thumbnail_thongbao/' + n.Thumbnail;
+                } else if (n.TieuDe &&
+                n.TieuDe.includes('Phòng được phê duyệt')) {
+                imgPath = '/admin/uploads/thumbnail_thongbao/success.jpg';
+                }
                 %>
 
-<img src="<%= imgPath %>" class="notify-thumb" alt="Chưa có ảnh">
-
-
-                  <div class="notify-content">
-                    <h4><%= n.TieuDe %></h4>
-                    <p><%= n.NoiDung %></p>
-                   
-                  </div>
+                <img src="<%= imgPath %>" class="notify-thumb" alt="Ảnh">
+                <div class="notify-content">
+                  <h4><%= n.TieuDe %></h4>
+                  <p><%= n.NoiDung %></p>
                 </div>
+              </div>
+
               <% }) %>
-            <% } else { %>
-              <div class="notify-empty">Không có thông báo nào</div>
-            <% } %>
+              <% } else { %>
+              <div class="notify-empty"><i class="fa-solid fa-inbox"></i> Không
+                có thông báo nào</div>
+              <% } %>
+            </div>
           </div>
+
+          <% } %>
+
         </div>
-
-        
-
-
-        <% } %>
       </div>
+    </header>
 
-  </header>
-  <div class="toast-container" aria-live="polite" aria-atomic="true"></div>
+    <div class="toast-container" aria-live="polite" aria-atomic="true"></div>

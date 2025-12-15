@@ -45,13 +45,13 @@
   <!-- H2 có link xem tất cả phòng trống tại thành phố -->
  <h2 style="margin-top: 40px;">
   <a href="/rooms/city/<%=city%>" style="color: #333; text-decoration:none;">
-    Khám phá nơi lưu trú tại <%= city %> >
+    Khám phá nơi lưu trú tại <%= city %>
   </a>
 </h2>
 
   <div class="room-section">
 
-    <% roomsByCity[city].slice(0, 7).forEach(room => { %> <!-- CHỈ LẤY 7 PHÒNG -->
+    <% roomsByCity[city].slice(0, 5).forEach(room => { %> <!-- CHỈ LẤY 7 PHÒNG -->
 
       <a class="card" href="/rooms/<%= room.MaPhong %>" data-type="<%= room.TenLoaiPhong %>">
 

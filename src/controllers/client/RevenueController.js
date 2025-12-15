@@ -15,12 +15,20 @@ const thongbao = req.session.login  ? await ThongBao.getByUser(req.session.login
         try {
             const revenueService = new RevenueService();
             const revenues = await revenueService.getAll();
+                 let sumPhong = 0;
+    let sumDichVu = 0;
 
+    revenues.forEach(r => {
+        sumPhong += r.DoanhThuTuPhong || 0;
+        sumDichVu += r.DoanhThuTuDichVu || 0;
+    });
             res.render('client/home/list-revenue', {
                 message,
                 revenues,
                 thongbao, 
                 currentUser,
+                sumPhong,
+                sumDichVu,
                 helpers: {
                     formatMoney: (value) =>
                         (value || 0).toLocaleString('vi-VN', {
@@ -62,7 +70,7 @@ const thongbao = req.session.login  ? await ThongBao.getByUser(req.session.login
         }
     }
 
-    // =============== FORM THÊM DOANH THU ===============
+    // // =============== FORM THÊM DOANH THU ===============
     static async createView(req, res) {
         const message = req.session.message;
         delete req.session.message;

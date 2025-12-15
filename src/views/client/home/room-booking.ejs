@@ -1,31 +1,37 @@
 <%- include('../layout/header.ejs') %>
-<main class="container-fluid section page-room-booking">
- <!-- Thông báo flash -->
-<% if (message) { %>
-<div class="alert <%= message.type %>">
-  <span class="alert-icon">
-    <%= message.type === 'success' ? '✅' : '⚠️' %>
-  </span>
-  <span class="alert-text"><%= message.mess %></span>
-  <button class="alert-close" onclick="this.parentElement.style.display='none';">&times;</button>
-</div>
-<% } %>
 
+<link rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+<main class="container-fluid section page-room-booking">
+  <!-- Thông báo flash -->
+  <% if (message) { %>
+  <div class="alert <%= message.type %>">
+    <span class="alert-icon">
+      <%= message.type === 'success' ? '✅' : '⚠️' %>
+    </span>
+    <span class="alert-text"><%= message.mess %></span>
+    <button class="alert-close"
+      onclick="this.parentElement.style.display='none';">&times;</button>
+  </div>
+  <% } %>
 
   <section class="room-detail-layout">
     <div class="room-info">
       <h1><%= room.TenPhong || room.name || 'Phòng' %></h1>
 
       <% if (room.HinhAnh || room.image) { %>
-       <div class="room-image">
-                  <% const firstImage = room.HinhAnh ? room.HinhAnh.split(',')[0] : 'default.jpg'; %>
-                <img src="/admin/uploads/anhphong/<%= firstImage.trim() %>" alt="<%= room.TenLoaiPhong %>" >
-            </div>
+      <div class="room-image">
+        <% const firstImage = room.HinhAnh ? room.HinhAnh.split(',')[0] :
+        'default.jpg'; %>
+        <img src="/admin/uploads/anhphong/<%= firstImage.trim() %>"
+          alt="<%= room.TenLoaiPhong %>">
+      </div>
       <% } %>
 
       <p class="room-price">
         Giá: <strong><%= helpers.formatMoney(room.Gia || room.price)
-                    %>/đêm</strong>
+          %>/đêm</strong>
       </p>
 
       <% if (room.MoTa || room.description) { %>
@@ -35,33 +41,40 @@
 
     <div class="booking-panel">
       <h2>Đặt phòng này</h2>
-      <form action="/rooms/<%= room.MaPhong || room.id %>/book" method="POST" class="form-layout">
-        <input type="hidden" name="MaPhong" value="<%= room.MaPhong || room.id %>">
+      <form action="/rooms/<%= room.MaPhong || room.id %>/book" method="POST"
+        class="form-layout">
+        <input type="hidden" name="MaPhong"
+          value="<%= room.MaPhong || room.id %>">
 
         <label class="form-field">
           <span class="label">Họ tên *</span>
-          <input type="text" name="HoTen" required placeholder="Nguyễn Văn A" value="<%= (currentUser && currentUser.HoTen) ? currentUser.HoTen : '' %>">
+          <input type="text" name="HoTen" required placeholder="Nguyễn Văn A"
+            value="<%= (currentUser && currentUser.HoTen) ? currentUser.HoTen : '' %>">
         </label>
 
         <label class="form-field">
           <span class="label">Email</span>
-          <input type="email" name="Email" placeholder="you@example.com" value="<%= (currentUser && currentUser.Email) ? currentUser.Email : '' %>">
+          <input type="email" name="Email" placeholder="you@example.com"
+            value="<%= (currentUser && currentUser.Email) ? currentUser.Email : '' %>">
         </label>
 
         <label class="form-field">
           <span class="label">Số điện thoại *</span>
-          <input type="tel" name="SoDienThoai" required placeholder="090xxxxxxx" value="<%= (currentUser && currentUser.SDT) ? currentUser.SDT : '' %>">
+          <input type="tel" name="SoDienThoai" required placeholder="090xxxxxxx"
+            value="<%= (currentUser && currentUser.SDT) ? currentUser.SDT : '' %>">
         </label>
 
         <div class="form-grid">
           <label class="form-field">
             <span class="label">Ngày nhận phòng *</span>
-            <input type="date" name="NgayNhanPhong" required>
+            <input type="text" id="NgayNhanPhong" name="NgayNhanPhong" required
+              placeholder="YYYY-MM-DD">
           </label>
 
           <label class="form-field">
             <span class="label">Ngày trả phòng *</span>
-            <input type="date" name="NgayTraPhong" required>
+            <input type="text" id="NgayTraPhong" name="NgayTraPhong" required
+              placeholder="YYYY-MM-DD">
           </label>
         </div>
 
@@ -72,17 +85,54 @@
 
         <label class="form-field">
           <span class="label">Ghi chú</span>
-          <textarea name="GhiChu" rows="3" placeholder="Yêu cầu thêm (nếu có)"></textarea>
+          <textarea name="GhiChu" rows="3"
+            placeholder="Yêu cầu thêm (nếu có)"></textarea>
         </label>
 
         <div class="form-actions">
           <button type="submit" class="btn primary">Xác nhận đặt
             phòng</button>
-          <a href="/rooms/<%= room.MaPhong || room.id %>" class="btn">Quay lại chi tiết phòng</a>
+          <a href="/rooms/<%= room.MaPhong || room.id %>" class="btn">Quay lại
+            chi tiết phòng</a>
         </div>
       </form>
     </div>
   </section>
 </main>
+
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script>
+  // ✅ các ngày đã có người đặt (controller truyền sang)
+  
+  const disabledDates = <%- JSON.stringify(bookedDates || []) %>;
+
+  let checkoutPicker = null;
+
+  flatpickr("#NgayNhanPhong", {
+    dateFormat: "Y-m-d",
+    minDate: "today",
+    disable: disabledDates,
+    onChange: function(selectedDates) {
+      if (!selectedDates || !selectedDates[0]) return;
+
+      const minCheckout = new Date(selectedDates[0]);
+      // rule của bạn: tối thiểu 2 ngày
+      minCheckout.setDate(minCheckout.getDate() + 2);
+
+      if (checkoutPicker) {
+        checkoutPicker.set("minDate", minCheckout);
+
+        const cur = checkoutPicker.selectedDates && checkoutPicker.selectedDates[0];
+        if (cur && cur < minCheckout) checkoutPicker.clear();
+      }
+    }
+  });
+
+  checkoutPicker = flatpickr("#NgayTraPhong", {
+    dateFormat: "Y-m-d",
+    minDate: "today",
+    disable: disabledDates
+  });
+</script>
 
 <%- include('../layout/footer.ejs') %>

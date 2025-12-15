@@ -40,11 +40,17 @@
 </div>
 <script>
   const params = new URLSearchParams(window.location.search);
+
   if (params.get('approved') === '1') {
-    alert('✅ Phê duyệt phòng thành công!');
+    alert('Phê duyệt phòng thành công!');
     window.history.replaceState({}, document.title, window.location.pathname);
-  } else if (params.get('error') === '1') {
-    alert('❌ Có lỗi xảy ra khi phê duyệt phòng!');
+  } 
+  else if (params.get('rejected') === '1') {
+    alert('Phòng đã bị từ chối thành công!');
+    window.history.replaceState({}, document.title, window.location.pathname);
+  } 
+  else if (params.get('error') === '1') {
+    alert('Có lỗi xảy ra khi xử lý yêu cầu!');
     window.history.replaceState({}, document.title, window.location.pathname);
   }
 </script>
