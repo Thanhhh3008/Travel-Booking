@@ -6,7 +6,7 @@ const pool = mysql.createPool({
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME,
     dateStrings: ['DATE', 'DATETIME', 'TIMESTAMP'],
-    port:3307
+    port: process.env.DB_PORT,
 })
 
 module.exports = pool;

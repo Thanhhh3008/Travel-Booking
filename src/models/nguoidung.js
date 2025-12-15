@@ -6,7 +6,7 @@ class nguoidung {
         cccd,
         username,
         password,
-        thongTinLienHe,
+        
         diaChi,
         sdt,
         quocTich,
@@ -22,7 +22,7 @@ class nguoidung {
         this.cccd = cccd;             // Ánh xạ từ 'CCCD'
         this.username = username;     // Ánh xạ từ 'Username'
         this.password = password;
-        this.thongTinLienHe = thongTinLienHe; // Ánh xạ từ 'ThongTinLienHe'
+      
         this.diaChi = diaChi;         // Ánh xạ từ 'DiaChi'
         this.sdt = sdt;               // Ánh xạ từ 'SDT'
         this.quocTich = quocTich;     // Ánh xạ từ 'QuocTich'

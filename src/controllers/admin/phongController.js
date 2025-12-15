@@ -112,7 +112,6 @@ exports.rejectRoom = async (req, res) => {
     await ThongBaoModel.add(
       'Phòng bị từ chối',
       message,
-      
       'ca_nhan',
       room.MaNguoiDung
     );

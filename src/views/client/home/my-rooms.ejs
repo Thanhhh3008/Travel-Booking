@@ -1,0 +1,442 @@
+<%- include('../layout/header.ejs') %>
+
+<link rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="/my-rooms.css">
+
+<main class="page-my-rooms">
+  <div class="container">
+    <!-- Page Header -->
+    <div class="page-header">
+      <h1 class="page-title">
+        <i class="fas fa-building"></i>
+        Quản lý phòng của tôi
+      </h1>
+      <a href="/rooms/add" class="btn-add-room">
+        <i class="fas fa-plus-circle"></i>
+        Thêm phòng mới
+      </a>
+    </div>
+
+    <!-- Thông báo flash -->
+    <% if (message) { %>
+    <div class="alert <%= message.type %>">
+      <span class="alert-icon">
+        <%= message.type === 'success' ? '✅' : '⚠️' %>
+      </span>
+      <span class="alert-text"><%= message.mess %></span>
+      <button class="alert-close"
+        onclick="this.parentElement.style.display='none';">&times;</button>
+    </div>
+    <% } %>
+
+    <!-- Statistics -->
+    <div class="stats-grid">
+      <div class="stat-card total">
+        <i class="fas fa-home stat-icon"></i>
+        <div class="stat-label">
+          <i class="fas fa-chart-bar"></i>
+          Tổng số phòng
+        </div>
+        <div class="stat-value"><%= stats.total %></div>
+      </div>
+
+      <div class="stat-card approved">
+        <i class="fas fa-check-circle stat-icon"></i>
+        <div class="stat-label">
+          <i class="fas fa-thumbs-up"></i>
+          Trống
+        </div>
+        <div class="stat-value"><%= stats.approved %></div>
+      </div>
+      <div class="stat-card booked">
+        <i class="fas fa-calendar-check stat-icon"></i>
+        <div class="stat-label">
+          <i class="fas fa-key"></i>
+          Đã đặt trước
+        </div>
+        <div class="stat-value"><%= stats.booked %></div>
+      </div>
+      <div class="stat-card using">
+        <i class="fas fa-door-open stat-icon"></i>
+        <div class="stat-label">
+          <i class="fas fa-play-circle"></i>
+          Đang sử dụng
+        </div>
+        <div class="stat-value"><%= stats.using %></div>
+      </div>
+
+      <div class="stat-card completed">
+        <i class="fas fa-flag-checkered stat-icon"></i>
+        <div class="stat-label">
+          <i class="fas fa-check-double"></i>
+          Hoàn thành kỳ
+        </div>
+        <div class="stat-value"><%= stats.completed %></div>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <button class="tab active" data-status="all">
+        <i class="fas fa-th-large"></i>
+        Tất cả (<%= stats.total %>)
+      </button>
+      <button class="tab" data-status="Trống">
+        <i class="fas fa-door-open"></i>
+        Trống (<%= roomsByStatus['Trống'].length %>)
+      </button>
+      <button class="tab" data-status="Đã đặt trước">
+        <i class="fas fa-calendar-check"></i>
+        Đã đặt (<%= stats.booked %>)
+      </button>
+      <button class="tab" data-status="Bị từ chối">
+        <i class="fas fa-times-circle"></i>
+        Bị từ chối (<%= stats.rejected %>)
+      </button>
+      <button class="tab" data-status="Đang sử dụng">
+        <i class="fas fa-play-circle"></i>
+        Đang sử dụng (<%= stats.using %>)
+      </button>
+      <button class="tab" data-status="Hoàn thành kỳ">
+        <i class="fas fa-flag-checkered"></i>
+        Hoàn thành kỳ (<%= stats.completed %>)
+      </button>
+    </div>
+
+    <!-- Tab Content: Tất cả -->
+    <div class="tab-content active" id="tab-all">
+      <% if (!rooms || rooms.length === 0) { %>
+      <div class="empty-state">
+        <div class="empty-state-icon">
+          <i class="fas fa-home"></i>
+        </div>
+        <div class="empty-state-text">Bạn chưa có phòng nào</div>
+        <a href="/rooms/add" class="btn-add-room">
+          <i class="fas fa-plus-circle"></i>
+          Thêm phòng đầu tiên
+        </a>
+      </div>
+      <% } else { %>
+      <div class="rooms-grid">
+        <% rooms.forEach(room => { %>
+        <% const firstImage = room.HinhAnh ? room.HinhAnh.split(',')[0] :
+        'default.jpg'; %>
+        <div class="room-card">
+          <div class="room-image">
+            <img src="/admin/uploads/anhphong/<%= firstImage.trim() %>"
+              alt="<%= room.TenLoaiPhong %>"
+              onerror="this.src='/images/default-room.jpg'">
+            <span
+              class="status-badge <%= getStatusClass(room.TrangThaiPhong) %>">
+              <i class="fas <%= getStatusIcon(room.TrangThaiPhong) %>"></i>
+              <%= helpers.mapStatus(room.TrangThaiPhong) %>
+            </span>
+          </div>
+          <div class="room-content">
+            <h3 class="room-title">
+              Phòng <%= room.TenChoO %> - <%= room.DiaChi || 'Chưa cập nhật' %>
+            </h3>
+            <div class="room-info">
+              <span>
+                <i class="fas fa-map-marker-alt"></i>
+                <%= room.ThanhPho || 'Chưa rõ' %>
+              </span>
+              <span>
+                <i class="fas fa-star"></i>
+                <%= room.Rating || 'Mới' %>
+              </span>
+            </div>
+            <div class="room-price">
+              <%= helpers.formatMoney(room.Gia) %>đ / đêm
+            </div>
+            <div class="room-actions">
+              <a href="/rooms/<%= room.MaPhong %>" class="btn btn-view">
+                <i class="fas fa-eye"></i>
+                Xem
+              </a>
+
+              <!-- Check-in button (chỉ hiện khi phòng Đã đặt trước) -->
+              <% if (room.TrangThaiPhong === 'Đã đặt trước') { %>
+              <button class="btn btn-checkin"
+                onclick="confirmCheckIn(<%= room.MaPhong %>, '<%= room.TenChoO %>')">
+                <i class="fas fa-sign-in-alt"></i>
+                Check-in
+              </button>
+              <button class="btn btn-cancel"
+                onclick="confirmCancel(<%= room.MaPhong %>, '<%= room.TenChoO %>')">
+                <i class="fas fa-ban"></i> Hủy đặt
+              </button>
+              <% } %>
+
+              <!-- Check-out button (chỉ hiện khi phòng Đang sử dụng) -->
+              <% if (room.TrangThaiPhong === 'Đang sử dụng') { %>
+              <button class="btn btn-checkout"
+                onclick="confirmCheckOut(<%= room.MaPhong %>, '<%= room.TenLoaiPhong %>')">
+                <i class="fas fa-sign-out-alt"></i>
+                Check-out
+              </button>
+              <% } %>
+              <!-- Reset về Trống (chỉ hiện khi phòng Hoàn thành kỳ) -->
+              <% if (room.TrangThaiPhong === 'Hoàn thành kỳ') { %>
+              <button class="btn btn-reset"
+                onclick="confirmReset(<%= room.MaPhong %>, '<%= room.TenChoO %>')">
+                <i class="fas fa-redo"></i> Cho đặt tiếp
+              </button>
+              <% } %>
+
+              <button class="btn btn-delete"
+                onclick="confirmDelete(<%= room.MaPhong %>, '<%= room.TenLoaiPhong %>')">
+                <i class="fas fa-trash-alt"></i>
+                Xóa
+              </button>
+            </div>
+          </div>
+        </div>
+        <% }); %>
+      </div>
+      <% } %>
+    </div>
+
+    <!-- Tab Content: Theo trạng thái -->
+    <% ['Trống', 'Đã đặt trước', 'Bị từ chối', 'Đang sử dụng',
+    'Hoàn thành kỳ'].forEach(status => { %>
+    <div class="tab-content" id="tab-<%= status.replace(/\s+/g, '-') %>">
+      <% if (!roomsByStatus[status] || roomsByStatus[status].length === 0) { %>
+      <div class="empty-state">
+        <div class="empty-state-icon">
+          <i class="fas fa-inbox"></i>
+        </div>
+        <div class="empty-state-text">Không có phòng nào <%=
+          status.toLowerCase() %></div>
+      </div>
+      <% } else { %>
+      <div class="rooms-grid">
+        <% roomsByStatus[status].forEach(room => { %>
+        <% const firstImage = room.HinhAnh ? room.HinhAnh.split(',')[0] :
+        'default.jpg'; %>
+        <div class="room-card">
+          <div class="room-image">
+            <img src="/admin/uploads/anhphong/<%= firstImage.trim() %>"
+              alt="<%= room.TenLoaiPhong %>"
+              onerror="this.src='/images/default-room.jpg'">
+            <span
+              class="status-badge <%= getStatusClass(room.TrangThaiPhong) %>">
+              <i class="fas <%= getStatusIcon(room.TrangThaiPhong) %>"></i>
+              <%= helpers.mapStatus(room.TrangThaiPhong) %>
+            </span>
+          </div>
+          <div class="room-content">
+            <h3 class="room-title">
+              Phòng <%= room.TenChoO %> - <%= room.DiaChi || 'Chưa cập nhật' %>
+            </h3>
+            <div class="room-info">
+              <span>
+                <i class="fas fa-map-marker-alt"></i>
+                <%= room.ThanhPho || 'Chưa rõ' %>
+              </span>
+              <span>
+                <i class="fas fa-star"></i>
+                <%= room.Rating || 'Mới' %>
+              </span>
+            </div>
+            <div class="room-price">
+              <%= helpers.formatMoney(room.Gia) %>đ / đêm
+            </div>
+            <div class="room-actions">
+              <a href="/rooms/<%= room.MaPhong %>" class="btn btn-view">
+                <i class="fas fa-eye"></i>
+                Xem
+              </a>
+
+              <!-- Check-in button -->
+              <% if (room.TrangThaiPhong === 'Đã đặt trước') { %>
+              <button class="btn btn-checkin"
+                onclick="confirmCheckIn(<%= room.MaPhong %>, '<%= room.TenChoO %>')">
+                <i class="fas fa-sign-in-alt"></i>
+                Check-in
+              </button>
+              <button class="btn btn-cancel"
+                onclick="confirmCancel(<%= room.MaPhong %>, '<%= room.TenChoO %>')">
+                <i class="fas fa-ban"></i> Hủy đặt
+              </button>
+              <% } %>
+
+              <!-- Check-out button -->
+              <% if (room.TrangThaiPhong === 'Đang sử dụng') { %>
+              <button class="btn btn-checkout"
+                onclick="confirmCheckOut(<%= room.MaPhong %>, '<%= room.TenChoO %>')">
+                <i class="fas fa-sign-out-alt"></i>
+                Check-out
+              </button>
+              <% } %>
+              <!-- Reset về Trống (chỉ hiện khi phòng Hoàn thành kỳ) -->
+              <% if (room.TrangThaiPhong === 'Hoàn thành kỳ') { %>
+              <button class="btn btn-reset"
+                onclick="confirmReset(<%= room.MaPhong %>, '<%= room.TenChoO %>')">
+                <i class="fas fa-redo"></i> Cho đặt tiếp
+              </button>
+              <% } %>
+
+              <button class="btn btn-delete"
+                onclick="confirmDelete(<%= room.MaPhong %>, '<%= room.TenLoaiPhong %>')">
+                <i class="fas fa-trash-alt"></i>
+                Xóa
+              </button>
+            </div>
+          </div>
+        </div>
+        <% }); %>
+      </div>
+      <% } %>
+    </div>
+    <% }); %>
+  </div>
+</main>
+
+<style>
+  /* Style cho nút Check-in */
+  .btn-checkin {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+  }
+  
+  .btn-checkin:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  }
+  
+  /* Style cho nút Check-out */
+  .btn-checkout {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+  }
+  
+  .btn-checkout:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(245, 87, 108, 0.4);
+  }
+  
+  /* Đảm bảo các nút action căn đều */
+  .room-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+</style>
+
+<script>
+  // Tab switching
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', function() {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+      
+      this.classList.add('active');
+      
+      const status = this.getAttribute('data-status');
+      if (status === 'all') {
+        document.getElementById('tab-all').classList.add('active');
+      } else {
+        const tabId = 'tab-' + status.replace(/\s+/g, '-');
+        document.getElementById(tabId).classList.add('active');
+      }
+    });
+  });
+
+  // Check-in confirmation
+  function confirmCheckIn(roomId, roomName) {
+    if (confirm(`Xác nhận check-in cho phòng "${roomName}"?\n\nPhòng sẽ chuyển sang trạng thái "Đang sử dụng".`)) {
+      const form = document.createElement('form');
+      form.method = 'POST';
+      form.action = `/rooms/${roomId}/checkin`;
+      document.body.appendChild(form);
+      form.submit();
+    }
+  }
+
+  // Check-out confirmation
+  function confirmCheckOut(roomId, roomName) {
+    if (confirm(`Xác nhận check-out cho phòng "${roomName}"?\n\nPhòng sẽ chuyển sang trạng thái "Hoàn thành kỳ".`)) {
+      const form = document.createElement('form');
+      form.method = 'POST';
+      form.action = `/rooms/${roomId}/checkout`;
+      document.body.appendChild(form);
+      form.submit();
+    }
+  }
+
+  // Delete confirmation
+  function confirmDelete(roomId, roomName) {
+    if (confirm(`Bạn có chắc chắn muốn xóa phòng "${roomName}"?\n\nHành động này không thể hoàn tác!`)) {
+      const form = document.createElement('form');
+      form.method = 'POST';
+      form.action = `/rooms/${roomId}/delete`;
+      document.body.appendChild(form);
+      form.submit();
+    }
+  }
+  function confirmCancel(roomId, roomName) {
+  if (confirm(`Bạn có chắc muốn hủy đặt phòng "${roomName}"?\n\nPhòng sẽ trở lại trạng thái "Trống".`)) {
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = `/rooms/${roomId}/cancel-booking`;
+    document.body.appendChild(form);
+    form.submit();
+  }
+}
+
+  function confirmReset(roomId, roomName) {
+  if (confirm(`Đưa phòng "${roomName}" trở lại trạng thái TRỐNG để cho thuê tiếp?`)) {
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = `/rooms/${roomId}/reset`;
+    document.body.appendChild(form);
+    form.submit();
+  }
+}
+
+
+</script>
+
+<%
+function getStatusClass(status) {
+const classMap = {
+'Chờ xét duyệt': 'pending',
+'Đã duyệt': 'approved',
+'Trống': 'available',
+'Đã đặt trước': 'booked',
+'Đang sử dụng': 'using',
+'Hoàn thành kỳ': 'completed',
+'Đã từ chối': 'rejected'
+};
+return classMap[status] || 'pending';
+}
+
+function getStatusIcon(status) {
+const iconMap = {
+'Chờ xét duyệt': 'fa-clock',
+'Đã duyệt': 'fa-check-circle',
+'Trống': 'fa-door-open',
+'Đã đặt trước': 'fa-calendar-check',
+'Đang sử dụng': 'fa-play-circle',
+'Hoàn thành kỳ': 'fa-flag-checkered',
+'Đã từ chối': 'fa-times-circle'
+};
+return iconMap[status] || 'fa-clock';
+}
+%>
+
+<%- include('../layout/footer.ejs') %>

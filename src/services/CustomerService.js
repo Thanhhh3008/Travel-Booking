@@ -21,7 +21,7 @@ class CustomerService {
                     row.CCCD,
                     row.Username,
                     row.Password,
-                    row.ThongTinLienHe,
+                    
                     row.DiaChi,
                     row.SDT,
                     row.QuocTich,
@@ -74,13 +74,13 @@ class CustomerService {
     save = async (customerData) => {
 
         try {
-            const [result] = await pool.execute(`INSERT INTO nguoidung (HoTen, NgaySinh, CCCD, Username, Password, ThongTinLienHe, DiaChi, SDT, QuocTich, Rating, Discriminator, Email , status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? , ?)`, [
+            const [result] = await pool.execute(`INSERT INTO nguoidung (HoTen, NgaySinh, CCCD, Username, Password, DiaChi, SDT, QuocTich, Rating, Discriminator, Email , status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? , ?)`, [
                 customerData.name,
                 customerData.birthday || null,
                 customerData.cccd || null,
                 customerData.username,
                 customerData.password,
-                customerData.information || null,
+               
                 customerData.address || null,
                 customerData.phone || null,
                 customerData.country || null,
@@ -98,7 +98,7 @@ class CustomerService {
 
     // kích hoạt tài khoản
     setActiveStatus = async (email) => {
-        // console.log(email);
+        console.log(email);
         const query = `UPDATE nguoidung SET status = 1 WHERE Email = ?`;
         try {
             const [result] = await pool.execute(query, [email]);

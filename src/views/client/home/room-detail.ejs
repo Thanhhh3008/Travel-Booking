@@ -23,7 +23,7 @@
         <% } %>
         <span><%= room.View || 'Chưa rõ' %></span>
         <span class="divider">·</span>
-        <span><%= room.DiaChi || 'Chưa rõ' %></span>
+        <span><%= room.ThanhPho || 'Chưa rõ' %></span>
       </div>
     </div>
    <div class="room-header-actions">
@@ -173,7 +173,7 @@
               <div class="reviewer-avatar">D</div>
               <div class="reviewer-info">
                 <h4>Delphine</h4>
-                <p class="reviewer-meta">11 năm hoạt động trên Airbnb</p>
+                <p class="reviewer-meta">11 năm hoạt động trên TripStay</p>
               </div>
             </div>
             <div class="review-rating">⭐⭐⭐⭐⭐</div>
@@ -187,7 +187,7 @@
               <div class="reviewer-avatar">Г</div>
               <div class="reviewer-info">
                 <h4>Георгий</h4>
-                <p class="reviewer-meta">7 năm hoạt động trên Airbnb</p>
+                <p class="reviewer-meta">7 năm hoạt động trên TripStay</p>
               </div>
             </div>
             <div class="review-rating">⭐⭐⭐⭐⭐</div>
@@ -206,7 +206,7 @@
         <div class="host-section">
           <img src="/admin/uploads/avatar/default-host.jpg" alt="Host" class="host-avatar" onerror="this.style.display='none'">
           <div class="host-info">
-            <h3>Lê Thị</h3>
+            <h3><%= room.HoTen || 'Chưa rõ' %></h3>
             <p class="host-meta">Host</p>
             <div style="margin-top: 12px;">
               <p><strong>11</strong> Đánh giá</p>
@@ -220,7 +220,7 @@
           💼 Công việc của tôi: The Moon Villa
         </p>
         <p style="margin-top: 16px; line-height: 1.6;">
-          Xin chào, mình là Thúy Lê – một người yêu thiên nhiên, yêu biển và đặc biệt đam mê những ngôi nhà đẹp mang hơi thở bình yên...
+          Xin chào, mình là <%= room.HoTen || 'Chưa rõ' %> – một người yêu thiên nhiên, yêu biển và đặc biệt đam mê những ngôi nhà đẹp mang hơi thở bình yên...
         </p>
         <button class="show-more-btn">Nhắn tin cho host</button>
       </div>
@@ -232,7 +232,7 @@
         <p><strong>Phản hồi trong vòng:</strong> 1 giờ</p>
         <button class="show-more-btn" style="margin-top: 16px;">Nhắn tin cho host</button>
         <p style="font-size: 12px; color: #717171; margin-top: 24px;">
-          🛡️ Để bảo vệ khoản thanh toán của bạn, hãy luôn sử dụng Airbnb để chuyển tiền và liên lạc với host.
+          🛡️ Để bảo vệ khoản thanh toán của bạn, hãy luôn sử dụng TripStay để chuyển tiền và liên lạc với host.
         </p>
       </div>
     </div>

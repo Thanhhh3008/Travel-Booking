@@ -145,10 +145,10 @@
   content: "";
   position: absolute;
   bottom: 6px;
-  left: 50%;
+  left: 35%;
   transform: translateX(-50%) scaleX(0);
   transform-origin: center;
-  width: 46%;
+  width: 50%;
   height: 2px;
   background: currentColor;
   border-radius: 2px;
@@ -1809,3 +1809,109 @@ label.error {
 }
 
 
+
+.room-section {
+  display: flex;
+  overflow-x: auto;
+  gap: 12px;                    
+  padding-bottom: 10px;
+  
+}
+
+.room-section {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);  
+  gap: 20px;                                
+  margin-bottom: 25px;
+  overflow: hidden;                         
+}
+
+/* Card nhỏ hơn */
+.card {
+  border-radius: 16px;
+  background: #fff;
+  overflow: hidden;
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Ảnh nhỏ lại */
+.card .thumb img {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 16px;
+}
+
+/* Badge */
+.card .badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: rgba(255,255,255,0.85);
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* Icon trái tim */
+.wish {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: #fff;
+  padding: 6px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* ====== NỘI DUNG ====== */
+.card-body {
+  padding: 8px 4px;
+}
+
+.card-body .title {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.card-body .meta {
+  color: #555;
+  font-size: 12px;
+}
+
+
+.btn.primary.small {
+  display: none !important;
+}
+.card i {
+   font-size: 30px;
+   margin-bottom: 10px;
+}
+.brand i { color: #ff2e63; } /* logo */
+.tabs i { color: #007bff; } /* icon menu */
+.user-btn i { color: #1abc9c; } /* icon user */
+.notify-btn i { color: #ffc107; } /* icon chuông */
+.dropdown-menu i { color: #555; } /* icon trong menu */
+.logout i { color: #e74c3c; } /* icon logout */
+
+.dropdown-menu a i.fa-id-card { color: #007bff; }
+.dropdown-menu a i.fa-receipt { color: #1abc9c; }
+.dropdown-menu a i.fa-hotel { color: #ff9800; }
+.dropdown-menu a i.fa-coins { color: #eab308; }
+
+.dropdown-menu a:hover i {
+  opacity: 0.7;
+}
+.tabs a i.fa-id-card { color: #007bff; }
+.tabs a i.fa-receipt { color: #1abc9c; }
+.tabs a i.fa-hotel { color: #ff9800; }
+.tabs a i.fa-coins { color: #eab308; }
+.tabs a i.fa-building-circle-arrow-right {
+  color: #22c55e;
+}

@@ -18,7 +18,7 @@ class HomeController {
              
 
             const statuses = ['Trống'];
-const placeholders = statuses.map(() => '?').join(', '); // "?, ?"
+// const placeholders = statuses.map(() => '?').join(', '); // "?, ?"
 
 const cities = ["Hà Nội", "Đà Nẵng", "Đà Lạt", "Hồ Chí Minh", "Vũng Tàu"];
 
@@ -26,8 +26,8 @@ const roomsByCity = {};
 
 for (const city of cities) {
     roomsByCity[city] = await roomService.getAll(
-        `WHERE p.TrangThaiPhong IN (${placeholders}) AND p.ThanhPho LIKE ?`,
-        [...statuses, `%${city}%`]
+        `WHERE p.ThanhPho LIKE ?`,
+        [`%${city}%`]
     );
 }
 

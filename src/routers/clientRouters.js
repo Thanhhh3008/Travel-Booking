@@ -11,7 +11,7 @@ const AuthController = require('../controllers/client/AuthController');
 const RoomController = require('../controllers/client/RoomController');
 const BookingController = require('../controllers/client/BookingController');
 const RevenueController = require('../controllers/client/RevenueController');
-
+const BookingManageController = require('../controllers/client/BookingManageController');
 // ================== CẤU HÌNH UPLOAD ẢNH ==================
 
 const uploadDir = path.join(__dirname, '..', '..', 'public', 'admin', 'uploads', 'anhphong');
@@ -77,6 +77,13 @@ const uploadRoomImage = (req, res, next) => {
 // Trang chủ
 router.get('/', HomeController.index);
 
+router.get('/owner/bookings', BookingManageController.index);
+router.post('/owner/bookings/:bookingId/checkin', BookingManageController.checkIn);
+router.post('/owner/bookings/:bookingId/checkout', BookingManageController.checkOut);
+router.post('/owner/bookings/:bookingId/reset-room', BookingManageController.resetRoom);
+
+
+
 // Auth
 router.get('/login.html', HomeController.login_view);
 router.get('/register.html', HomeController.register_view);
@@ -90,6 +97,15 @@ router.get('/rooms', RoomController.index);
 router.get('/rooms/add',requireLogin, RoomController.createView);
 router.post('/rooms', uploadRoomImage,requireLogin, RoomController.store);
 router.get('/rooms/city/:city', RoomController.listByCity);
+router.get('/rooms/my-rooms', RoomController.myRooms);
+router.post('/rooms/:id/delete', RoomController.delete);
+
+router.post('/rooms/:id/checkin', RoomController.checkIn);
+router.post('/rooms/:id/checkout', RoomController.checkOut);
+router.post('/rooms/:id/cancel-booking', RoomController.cancelBooking);
+router.post('/rooms/:id/reset', RoomController.resetRoom);
+
+
 // NEW: sửa phòng
 router.get('/rooms/:id/edit', RoomController.editView);
 router.post('/rooms/:id', uploadRoomImage, RoomController.update);
