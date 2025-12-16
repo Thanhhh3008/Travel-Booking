@@ -1,0 +1,222 @@
+<%- include('../layout/header.ejs') %>
+
+    <style>
+        body {
+            background-color: #f4f7f6;
+            color: #333;
+        }
+
+        .main-container {
+            padding-top: 40px;
+            padding-bottom: 40px;
+        }
+
+        .profile-card {
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            padding: 30px;
+            margin-top: 5rem;
+            margin-bottom: 5rem;
+        }
+
+        .profile-sidebar {
+            text-align: center;
+            border-right: 1px solid #eee;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding-right: 30px;
+        }
+
+        .profile-picture {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 15px;
+            border: 3px solid #0d6efd;
+        }
+
+        .profile-name {
+            font-size: 1.75rem;
+            font-weight: 600;
+            color: #0d6efd;
+        }
+
+        .profile-bio {
+            font-size: 0.9rem;
+            color: #6c757d;
+            margin-bottom: 20px;
+        }
+
+        .profile-details-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 25px;
+            color: #343a40;
+            border-bottom: 2px solid #0d6efd;
+            padding-bottom: 10px;
+        }
+
+        .info-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            font-size: 1.05rem;
+        }
+
+        .info-row .icon {
+            font-size: 1.2rem;
+            color: #0d6efd;
+            margin-right: 15px;
+            width: 25px;
+            text-align: center;
+        }
+
+        .info-row .info-label {
+            font-weight: 500;
+            color: #6c757d;
+        }
+
+        .info-row .info-value {
+            font-weight: 500;
+            color: #343a40;
+        }
+
+        .btn-edit-profile {
+            padding: 10px 25px;
+            font-weight: 500;
+        }
+
+
+        .row {
+            display: flex !important;
+            justify-content: space-evenly;
+
+        }
+
+        div.avr {
+            width: 120px;
+            height: 120px;
+            position: relative;
+            border-radius: 50%;
+            overflow: hidden;
+            /* QUAN TRỌNG */
+            cursor: pointer;
+        }
+
+        /* img full khung */
+        div.avr img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+            display: block;
+        }
+
+        /* overlay */
+        div.avr::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.45);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        div.avr:hover::after {
+            opacity: 1;
+        }
+
+        /* nút đổi ảnh */
+        .btn-change {
+            position: absolute;
+            z-index: 10;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.9);
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        div.avr:hover .btn-change {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        /* button */
+        .btn-change a {
+            padding: 8px 14px;
+            background-color: #0d6efd;
+            color: #fff;
+            font-size: 0.85rem;
+            font-weight: 500;
+            border-radius: 20px;
+            text-decoration: none;
+            box-shadow: 0 5px 12px rgba(13, 110, 253, 0.4);
+        }
+    </style>
+
+    <div class="container main-container">
+        <div class="profile-card">
+            <div class="row">
+                <div class="col-lg-4 profile-sidebar">
+                    <div class="avr">
+                        <img src="http://127.0.0.1:6969/get-avartar-user/<%= user.maNguoiDung %>" alt="Profile Picture"
+                            class="profile-picture">
+
+                        <div class="btn-change">
+                            <a href="/change-avartar.html">Đổi</a>
+                        </div>
+                    </div>
+
+                    <h2 class="profile-name">
+                        <%= user.hoTen %>
+                    </h2>
+                    <!-- <p class="profile-bio">Web Developer & Travel Enthusiast</p> -->
+                    <a href="/change-password.html" class="btn btn-outline-primary">Đổi mật khẩu</a>
+                </div>
+                <div class="col-lg-8">
+                    <div class="ps-lg-4">
+                        <h3 class="profile-details-title">Thông Tin Cá Nhân</h3>
+                        <div class="info-row">
+                            <i class="fas fa-user icon"></i>
+                            <span class="info-label me-3">Họ Tên Đầy Đủ:</span>
+                            <span class="info-value">
+                                <%= user.hoTen %>
+                            </span>
+                        </div>
+                        <div class="info-row">
+                            <i class="fas fa-envelope icon"></i>
+                            <span class="info-label me-3">Địa Chỉ Email:</span>
+                            <span class="info-value">
+                                <%= user.email %>
+                            </span>
+                        </div>
+                        <div class="info-row">
+                            <i class="fas fa-phone icon"></i>
+                            <span class="info-label me-3">Số Điện Thoại:</span>
+                            <span class="info-value">
+                                <%= user.sdt || 'Chưa Có' %>
+                            </span>
+                        </div>
+                        <div class="info-row">
+                            <i class="fas fa-map-marker-alt icon"></i>
+                            <span class="info-label me-3">Địa Chỉ:</span>
+                            <span class="info-value">
+                                <%= user.diaChi || 'Chưa Có' %>
+                            </span>
+                        </div>
+                        <div class="mt-4">
+                            <a href="/profile/edit-info" class="btn btn-primary btn-edit-profile">Chỉnh Sửa Thông
+                                Tin</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <%- include('../layout/footer.ejs') %>

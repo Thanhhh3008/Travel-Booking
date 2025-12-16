@@ -18,7 +18,7 @@
 
   <section class="room-detail-layout">
     <div class="room-info">
-      <h1><%= room.TenChoO|| room.name || 'Phòng' %></h1>
+      <h1><%= room.TenPhong || room.name || 'Phòng' %></h1>
 
       <% if (room.HinhAnh || room.image) { %>
       <div class="room-image">
@@ -102,7 +102,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script>
-  //  các ngày đã có người đặt (controller truyền sang)
+  // ✅ các ngày đã có người đặt (controller truyền sang)
   
   const disabledDates = <%- JSON.stringify(bookedDates || []) %>;
 
@@ -116,7 +116,7 @@
       if (!selectedDates || !selectedDates[0]) return;
 
       const minCheckout = new Date(selectedDates[0]);
-      // tối thiểu 2 ngày
+      // rule của bạn: tối thiểu 2 ngày
       minCheckout.setDate(minCheckout.getDate() + 2);
 
       if (checkoutPicker) {

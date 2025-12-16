@@ -1,139 +1,130 @@
 <!DOCTYPE html>
 <html lang="vi">
 
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>TripStay | Nơi Nghỉ Ngơi Sau Những Cuộc Vui</title>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap"
-      rel="stylesheet">
-    <link rel="stylesheet" href="/styles.css">
-    <link rel="shortcut icon" href="/image/logo.ico" type="image/x-icon">
-    <link rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <style>
-  .header {
-    background:linear-gradient(180deg, #ffffff 39.9%, #f8f8f8 100%);
-  }
-</style>
-  </head>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TripStay | Nơi Nghỉ Ngơi Sau Những Cuộc Vui</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+  <link rel="shortcut icon" href="/image/logo.ico" type="image/x-icon">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    .header {
+      background: linear-gradient(180deg, #ffffff 39.9%, #f8f8f8 100%);
+    }
+  </style>
+</head>
 
-  <body>
+<body>
 
-    <header class="header">
-      <div class="container nav">
+  <header class="header">
+    <div class="container nav">
 
-        <!-- Logo -->
-        <a class="brand" href="/">
-          <i class="fa-solid fa-house-chimney"></i>
-          <span class="text">tripstay</span>
-        </a>
+      <!-- Logo -->
+      <a class="brand" href="/">
+        <i class="fa-solid fa-house-chimney"></i>
+        <span class="text">tripstay</span>
+      </a>
 
-        <!-- Menu -->
-        <nav class="tabs">
-          <a class="tab-link" href="/"><i class="fa-solid fa-bed"></i> Nơi lưu
-            trú</a>
+      <!-- Menu -->
+      <nav class="tabs">
+        <a class="tab-link" href="/"><i class="fa-solid fa-bed"></i> Nơi lưu
+          trú</a>
 
-          <!-- <a class="tab-link" href="/services.html"><i class="fa-solid fa-bell-concierge"></i> Dịch vụ</a> -->
+        <!-- <a class="tab-link" href="/services.html"><i class="fa-solid fa-bell-concierge"></i> Dịch vụ</a> -->
 
-          <!-- Thêm phòng / Trở thành đối tác -->
-          <% if (currentUser && currentUser.MaVaiTro == 2) { %>
+        <!-- Thêm phòng / Trở thành đối tác -->
+        <% if (currentUser && currentUser.MaVaiTro==2) { %>
           <a class="tab-link" href="/rooms/add">
             <i class="fa-solid fa-hotel"></i> Thêm phòng
           </a>
           <% } else { %>
-          <a class="tab-link" href="/rooms/add">
-            <i class="fa-solid fa-handshake-angle"></i> Trở thành đối tác
-          </a>
-          <% } %>
-        </nav>
+            <a class="tab-link" href="/rooms/add">
+              <i class="fa-solid fa-handshake-angle"></i> Trở thành đối tác
+            </a>
+            <% } %>
+      </nav>
 
-        <!-- User Section -->
-        <div class="nav-actions">
+      <!-- User Section -->
+      <div class="nav-actions">
 
-          <% if (login == null) { %>
-          <a class="link" href="/login.html"><i
-              class="fa-solid fa-right-to-bracket"></i> Đăng nhập</a>
-          <a class="link" href="/register.html"><i
-              class="fa-solid fa-user-plus"></i> Đăng ký</a>
+        <% if (login==null) { %>
+          <a class="link" href="/login.html"><i class="fa-solid fa-right-to-bracket"></i> Đăng nhập</a>
+          <a class="link" href="/register.html"><i class="fa-solid fa-user-plus"></i> Đăng ký</a>
           <% } %>
 
-          <% if (login != null) { %>
+            <% if (login !=null) { %>
 
-          <!-- User Dropdown -->
-          <div class="user-dropdown">
-            <button class="user-btn">
-              <i class="fa-solid fa-user"></i>
-              Xin chào, <%= login.username %> ▾
-            </button>
+              <!-- User Dropdown -->
+              <div class="user-dropdown">
+                <button class="user-btn" onclick="onClickDropDownMenu(event)">
+                  <i class="fa-solid fa-user"></i>
+                  Xin chào, <%= login.username %> ▾
+                </button>
 
-            <div class="dropdown-menu">
-              <a href="/profile.html"><i class="fa-solid fa-id-card"></i> Thông
-                tin cá nhân</a>
-              <a href="/bookings.html"><i class="fa-solid fa-receipt"></i> Lịch
-                sử đặt phòng</a>
+                <div class="dropdown-menu">
+                  <a href="/profile.html"><i class="fa-solid fa-id-card"></i> Thông
+                    tin cá nhân</a>
+                  <a href="/bookings.html"><i class="fa-solid fa-receipt"></i> Lịch
+                    sử đặt phòng</a>
 
-              <% if (currentUser && currentUser.MaVaiTro == 2) { %>
-              <a href="/rooms/my-rooms"><i class="fa-solid fa-hotel"></i> Quản
-                lý chỗ ở</a>
+                  <% if (currentUser && currentUser.MaVaiTro==2) { %>
+                    <a href="/rooms/my-rooms"><i class="fa-solid fa-hotel"></i> Quản
+                      lý chỗ ở</a>
 
-              <!--  Quản lý đơn đặt phòng (chủ phòng) -->
-              <a href="/owner/bookings"><i
-                  class="fa-solid fa-clipboard-list"></i> Quản lý đơn đặt
-                phòng</a>
+                    <!-- ✅ THÊM: Quản lý đơn đặt phòng (chủ phòng) -->
+                    <a href="/owner/bookings"><i class="fa-solid fa-clipboard-list"></i> Quản lý đơn đặt
+                      phòng</a>
 
-              <a href="/revenues"><i class="fa-solid fa-coins"></i> Doanh
-                thu</a>
-              <% } %>
+                    <a href="/revenues"><i class="fa-solid fa-coins"></i> Doanh
+                      thu</a>
+                    <% } %>
 
-              <a href="/logout.html" class="logout">
-                <i class="fa-solid fa-door-open"></i> Đăng xuất
-              </a>
-            </div>
-          </div>
-
-          <!-- Notification Dropdown -->
-          <div class="notification-dropdown">
-            <button class="notify-btn">
-              <i class="fa-solid fa-bell"></i> Thông báo
-              <span id="notify-count" class="badge-noti">0</span> ▾
-            </button>
-
-            <div class="notify-menu">
-              <% if (thongbao && thongbao.length > 0) { %>
-              <% thongbao.forEach(n => { %>
-
-              <div class="notify-item">
-                <%
-                let imgPath = '/admin/uploads/thumbnail_thongbao/failed.jpg';
-                if (n.Thumbnail && n.Thumbnail.trim() !== '') {
-                imgPath = '/admin/uploads/thumbnail_thongbao/' + n.Thumbnail;
-                } else if (n.TieuDe &&
-                n.TieuDe.includes('Phòng được phê duyệt')) {
-                imgPath = '/admin/uploads/thumbnail_thongbao/success.jpg';
-                }
-                %>
-
-                <img src="<%= imgPath %>" class="notify-thumb" alt="Ảnh">
-                <div class="notify-content">
-                  <h4><%= n.TieuDe %></h4>
-                  <p><%= n.NoiDung %></p>
+                      <a href="/logout.html" class="logout">
+                        <i class="fa-solid fa-door-open"></i> Đăng xuất
+                      </a>
                 </div>
               </div>
 
-              <% }) %>
-              <% } else { %>
-              <div class="notify-empty"><i class="fa-solid fa-inbox"></i> Không
-                có thông báo nào</div>
+              <!-- Notification Dropdown -->
+              <div class="notification-dropdown">
+                <button class="notify-btn">
+                  <i class="fa-solid fa-bell"></i> Thông báo
+                  <span id="notify-count" class="badge-noti">0</span> ▾
+                </button>
+
+                <div class="notify-menu">
+                  <% if (thongbao && thongbao.length> 0) { %>
+                    <% thongbao.forEach(n=> { %>
+
+                      <div class="notify-item">
+                        <% let imgPath='/admin/uploads/thumbnail_thongbao/failed.jpg' ; if (n.Thumbnail &&
+                          n.Thumbnail.trim() !=='' ) { imgPath='/admin/uploads/thumbnail_thongbao/' + n.Thumbnail; }
+                          else if (n.TieuDe && n.TieuDe.includes('Phòng được phê duyệt')) {
+                          imgPath='/admin/uploads/thumbnail_thongbao/success.jpg' ; } %>
+
+                          <img src="<%= imgPath %>" class="notify-thumb" alt="Ảnh">
+                          <div class="notify-content">
+                            <h4>
+                              <%= n.TieuDe %>
+                            </h4>
+                            <p>
+                              <%= n.NoiDung %>
+                            </p>
+                          </div>
+                      </div>
+
+                      <% }) %>
+                        <% } else { %>
+                          <div class="notify-empty"><i class="fa-solid fa-inbox"></i> Không
+                            có thông báo nào</div>
+                          <% } %>
+                </div>
+              </div>
+
               <% } %>
-            </div>
-          </div>
 
-          <% } %>
-
-        </div>
       </div>
-    </header>
-
-    <div class="toast-container" aria-live="polite" aria-atomic="true"></div>
+    </div>
+  </header>

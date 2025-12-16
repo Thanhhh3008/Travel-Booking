@@ -41,51 +41,40 @@
         <div class="stat-value"><%= stats.total %></div>
       </div>
 
-      <!-- <div class="stat-card approved">
+      <div class="stat-card approved">
         <i class="fas fa-check-circle stat-icon"></i>
         <div class="stat-label">
           <i class="fas fa-thumbs-up"></i>
-          Đang hoạt động
+          Trống
         </div>
-        <div class="stat-value"><%= stats.us %></div>
-      </div> -->
-      <!-- <div class="stat-card booked">
+        <div class="stat-value"><%= stats.approved %></div>
+      </div>
+      <div class="stat-card booked">
         <i class="fas fa-calendar-check stat-icon"></i>
         <div class="stat-label">
           <i class="fas fa-key"></i>
           Đã đặt trước
         </div>
         <div class="stat-value"><%= stats.booked %></div>
-      </div> -->
+      </div>
       <div class="stat-card using">
         <i class="fas fa-door-open stat-icon"></i>
         <div class="stat-label">
           <i class="fas fa-play-circle"></i>
-          Đang hoạt động
+          Đang sử dụng
         </div>
         <div class="stat-value"><%= stats.using %></div>
       </div>
-<div class="stat-card pending">
-  <i class="fas fa-clock stat-icon"></i>
-  <div class="stat-label">
-    <i class="fas fa-hourglass-half"></i>
-    Chờ xét duyệt
-  </div>
-  <div class="stat-value"><%= stats.pending %></div>
-</div>
 
-<div class="stat-card rejected">
-  <i class="fas fa-ban stat-icon"></i>
-  <div class="stat-label">
-    <i class="fas fa-times-circle"></i>
-    Bị từ chối
-  </div>
-  <div class="stat-value"><%= stats.rejected %></div>
-</div>
-</div>
-      
-    
-
+      <div class="stat-card completed">
+        <i class="fas fa-flag-checkered stat-icon"></i>
+        <div class="stat-label">
+          <i class="fas fa-check-double"></i>
+          Hoàn thành kỳ
+        </div>
+        <div class="stat-value"><%= stats.completed %></div>
+      </div>
+    </div>
 
     <!-- Tabs -->
     <div class="tabs">
@@ -93,22 +82,26 @@
         <i class="fas fa-th-large"></i>
         Tất cả (<%= stats.total %>)
       </button>
-      
-     
-      
-      <button class="tab" data-status="Đang hoạt động">
-        <i class="fas fa-play-circle"></i>
-        Đang hoạt động (<%= stats.using %>)
+      <button class="tab" data-status="Trống">
+        <i class="fas fa-door-open"></i>
+        Trống (<%= roomsByStatus['Trống'].length %>)
+      </button>
+      <button class="tab" data-status="Đã đặt trước">
+        <i class="fas fa-calendar-check"></i>
+        Đã đặt (<%= stats.booked %>)
       </button>
       <button class="tab" data-status="Bị từ chối">
         <i class="fas fa-times-circle"></i>
         Bị từ chối (<%= stats.rejected %>)
       </button>
-      <button class="tab" data-status="Chờ xét duyệt">
-  <i class="fas fa-clock"></i>
-  Chờ xét duyệt (<%= stats.pending %>)
-</button>
-
+      <button class="tab" data-status="Đang sử dụng">
+        <i class="fas fa-play-circle"></i>
+        Đang sử dụng (<%= stats.using %>)
+      </button>
+      <button class="tab" data-status="Hoàn thành kỳ">
+        <i class="fas fa-flag-checkered"></i>
+        Hoàn thành kỳ (<%= stats.completed %>)
+      </button>
     </div>
 
     <!-- Tab Content: Tất cả -->
@@ -162,8 +155,38 @@
                 <i class="fas fa-eye"></i>
                 Xem
               </a>
+
+              <!-- Check-in button (chỉ hiện khi phòng Đã đặt trước) -->
+              <% if (room.TrangThaiPhong === 'Đã đặt trước') { %>
+              <button class="btn btn-checkin"
+                onclick="confirmCheckIn(<%= room.MaPhong %>, '<%= room.TenChoO %>')">
+                <i class="fas fa-sign-in-alt"></i>
+                Check-in
+              </button>
+              <button class="btn btn-cancel"
+                onclick="confirmCancel(<%= room.MaPhong %>, '<%= room.TenChoO %>')">
+                <i class="fas fa-ban"></i> Hủy đặt
+              </button>
+              <% } %>
+
+              <!-- Check-out button (chỉ hiện khi phòng Đang sử dụng) -->
+              <% if (room.TrangThaiPhong === 'Đang sử dụng') { %>
+              <button class="btn btn-checkout"
+                onclick="confirmCheckOut(<%= room.MaPhong %>, '<%= room.TenLoaiPhong %>')">
+                <i class="fas fa-sign-out-alt"></i>
+                Check-out
+              </button>
+              <% } %>
+              <!-- Reset về Trống (chỉ hiện khi phòng Hoàn thành kỳ) -->
+              <% if (room.TrangThaiPhong === 'Hoàn thành kỳ') { %>
+              <button class="btn btn-reset"
+                onclick="confirmReset(<%= room.MaPhong %>, '<%= room.TenChoO %>')">
+                <i class="fas fa-redo"></i> Cho đặt tiếp
+              </button>
+              <% } %>
+
               <button class="btn btn-delete"
-                onclick="confirmDelete(<%= room.MaPhong %>, '<%= room.TenChoO %>')">
+                onclick="confirmDelete(<%= room.MaPhong %>, '<%= room.TenLoaiPhong %>')">
                 <i class="fas fa-trash-alt"></i>
                 Xóa
               </button>
@@ -176,7 +199,8 @@
     </div>
 
     <!-- Tab Content: Theo trạng thái -->
-    <% ['Đang hoạt động', 'Bị từ chối', 'Chờ xét duyệt'].forEach(status => { %>
+    <% ['Trống', 'Đã đặt trước', 'Bị từ chối', 'Đang sử dụng',
+    'Hoàn thành kỳ'].forEach(status => { %>
     <div class="tab-content" id="tab-<%= status.replace(/\s+/g, '-') %>">
       <% if (!roomsByStatus[status] || roomsByStatus[status].length === 0) { %>
       <div class="empty-state">
@@ -225,7 +249,34 @@
                 Xem
               </a>
 
-            
+              <!-- Check-in button -->
+              <% if (room.TrangThaiPhong === 'Đã đặt trước') { %>
+              <button class="btn btn-checkin"
+                onclick="confirmCheckIn(<%= room.MaPhong %>, '<%= room.TenChoO %>')">
+                <i class="fas fa-sign-in-alt"></i>
+                Check-in
+              </button>
+              <button class="btn btn-cancel"
+                onclick="confirmCancel(<%= room.MaPhong %>, '<%= room.TenChoO %>')">
+                <i class="fas fa-ban"></i> Hủy đặt
+              </button>
+              <% } %>
+
+              <!-- Check-out button -->
+              <% if (room.TrangThaiPhong === 'Đang sử dụng') { %>
+              <button class="btn btn-checkout"
+                onclick="confirmCheckOut(<%= room.MaPhong %>, '<%= room.TenChoO %>')">
+                <i class="fas fa-sign-out-alt"></i>
+                Check-out
+              </button>
+              <% } %>
+              <!-- Reset về Trống (chỉ hiện khi phòng Hoàn thành kỳ) -->
+              <% if (room.TrangThaiPhong === 'Hoàn thành kỳ') { %>
+              <button class="btn btn-reset"
+                onclick="confirmReset(<%= room.MaPhong %>, '<%= room.TenChoO %>')">
+                <i class="fas fa-redo"></i> Cho đặt tiếp
+              </button>
+              <% } %>
 
               <button class="btn btn-delete"
                 onclick="confirmDelete(<%= room.MaPhong %>, '<%= room.TenLoaiPhong %>')">
@@ -244,7 +295,40 @@
 </main>
 
 <style>
-
+  /* Style cho nút Check-in */
+  .btn-checkin {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+  }
+  
+  .btn-checkin:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  }
+  
+  /* Style cho nút Check-out */
+  .btn-checkout {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+  }
+  
+  .btn-checkout:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(245, 87, 108, 0.4);
+  }
+  
   /* Đảm bảo các nút action căn đều */
   .room-actions {
     display: flex;
@@ -331,11 +415,11 @@
 function getStatusClass(status) {
 const classMap = {
 'Chờ xét duyệt': 'pending',
-'Đang hoạt động': 'approved',
+'Đã duyệt': 'approved',
 'Trống': 'available',
-
-
-
+'Đã đặt trước': 'booked',
+'Đang sử dụng': 'using',
+'Hoàn thành kỳ': 'completed',
 'Đã từ chối': 'rejected'
 };
 return classMap[status] || 'pending';
@@ -344,10 +428,10 @@ return classMap[status] || 'pending';
 function getStatusIcon(status) {
 const iconMap = {
 'Chờ xét duyệt': 'fa-clock',
-
-'Đang hoạt động': 'fa-door-open',
+'Đã duyệt': 'fa-check-circle',
+'Trống': 'fa-door-open',
 'Đã đặt trước': 'fa-calendar-check',
-
+'Đang sử dụng': 'fa-play-circle',
 'Hoàn thành kỳ': 'fa-flag-checkered',
 'Đã từ chối': 'fa-times-circle'
 };

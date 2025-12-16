@@ -21,7 +21,7 @@ class CustomerService {
                     row.CCCD,
                     row.Username,
                     row.Password,
-                    
+
                     row.DiaChi,
                     row.SDT,
                     row.QuocTich,
@@ -29,7 +29,8 @@ class CustomerService {
                     row.Discriminator,
                     row.Email,
                     row.status,
-                    row.MaVaiTro  
+                    row.MaVaiTro,
+                    row.avartar
                 );
             });
         } catch (err) {
@@ -80,7 +81,7 @@ class CustomerService {
                 customerData.cccd || null,
                 customerData.username,
                 customerData.password,
-               
+
                 customerData.address || null,
                 customerData.phone || null,
                 customerData.country || null,
@@ -110,34 +111,79 @@ class CustomerService {
         }
     }
 
+    // cập nhật mật khẩu
+    updatePassword = async (userId, newPassword) => {
+        const query = `UPDATE nguoidung SET Password = ? WHERE MaNguoiDung = ?`;
+        try {
+            const [result] = await pool.execute(query, [newPassword, userId]);
+            return result.affectedRows > 0;
+        } catch (err) {
+            console.error(err);
+            return false;
+        }
+    }
 
+    updateImage = async (userId, newImage) => {
+        const query = `UPDATE nguoidung SET avartar = ? WHERE MaNguoiDung = ?`;
+
+        try {
+            const [result] = await pool.execute(query, [newImage, userId]);
+            return result.affectedRows > 0;
+        }catch(err) {
+            console.error(err);
+            return false;
+        }
+    }
 
 
     // cập nhật thông tin khách hàng
-    // update = async (customerData) => {
-    //     // console.log(customerData);
-    //     const query = `UPDATE customer SET name = ?, phone = ?, email = ?, ward_id = ?, status = ?, housenumber_street = ?, shipping_name = ?, shipping_mobile = ?, password = ?, nguoidungname = ? WHERE id = ?`;
-    //     const values = [
-    //         customerData.name,
-    //         customerData.phone,
-    //         customerData.email,
-    //         customerData.ward_id,
-    //         customerData.status,
-    //         customerData.housenumber_street,
-    //         customerData.shipping_name,
-    //         customerData.shipping_mobile,
-    //         customerData.password,
-    //         customerData.nguoidungname,
-    //         customerData.id
-    //     ];
-    //     try {
-    //         const [result] = await pool.execute(query, values);
-    //         return result.affectedRows > 0;
-    //     } catch (err) {
-    //         console.error(err);
-    //         return false;
-    //     }
-    // }
+    update = async (customerData) => {
+        // console.log(customerData, 'uỷtdyrtd');
+
+        // 1. Lưu ý thay 'TEN_BANG_CUA_BAN' bằng tên bảng thực tế (VD: NguoiDung hoặc KhachHang)
+        // 2. Các cột đã được map lại theo đúng hình ảnh (HoTen, SDT, Email, v.v.)
+        // 3. Khóa chính để WHERE là 'MaNguoiDung' chứ không phải 'id'
+        const query = `
+        UPDATE nguoidung 
+        SET 
+            HoTen = ?, 
+            NgaySinh = ?, 
+            CCCD = ?, 
+            Username = ?, 
+            Password = ?, 
+            Email = ?, 
+            DiaChi = ?, 
+            SDT = ?, 
+            QuocTich = ?, 
+            status = ?, 
+            avartar = ?, 
+            MaVaiTro = ? 
+        WHERE MaNguoiDung = ?`;
+
+        const values = [
+            customerData.HoTen,       // Tương ứng cột HoTen
+            customerData.NgaySinh,    // Tương ứng cột NgaySinh
+            customerData.CCCD || '',        // Tương ứng cột CCCD
+            customerData.Username,    // Tương ứng cột Username
+            customerData.Password,    // Tương ứng cột Password
+            customerData.Email,       // Tương ứng cột Email
+            customerData.DiaChi,      // Tương ứng cột DiaChi (Thay cho housenumber_street/ward_id cũ)
+            customerData.SDT,         // Tương ứng cột SDT
+            customerData.QuocTich || 'vn',    // Tương ứng cột QuocTich
+            customerData.status,      // Tương ứng cột status
+            customerData.avartar,     // Tương ứng cột avartar (Lưu ý: Trong hình DB bạn đang đặt tên sai chính tả là 'avartar' thay vì 'avatar')
+            customerData.MaVaiTro,    // Tương ứng cột MaVaiTro
+            customerData.MaNguoiDung  // KHÓA CHÍNH: Tương ứng cột MaNguoiDung
+        ];
+
+        try {
+            const [result] = await pool.execute(query, values);
+            return result.affectedRows > 0;
+        } catch (err) {
+            console.error(err);
+            return false;
+        }
+    }
 
     // xóa khách hàng
     // destroy = async (id) => {

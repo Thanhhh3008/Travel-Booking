@@ -6,7 +6,7 @@ class nguoidung {
         cccd,
         username,
         password,
-        
+
         diaChi,
         sdt,
         quocTich,
@@ -14,7 +14,8 @@ class nguoidung {
         discriminator,
         email,
         status,
-        MaVaiTro  
+        MaVaiTro,
+        avartar
     ) {
         this.maNguoiDung = maNguoiDung;
         this.hoTen = hoTen;           // Ánh xạ từ 'HoTen'
@@ -22,7 +23,7 @@ class nguoidung {
         this.cccd = cccd;             // Ánh xạ từ 'CCCD'
         this.username = username;     // Ánh xạ từ 'Username'
         this.password = password;
-      
+
         this.diaChi = diaChi;         // Ánh xạ từ 'DiaChi'
         this.sdt = sdt;               // Ánh xạ từ 'SDT'
         this.quocTich = quocTich;     // Ánh xạ từ 'QuocTich'
@@ -31,6 +32,8 @@ class nguoidung {
         this.email = email;
         this.status = status;
         this.MaVaiTro = MaVaiTro;
+
+        this.avartar = avartar;
     }
 }
 

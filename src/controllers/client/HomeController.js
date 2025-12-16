@@ -26,7 +26,7 @@ const roomsByCity = {};
 
 for (const city of cities) {
     roomsByCity[city] = await roomService.getAll(
-        `WHERE p.ThanhPho LIKE ? AND p.TrangThaiPhong = 'Đang hoạt động'`,
+        `WHERE p.ThanhPho LIKE ?`,
         [`%${city}%`]
     );
 }
