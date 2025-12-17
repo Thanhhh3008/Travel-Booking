@@ -9,7 +9,7 @@ const User = require('../../models/admin/NguoiDung');
 const RevenueService = require('../../services/RevenueService');
 
 const BookingService = require('../../services/BookingService');
-
+const ReviewService = require('../../services/ReviewService');
 class RoomController {
     // =============== TRANG DANH SÁCH PHÒNG ===============
     // static async index(req, res) {
@@ -113,7 +113,7 @@ class RoomController {
             const roomService = new RoomService();
 
             const rooms = await roomService.getAll(
-                `WHERE p.ThanhPho LIKE ?`,
+                `WHERE p.TrangThaiPhong = 'Đang hoạt động' and p.ThanhPho LIKE ?`,
                 [`%${city}%`]
             );
 
@@ -193,7 +193,7 @@ class RoomController {
             MaLoaiPhong: parsedLoaiPhong,
             View: View || null,
             DiaChi: DiaChi || null,
-            ThanhPho: ThanhPho.trim(),    // ✅ THÊM
+            ThanhPho: ThanhPho.trim(),    
             Rating: parsedRating,
             Gia: parsedGia,
             MoTa: MoTa || null,
@@ -378,57 +378,156 @@ class RoomController {
     }
 
     // =============== TRANG CHI TIẾT PHÒNG ===============
-    static async detail(req, res) {
-        const message = req.session.message;
-        delete req.session.message;
+   static async detail(req, res) {
+    const message = req.session.message;
+    delete req.session.message;
 
-        const id = Number(req.params.id);
-        const roomService = new RoomService();
+    const id = Number(req.params.id);
+    const roomService = new RoomService();
+    const bookingService = new BookingService();
+    const reviewService = new ReviewService();
 
-        const thongbao = req.session.login ? await ThongBao.getByUser(req.session.login.maNguoiDung) : [];
-        let currentUser = null;
+    const thongbao = req.session.login
+        ? await ThongBao.getByUser(req.session.login.maNguoiDung)
+        : [];
 
-        if (req.session.login) {
-            console.log("ma nguoi dung", req.session.login.maNguoiDung);
-            currentUser = await User.getById(req.session.login.maNguoiDung);
-        }
+    let currentUser = null;
+    let canReview = false;
+    let reviews = [];
 
-        try {
-            const room = await roomService.findById(id);
+    try {
+        // Lấy thông tin phòng
+        const room = await roomService.findById(id);
 
-            if (!room) {
-                req.session.message = {
-                    type: 'danger',
-                    mess: 'Không tìm thấy phòng.',
-                };
-                return req.session.save(() => res.redirect('/'));
-            }
-
-            res.render('client/home/room-detail', {
-                message,
-                room,
-                thongbao,
-                currentUser,
-                helpers: {
-                    formatMoney: (value) =>
-                        Number(value || 0).toLocaleString('vi-VN', {
-                            style: 'currency',
-                            currency: 'VND',
-                            maximumFractionDigits: 0,
-                        }),
-                },
-            });
-        } catch (error) {
-            console.error('Error loading room detail:', error);
+        if (!room) {
             req.session.message = {
                 type: 'danger',
-                mess: 'Đã xảy ra lỗi khi tải chi tiết phòng.',
+                mess: 'Không tìm thấy phòng.',
             };
-            req.session.save(() => res.redirect('/'));
+            return req.session.save(() => res.redirect('/'));
         }
+
+        //  Lấy danh sách đánh giá (ai cũng xem được)
+        reviews = await reviewService.getByRoom(id);
+
+        //  Nếu đã đăng nhập → kiểm tra quyền đánh giá
+        if (req.session.login && req.session.login.maNguoiDung) {
+            const userId = req.session.login.maNguoiDung;
+
+            currentUser = await User.getById(userId);
+
+            const hasCompletedBooking =
+                await bookingService.hasCompletedBooking(id, userId);
+
+            // const hasReviewed =
+            //     await reviewService.hasReviewed(id, userId);
+
+            canReview = hasCompletedBooking ;
+        }
+console.log(room.avartar)
+        // 4 Render
+        res.render('client/home/room-detail', {
+            message,
+            room,
+            reviews,
+            thongbao,
+            currentUser,
+            canReview,
+            helpers: {
+                formatMoney: (value) =>
+                    Number(value || 0).toLocaleString('vi-VN', {
+                        style: 'currency',
+                        currency: 'VND',
+                        maximumFractionDigits: 0,
+                    }),
+            },
+        });
+
+    } catch (error) {
+        console.error('Error loading room detail:', error);
+        req.session.message = {
+            type: 'danger',
+            mess: 'Đã xảy ra lỗi khi tải chi tiết phòng.',
+        };
+        req.session.save(() => res.redirect('/'));
+    }
+}
+
+
+
+  
+static async review(req, res) {
+  try {
+    if (!req.session.login) {
+      req.session.message = {
+        type: 'danger',
+        mess: 'Vui lòng đăng nhập.',
+      };
+      return req.session.save(() => res.redirect('/login.html'));
     }
 
-    // 
+    const userId = req.session.login.maNguoiDung;
+    const roomId = req.params.roomId; 
+    const { rate, content } = req.body;
+
+    const bookingService = new BookingService();
+    const reviewService = new ReviewService();
+    const roomService = new RoomService();
+
+    if (!await bookingService.hasCompletedBooking(roomId, userId)) {
+      req.session.message = {
+        type: 'danger',
+        mess: 'Bạn chưa hoàn thành đặt phòng.',
+      };
+      return req.session.save(() =>
+        res.redirect(`/rooms/${roomId}`)
+      );
+    }
+            if (content.length > 200) {
+            req.session.message = {
+                type: 'danger',
+                mess: 'Nội dung đánh giá không được vượt quá 200 ký tự.',
+            };
+            return req.session.save(() =>
+                res.redirect(`/rooms/${roomId}`)
+            );
+            }
+
+    // if (await reviewService.hasReviewed(roomId, userId)) {
+    //   req.session.message = {
+    //     type: 'danger',
+    //     mess: 'Bạn đã đánh giá phòng này rồi.',
+    //   };
+    //   return req.session.save(() =>
+    //     res.redirect(`/rooms/${roomId}`)
+    //   );
+    // }
+
+    await reviewService.create({ roomId, userId, rate, content });
+    await roomService.updateRating(roomId);
+
+    req.session.message = {
+      type: 'success',
+      mess: 'Cảm ơn bạn đã đánh giá!',
+    };
+
+    req.session.save(() =>
+      res.redirect(`/rooms/${roomId}`)
+    );
+
+  } catch (error) {
+    console.error(error);
+    req.session.message = {
+      type: 'danger',
+      mess: 'Không thể gửi đánh giá.',
+    };
+    req.session.save(() =>
+      res.redirect(`/rooms/${req.params.roomId}`)
+    );
+  }
+}
+
+
       static async myRooms(req, res) {
     try {
         if (!req.session.login || !req.session.login.maNguoiDung) {

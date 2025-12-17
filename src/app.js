@@ -152,8 +152,6 @@ app.use('/', clientRouters);
 const thongbaorouters = require('./routers/admin/thongbaoRoute');
 app.use('/admin/thongbao', thongbaorouters);
 
-const adminrouters = require('./routers/admin/admin');
-app.use('/admin', adminrouters);
 
 const userrouters = require('./routers/admin/userRoute');
 app.use('/admin/user', userrouters);
@@ -165,11 +163,13 @@ app.use('/admin/duyetphong', phongrouters);
 // const chatRoute = require("./routers/chatRoute");
 
 // app.use("/chat", chatRoute);
+const adminRoutes = require('./routers/admin/adminRoute');
+app.use('/admin', adminRoutes);
 
 //End router admin
 
 
 app.listen(port, () => {
     console.log(`Example app listening on port http://127.0.0.1:${port}`)
-    console.log(`Admin dashoboard: http://127.0.0.1:${port}/admin/dashboard`)
+    console.log(`Admin dashoboard: http://127.0.0.1:${port}/admin`)
 });

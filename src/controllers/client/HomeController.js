@@ -17,8 +17,8 @@ class HomeController {
       }
              
 
-            const statuses = ['Trống'];
-// const placeholders = statuses.map(() => '?').join(', '); // "?, ?"
+       
+
 
 const cities = ["Hà Nội", "Đà Nẵng", "Đà Lạt", "Hồ Chí Minh", "Vũng Tàu"];
 

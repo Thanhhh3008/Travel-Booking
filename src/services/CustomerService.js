@@ -29,7 +29,8 @@ class CustomerService {
                     row.Discriminator,
                     row.Email,
                     row.status,
-                    row.MaVaiTro  
+                    row.MaVaiTro,
+                    row.avartar
                 );
             });
         } catch (err) {
@@ -110,34 +111,73 @@ class CustomerService {
         }
     }
 
+  updatePassword = async (userId, newPassword) => {
+        const query = `UPDATE nguoidung SET Password = ? WHERE MaNguoiDung = ?`;
+        try {
+            const [result] = await pool.execute(query, [newPassword, userId]);
+            return result.affectedRows > 0;
+        } catch (err) {
+            console.error(err);
+            return false;
+        }
+    }
 
+    updateImage = async (userId, newImage) => {
+        const query = `UPDATE nguoidung SET avartar = ? WHERE MaNguoiDung = ?`;
 
+        try {
+            const [result] = await pool.execute(query, [newImage, userId]);
+            return result.affectedRows > 0;
+        }catch(err) {
+            console.error(err);
+            return false;
+        }
+    }
 
-    // cập nhật thông tin khách hàng
-    // update = async (customerData) => {
-    //     // console.log(customerData);
-    //     const query = `UPDATE customer SET name = ?, phone = ?, email = ?, ward_id = ?, status = ?, housenumber_street = ?, shipping_name = ?, shipping_mobile = ?, password = ?, nguoidungname = ? WHERE id = ?`;
-    //     const values = [
-    //         customerData.name,
-    //         customerData.phone,
-    //         customerData.email,
-    //         customerData.ward_id,
-    //         customerData.status,
-    //         customerData.housenumber_street,
-    //         customerData.shipping_name,
-    //         customerData.shipping_mobile,
-    //         customerData.password,
-    //         customerData.nguoidungname,
-    //         customerData.id
-    //     ];
-    //     try {
-    //         const [result] = await pool.execute(query, values);
-    //         return result.affectedRows > 0;
-    //     } catch (err) {
-    //         console.error(err);
-    //         return false;
-    //     }
-    // }
+ update = async (customerData) => {
+        
+        const query = `
+        UPDATE nguoidung 
+        SET 
+            HoTen = ?, 
+            NgaySinh = ?, 
+            CCCD = ?, 
+            Username = ?, 
+            Password = ?, 
+            Email = ?, 
+            DiaChi = ?, 
+            SDT = ?, 
+            QuocTich = ?, 
+            status = ?, 
+            avartar = ?, 
+            MaVaiTro = ? 
+        WHERE MaNguoiDung = ?`;
+
+        const values = [
+            customerData.HoTen,       
+            customerData.NgaySinh,    
+            customerData.CCCD || '',        
+            customerData.Username,    
+            customerData.Password,    
+            customerData.Email,       
+            customerData.DiaChi,     
+            customerData.SDT,        
+            customerData.QuocTich || 'vn',    
+            customerData.status,     
+            customerData.avartar,     
+            customerData.MaVaiTro,    
+            customerData.MaNguoiDung  
+        ];
+
+        try {
+            const [result] = await pool.execute(query, values);
+            return result.affectedRows > 0;
+        } catch (err) {
+            console.error(err);
+            return false;
+        }
+    }
+   
 
     // xóa khách hàng
     // destroy = async (id) => {

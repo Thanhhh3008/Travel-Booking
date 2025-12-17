@@ -67,7 +67,7 @@ class BookingService {
             DATE(NgayTraPhong) AS endDate
         FROM chitietdatphong
         WHERE MaPhong = ?
-          AND TrangThai != 'Đã hoàn thành'
+          AND TrangThai != '1'
     `;
 
     const [rows] = await pool.execute(sql, [roomId]);
@@ -88,17 +88,44 @@ class BookingService {
 
     return [...new Set(disabled)];
 }
+// Đếm số đơn đặt phòng hôm nay
+  static async countToday() {
+    const [rows] = await pool.query(`
+      SELECT COUNT(*) AS total
+      FROM chitietdatphong
+      WHERE ngaydatphong = CURDATE()
+    `);
+    return rows[0].total;
+  }
 
 async markCompleted(bookingId) {
     const sql = `
         UPDATE chitietdatphong
-        SET TrangThai = 'Đã hoàn thành'
+        SET TrangThai = '1'
         WHERE MaChiTietDatPhong = ?
     `;
     const [result] = await pool.execute(sql, [bookingId]);
     return result.affectedRows > 0;
 }
+async hasCompletedBooking(roomId, userId) {
+    try {
+        const query = `
+            SELECT 1
+            FROM chitietdatphong
+            WHERE MaPhong = ?
+              AND MaNguoiDung = ?
+              AND TrangThai = 1
+            LIMIT 1
+        `;
 
+        const [rows] = await pool.execute(query, [roomId, userId]);
+
+        return rows.length > 0;
+    } catch (error) {
+        console.error('BookingService.hasCompletedBooking error:', error);
+        throw error;
+    }
+}
     async getBookingHistory(userId, stas) {
         try {
             let query = `
@@ -114,6 +141,7 @@ async markCompleted(bookingId) {
                     cdp.LichSu,
                     p.SoPhong,
                     p.HinhAnh,
+                    p.TenChoO,
                     lp.TenLoaiPhong
                 FROM chitietdatphong cdp
                 JOIN phong p ON cdp.MaPhong = p.MaPhong

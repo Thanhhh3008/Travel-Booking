@@ -94,60 +94,83 @@
 
   <!-- Bảng danh sách thông báo -->
   <table class="table table-striped mt-4" style="table-layout: fixed; width: 100%; border-collapse: collapse;">
-    <thead>
-      <tr>
-        <th>#</th>
-        <th>Tiêu đề</th>
-        <th>Nội dung</th>
-        <th>Loại</th>
-        <th>Người nhận</th>
-        <th>Thao tác</th>
-      </tr>
-    </thead>
-    <tbody>
-      <% if (thongbaos && thongbaos.length > 0) { %>
-        <% thongbaos.forEach(tb => { %>
-          <tr>
-            <td><%= tb.MaThongBao %></td>
-            <td ><%= tb.TieuDe %></td>
-            <td class="text-truncate" ><%= tb.NoiDung %></td>
-             <td>
-              <span class="badge <%= tb.LoaiThongBao === 'ca_nhan' ? 'bg-info' : 'bg-secondary' %>">
-                <%= tb.LoaiThongBao === 'ca_nhan' ? 'Cá nhân' : 'Toàn cục' %>
-              </span>
-            </td>
-          
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>Tiêu đề</th>
+      <th>Nội dung</th>
+      <th>Loại</th>
+      <th>Người nhận</th>
+      <th>Thao tác</th>
+    </tr>
+  </thead>
 
-           
-            <td><%= tb.EmailNguoiNhan || 'Tất cả' %></td>
-
-            <td>
-                <a href="/admin/thongbao/detail/<%= tb.MaThongBao %>" 
-     class="btn btn-info btn-sm" 
-     title="Xem chi tiết">
-    👁️
-  </a>
-              <button 
-                class="btn btn-warning btn-sm" 
-                data-bs-toggle="modal" 
-                data-bs-target="#editModal"
-                onclick="openEditModal('<%= tb.MaThongBao %>', '<%= tb.TieuDe %>', '<%= tb.NoiDung %>', '<%= tb.LoaiThongBao %>', '<%= tb.EmailNguoiNhan || '' %>')"
->
-                ✏️
-              </button>
-              <a href="/admin/thongbao/delete/<%= tb.MaThongBao %>" 
-                 class="btn btn-danger btn-sm"
-                 onclick="return confirm('Xóa thông báo này?')">🗑️</a>
-            </td>
-          </tr>
-        <% }) %>
-      <% } else { %>
+  <tbody>
+    <% if (thongbaos && thongbaos.length > 0) { %>
+      <% thongbaos.forEach(tb => { %>
         <tr>
-          <td colspan="7" class="text-center text-muted">Không có thông báo nào phù hợp.</td>
+          <td><%= tb.MaThongBao %></td>
+
+          <td><%= tb.TieuDe %></td>
+
+          <td class="text-truncate" title="<%= tb.NoiDung %>">
+            <%= tb.NoiDung %>
+          </td>
+
+          <td>
+            <span class="badge <%= tb.LoaiThongBao === 'ca_nhan' ? 'bg-info' : 'bg-secondary' %>">
+              <%= tb.LoaiThongBao === 'ca_nhan' ? 'Cá nhân' : 'Toàn cục' %>
+            </span>
+          </td>
+
+          <td>
+            <%= tb.EmailNguoiNhan || 'Tất cả' %>
+          </td>
+
+          <td>
+            <!-- Xem chi tiết -->
+            <a href="/admin/thongbao/detail/<%= tb.MaThongBao %>" 
+               class="btn btn-info btn-sm" 
+               title="Xem chi tiết">
+              <i class="fa-solid fa-eye"></i>
+            </a>
+
+            <!-- Chỉnh sửa -->
+            <button 
+              class="btn btn-warning btn-sm" 
+              title="Chỉnh sửa"
+              data-bs-toggle="modal" 
+              data-bs-target="#editModal"
+              onclick="openEditModal(
+                '<%= tb.MaThongBao %>',
+                '<%= tb.TieuDe %>',
+                '<%= tb.NoiDung %>',
+                '<%= tb.LoaiThongBao %>',
+                '<%= tb.EmailNguoiNhan || '' %>'
+              )">
+              <i class="fa-solid fa-pen-to-square"></i>
+            </button>
+
+            <!-- Xóa -->
+            <a href="/admin/thongbao/delete/<%= tb.MaThongBao %>" 
+               class="btn btn-danger btn-sm"
+               title="Xóa"
+               onclick="return confirm('Xóa thông báo này?')">
+              <i class="fa-solid fa-trash"></i>
+            </a>
+          </td>
         </tr>
-      <% } %>
-    </tbody>
-  </table>
+      <% }) %>
+    <% } else { %>
+      <tr>
+        <td colspan="6" class="text-center text-muted">
+          Không có thông báo nào phù hợp.
+        </td>
+      </tr>
+    <% } %>
+  </tbody>
+</table>
+
 </div>
 
 <!-- Modal Sửa -->

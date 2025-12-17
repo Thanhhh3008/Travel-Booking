@@ -10,7 +10,7 @@ const transactionService = require('../../services/TransactionService');
 const { VNPay, ignoreLogger, ProductCode, VnpLocale, dateFormat } = require('vnpay')
 const { v4: uuidv4 } = require('uuid');
 require('dotenv').config();
-
+const ThongBao = require('../../models/admin/ThongBao');
 class AuthController {
     static sendToVerifyEmail = async (email) => {
         const payload = { email: email };
@@ -155,7 +155,41 @@ class AuthController {
         });
 
     }
+ static changePasswordView = async (req, res) => {
+    const message = req.session.message;
+    delete req.session.message;
+     const thongbao = req.session.login  ? await ThongBao.getByUser(req.session.login.maNguoiDung) : [];
+        return res.render('client/auth/change-pass',{ message,thongbao})
+    }
+     static profileView = async (req, res) => {
+        const message = req.session.message;
+    delete req.session.message;
+        if (!req.session.login) {
+            return res.redirect('/login.html');
+        }
+        const mCustomer = new customerModels();
 
+        const user = await mCustomer.find(req.session.login.maNguoiDung);
+        console.log(user)
+ const thongbao = req.session.login  ? await ThongBao.getByUser(req.session.login.maNguoiDung) : [];
+        return res.render('client/auth/profile', { user: user,thongbao,message })
+    }
+
+    static changeInfoView = async (req, res) => {
+     
+        if (!req.session.login) {
+            return res.redirect('/login.html');
+        }
+        const mCustomer = new customerModels();
+
+        const user = await mCustomer.find(req.session.login.maNguoiDung);
+           if (user.ngaySinh) {
+  const date = new Date(user.ngaySinh);
+  user.ngaySinh = date.toISOString().split('T')[0];
+}
+        const thongbao = req.session.login  ? await ThongBao.getByUser(req.session.login.maNguoiDung) : [];
+        return res.render('client/auth/profile-edit', { user,thongbao })
+    }
     static login = async (req, res) => {
         const data = req.body;
         const mCustomer = new customerModels();
@@ -257,84 +291,80 @@ const hash = user.password.toString();  // default là 'utf8'
 
     }
 
+    
     static changInformationOfCustomer = async (req, res) => {
-        const data = req.body;
-        const mCustomer = new customerModels();
+  const data = req.body;
+  const mCustomer = new customerModels();
 
-        // Lấy data khách hàng
-        const user = await mCustomer.find(data.id);
+  try {
+    // 1. Lấy user hiện tại từ DB
+    const currentUser = await mCustomer.findByEmail(data.email);
 
-        const updatedData = {
-            name: data.name,
-            phone: data.phone,
-            email: user.email,
-            ward_id: user.ward_id,
-            housenumber_street: user.housenumber_street,
-            shipping_name: user.shipping_name,
-            shipping_mobile: user.shipping_mobile,
-            status: 1,
-            id: data.id,
-            password: user.password, // giữ nguyên mật khẩu cũ nếu không thay đổi
-            username: user.username // giữ nguyên username cũ nếu không thay đổi
-        };
-
-        // khi có nhập mật khẩu thì mới kiểm tra mật khẩu hiện tại
-        if (data.current_password !== '') {
-            if (!bcrypt.compareSync(data.current_password, user.password)) {
-                req.session.message = {
-                    mess: `Mật khẩu hiện tại không đúng`,
-                    type: 'danger'
-                };
-
-                req.session.save(() => {
-                    res.redirect('/thong-tin-ca-nhan.html');
-                });
-                return;
-            }
-
-            if (data.new_password === '') {
-                req.session.message = {
-                    mess: `Vui lòng nhập mật khẩu mới`,
-                    type: 'danger'
-                };
-                req.session.save(() => {
-                    res.redirect('/thong-tin-ca-nhan.html');
-                });
-                return;
-            }
-
-            const salt = bcrypt.genSaltSync(saltRounds);
-            const hash = bcrypt.hashSync(data.new_password, salt);
-
-            updatedData.password = hash;
-        }
-
-
-        // const newPasswordHash = bcrypt.hashSync(data.new_password, saltRounds);
-        // await mCustomer.updatePassword(user.id, hash);
-
-        if (!(await mCustomer.update(updatedData))) {
-            req.session.message = {
-                mess: `Cập nhật thất bại , hãy thử lại sau !!!`,
-                type: 'danger'
-            };
-            req.session.save(() => {
-                res.redirect('/thong-tin-ca-nhan.html');
-            });
-            return;
-        }
-
-        req.session.user.name = data.name;
-
-        req.session.message = {
-            mess: `Thay đối thông tin thành công`,
-            type: 'success'
-        };
-
-        req.session.save(() => {
-            res.redirect('/thong-tin-ca-nhan.html');
-        });
+    if (!currentUser) {
+      req.session.message = {
+        mess: `Không tìm thấy thông tin người dùng!`,
+        type: 'danger'
+      };
+      return res.redirect('/');
     }
+
+    // 2. Chuẩn bị dữ liệu cập nhật
+    const updatedData = {
+      // --- Dữ liệu từ form ---
+      HoTen: data.hoTen,
+      Email: data.email,
+      SDT: data.sdt,
+      DiaChi: data.diaChi,
+      NgaySinh: data.ngaySinh || currentUser.ngaySinh,
+      QuocTich: data.quocTich || currentUser.quocTich,
+
+      // --- Giữ nguyên ---
+      CCCD: currentUser.CCCD,
+      Username: currentUser.username,
+      Password: currentUser.password,
+      status: currentUser.status,
+      avartar: currentUser.avartar,
+      MaVaiTro: currentUser.MaVaiTro,
+
+      // --- Khóa chính ---
+      MaNguoiDung: currentUser.maNguoiDung
+    };
+
+    // 3. Update DB
+    if (!(await mCustomer.update(updatedData))) {
+      req.session.message = {
+        mess: `Cập nhật thất bại, hãy thử lại sau !!!`,
+        type: 'danger'
+      };
+      return req.session.save(() => res.redirect('/'));
+    }
+
+    // 4. Update session
+    if (req.session.user) {
+      req.session.user.HoTen = updatedData.HoTen;
+      req.session.user.NgaySinh = updatedData.NgaySinh;
+      req.session.user.QuocTich = updatedData.QuocTich;
+    }
+
+    req.session.message = {
+      mess: `Thay đổi thông tin thành công`,
+      type: 'success'
+    };
+
+    req.session.save(() => {
+      res.redirect('/profile.html');
+    });
+
+  } catch (error) {
+    console.error("Lỗi controller changInformationOfCustomer:", error);
+    req.session.message = {
+      mess: `Đã xảy ra lỗi hệ thống!`,
+      type: 'danger'
+    };
+    res.redirect('/');
+  }
+};
+
 
     static sendChangePassEmail = async (req, res) => {
         const email = req.body.email;
@@ -445,7 +475,7 @@ const hash = user.password.toString();  // default là 'utf8'
 
                 return;
             }
-            return res.render('client/customer/formChangePassByEmail', { token1: token, user1: user });
+            return res.render('client/auth/formChangePassByEmail', { token1: token, user1: user });
         } catch (err) {
 
             req.session.message = {
@@ -462,76 +492,82 @@ const hash = user.password.toString();  // default là 'utf8'
     }
 
     static changepassword = async (req, res) => {
-        const dataParser = req.body;
-        const mCustomer = new customerModels();
+    const { currentPassword, newPassword, confirmPassword } = req.body;
+    const mCustomer = new customerModels();
+    const userId = req.session.login.maNguoiDung;
 
+    // Regex giống đăng ký
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/;
 
-        try {
-            // Xác thực khóa jwt
-            const data = jwt.verify(dataParser.token, process.env.KEY_JWT);
+    try {
+        const user = await mCustomer.find(userId);
 
-            // tìm tài khoản cần update bằng email
-            const email = data.email;
-            const user = await mCustomer.findByEmail(email);
-
-            // Băm mật khẩu mới của người dùng
-            const salt = bcrypt.genSaltSync(saltRounds);
-            const hash = bcrypt.hashSync(dataParser.new_password, salt);
-
-            // Tiến hành setup data của người dùng
-            const updatedData = {
-                name: user.name,
-                phone: user.phone,
-                email: user.email,
-                ward_id: user.ward_id,
-                housenumber_street: user.housenumber_street,
-                shipping_name: user.shipping_name,
-                shipping_mobile: user.shipping_mobile,
-                status: 1,
-                id: user.id,
-                password: hash, // sử dụng mật khẩu mới đã băm
-                username: user.username // giữ nguyên username cũ nếu không thay đổi
-            };
-
-            if (!(await mCustomer.update(updatedData))) {
-                req.session.message = {
-                    mess: `Cập nhật thất bại , hãy thử lại sau !!!`,
-                    type: 'danger'
-                };
-                req.session.save(() => {
-                    res.redirect('/');
-                });
-                return;
-            }
-
-            req.session.message = {
-                mess: `Đổi mật khẩu thành công, bạn có thể đăng nhập ngay bây giờ`,
-                type: 'success'
-            };
-            req.session.save(() => {
-                res.redirect('/');
-            });
-            return;
-
-        } catch (error) {
-            // console.log(error);
-            req.session.message = {
-                mess: `Token không hợp lệ hoặc đã hết hạn hãy thử lại sau !!!`,
-                type: 'danger'
-            };
-            req.session.save(() => {
-                res.redirect('/');
-            });
-            return;
+        if (!user) {
+            req.session.message = { type: 'danger', mess: 'Không tìm thấy người dùng.' };
+            return req.session.save(() => res.redirect('/'));
         }
+
+        //  Kiểm tra mật khẩu hiện tại
+        const isMatch = await bcrypt.compare(currentPassword, user.password.toString());
+        if (!isMatch) {
+            req.session.message = { type: 'danger', mess: 'Mật khẩu hiện tại không đúng.' };
+            return req.session.save(() => res.redirect('/change-password.html'));
+        }
+
+        //  Kiểm tra xác nhận mật khẩu
+        if (newPassword !== confirmPassword) {
+            req.session.message = { type: 'danger', mess: 'Mật khẩu xác nhận không khớp.' };
+            return req.session.save(() => res.redirect('/change-password.html'));
+        }
+
+        //  Kiểm tra độ mạnh mật khẩu (GIỐNG ĐĂNG KÝ)
+        if (!passwordRegex.test(newPassword)) {
+            req.session.message = {
+                type: 'danger',
+                mess: 'Mật khẩu phải có ít nhất 8 ký tự, gồm chữ hoa, chữ thường và số.'
+            };
+            return req.session.save(() => res.redirect('/change-password.html'));
+        }
+
+        // Không cho dùng lại mật khẩu cũ
+        const isSameAsOld = await bcrypt.compare(newPassword, user.password.toString());
+        if (isSameAsOld) {
+            req.session.message = {
+                type: 'danger',
+                mess: 'Mật khẩu mới không được trùng mật khẩu cũ.'
+            };
+            return req.session.save(() => res.redirect('/change-password.html'));
+        }
+
+        //  Hash & update
+        const salt = bcrypt.genSaltSync(saltRounds);
+        const hashedPassword = bcrypt.hashSync(newPassword, salt);
+
+        if (await mCustomer.updatePassword(userId, hashedPassword)) {
+            req.session.message = { type: 'success', mess: 'Đổi mật khẩu thành công!' };
+            return req.session.save(() => res.redirect('/profile.html'));
+        }
+
+        req.session.message = {
+            type: 'danger',
+            mess: 'Đã xảy ra lỗi khi cập nhật mật khẩu, vui lòng thử lại.'
+        };
+        return req.session.save(() => res.redirect('/change-password.html'));
+
+    } catch (error) {
+        console.error("Error in changepassword:", error);
+        req.session.message = { type: 'danger', mess: 'Đã có lỗi hệ thống xảy ra.' };
+        return req.session.save(() => res.redirect('/'));
     }
+};
+
 
 
     static bookingHistoryView = async (req, res) => {
         const message = req.session.message;
         delete req.session.message;
         const stas = req.query['status'] || null
-
+const thongbao = req.session.login  ? await ThongBao.getByUser(req.session.login.maNguoiDung) : [];
         try {
             // Check if user is logged in
             if (!req.session.login) {
@@ -555,7 +591,7 @@ const hash = user.password.toString();  // default là 'utf8'
             //     }
             // })
 
-            res.render('client/home/booking-history', { message, bookings });
+            res.render('client/home/booking-history', { message, bookings,thongbao });
         } catch (error) {
             console.error('Error fetching booking history:', error);
             req.session.message = {

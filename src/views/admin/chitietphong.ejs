@@ -4,29 +4,75 @@
   <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
     <div class="card-body bg-light p-4">
 
-      <h3 class="card-title text-primary fw-bold mb-4">🏠 Chi tiết chỗ ở: <%= room.SoPhong %></h3>
+      <h3 class="card-title text-primary fw-bold mb-4">Chi tiết chỗ ở: <%= room.SoPhong %></h3>
       <hr>
 
-      <div class="row mb-4">
-        <div class="col-md-6">
-          <p><strong>📍 Địa chỉ:</strong> <%= room.DiaChi %></p>
-          <p><strong>📝 Mô tả:</strong> <%= room.MoTa %></p>
-          <p><strong>🛏️ Loại phòng:</strong> <%= room.TenLoaiPhong %></p>
-          <p><strong>📐 Diện tích:</strong> <%= room.DienTich %> m²</p>
-          
+    <div class="row mb-4">
+  <div class="col-md-6">
+    <p>
+      <strong>
+        <i class="fa-solid fa-location-dot me-1"></i> Địa chỉ:
+      </strong>
+      <%= room.DiaChi %>
+    </p>
 
-        </div>
-        <div class="col-md-6">
-          <p><strong>⭐ Rating:</strong> <span class="badge bg-warning text-dark"><%= room.Rating %></span></p>
-          <p><strong>📊 Trạng thái:</strong> 
-            <span class="badge <%= room.TrangThaiPhong === 'Chờ xét duyệt' ? 'bg-secondary' : 'bg-success' %>">
-              <%= room.TrangThaiPhong %>
-            </span>
-          </p>
-          <p><strong>👥 Số khách tối đa:</strong> <%= room.SoKhachToiDa %></p>
-          <p><strong>💰 Giá:</strong> <%= room.Gia.toLocaleString() %> VND</p>
-        </div>
-      </div>
+    <p>
+      <strong>
+        <i class="fa-solid fa-city me-1"></i> Thành phố:
+      </strong>
+      <%= room.ThanhPho %>
+    </p>
+
+    <p>
+      <strong>
+        <i class="fa-solid fa-bed me-1"></i> Loại phòng:
+      </strong>
+      <%= room.TenLoaiPhong %>
+    </p>
+
+    <p>
+      <strong>
+        <i class="fa-solid fa-ruler-combined me-1"></i> Diện tích:
+      </strong>
+      <%= room.DienTich %> m²
+    </p>
+  </div>
+
+  <div class="col-md-6">
+    <p>
+      <strong>
+        <i class="fa-solid fa-star me-1"></i> Rating:
+      </strong>
+      <span class="badge bg-warning text-dark">
+        <%= room.Rating %>
+      </span>
+    </p>
+
+    <p>
+      <strong>
+        <i class="fa-solid fa-signal me-1"></i> Trạng thái:
+      </strong>
+      <span class="badge <%= room.TrangThaiPhong === 'Chờ xét duyệt' ? 'bg-secondary' : 'bg-success' %>">
+        <%= room.TrangThaiPhong %>
+      </span>
+    </p>
+
+    <p>
+      <strong>
+        <i class="fa-solid fa-users me-1"></i> Số khách tối đa:
+      </strong>
+      <%= room.SoKhachToiDa %>
+    </p>
+
+    <p>
+      <strong>
+        <i class="fa-solid fa-money-bill-wave me-1"></i> Giá:
+      </strong>
+      <%= room.Gia.toLocaleString() %> VND
+    </p>
+  </div>
+</div>
+
 
       <% if (room.HinhAnh || room.GiayToPhong) { %>
 

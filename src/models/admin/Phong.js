@@ -38,7 +38,8 @@ getById: async (id) => {
       lp.TenLoaiPhong, 
       lp.DienTich, 
       lp.SoKhachToiDa, 
-      lp.Gia
+      p.Gia,
+      p.ThanhPho
     FROM phong p
     LEFT JOIN loaiphong lp ON p.MaLoaiPhong = lp.MaLoaiPhong
     WHERE p.MaPhong = ?
@@ -62,6 +63,13 @@ approveRoom: async (id) => {
       WHERE MaPhong = ?
     `, [id]);
   },
+ countAll: async () => {
+  const [rows] = await pool.query(
+    'SELECT COUNT(*) AS total FROM phong'
+  );
+  return rows[0].total;
+},
+
 deleteRoom: async (maPhong) => {
   await pool.query('DELETE FROM phong WHERE MaPhong = ?', [maPhong]);
 },
