@@ -30,24 +30,32 @@
           <span class="text">tripstay</span>
         </a>
 
-        <!-- Menu -->
-        <nav class="tabs">
-          <a class="tab-link" href="/"><i class="fa-solid fa-bed"></i> Nơi lưu
-            trú</a>
+       <!-- Menu -->
+<nav class="tabs">
+  <a class="tab-link" href="/">
+    <i class="fa-solid fa-bed"></i> Nơi lưu trú
+  </a>
 
-          <!-- <a class="tab-link" href="/services.html"><i class="fa-solid fa-bell-concierge"></i> Dịch vụ</a> -->
+  <!-- Nếu là CHỦ PHÒNG -->
+  <% if (currentUser && currentUser.MaVaiTro == 2) { %>
+    <a class="tab-link" href="/rooms/add">
+      <i class="fa-solid fa-hotel"></i> Thêm phòng
+    </a>
 
-          <!-- Thêm phòng / Trở thành đối tác -->
-          <% if (currentUser && currentUser.MaVaiTro == 2) { %>
-          <a class="tab-link" href="/rooms/add">
-            <i class="fa-solid fa-hotel"></i> Thêm phòng
-          </a>
-          <% } else { %>
-          <a class="tab-link" href="/rooms/add">
-            <i class="fa-solid fa-handshake-angle"></i> Trở thành đối tác
-          </a>
-          <% } %>
-        </nav>
+  <!-- Nếu là ADMIN -->
+  <% } else if (currentUser && currentUser.MaVaiTro == 3) { %>
+    <a class="tab-link" href="/admin">
+      <i class="fa-solid fa-screwdriver-wrench"></i> Trang quản lý
+    </a>
+
+  <!-- Người dùng thường -->
+  <% } else { %>
+    <a class="tab-link" href="/rooms/add">
+      <i class="fa-solid fa-handshake-angle"></i> Trở thành đối tác
+    </a>
+  <% } %>
+</nav>
+
 
         <!-- User Section -->
         <div class="nav-actions">

@@ -12,6 +12,8 @@ const RoomController = require('../controllers/client/RoomController');
 const BookingController = require('../controllers/client/BookingController');
 const RevenueController = require('../controllers/client/RevenueController');
 const BookingManageController = require('../controllers/client/BookingManageController');
+const ImageController = require('../controllers/client/ImageController');
+const uploadAvartar = require('../middlewares/uploadMiddleware');
 // ================== CẤU HÌNH UPLOAD ẢNH ==================
 
 const uploadDir = path.join(__dirname, '..', '..', 'public', 'admin', 'uploads', 'anhphong');
@@ -94,6 +96,7 @@ router.get('/logout.html', AuthController.logout);
 
 // Room
 // router.get('/rooms', RoomController.index);
+
 router.get('/rooms/add',requireLogin, RoomController.createView);
 router.post('/rooms', uploadRoomImage,requireLogin, RoomController.store);
 router.get('/rooms/city/:city', RoomController.listByCity);
@@ -125,5 +128,23 @@ router.get('/revenues/add', RevenueController.createView);
 router.post('/revenues', RevenueController.store);
 router.get('/revenues/:id/edit', RevenueController.editView);
 router.post('/revenues/:id', RevenueController.update);
+// get image
+router.get('/get-avartar-user/:id', ImageController.sendImageAvartar)
+
+// profile
+router.get('/profile.html', AuthController.profileView);
+router.get('/profile/edit-info', AuthController.changeInfoView);
+router.post('/profile/update', AuthController.changInformationOfCustomer)
+
+// Change Password (for logged-in user)
+router.get('/change-password.html', requireLogin, AuthController.changePasswordView);
+router.post('/changepassword', requireLogin, AuthController.changepassword);
+
+
+router.post('/change-avatar' , uploadAvartar.single('avatar'), ImageController.changeImageAvartar)
+router.get('/change-avartar.html',  requireLogin , ImageController.changeImageAvartarView)
+
+// Review
+router.post('/rooms/:roomId/review', RoomController.review);
 
 module.exports = router;

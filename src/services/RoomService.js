@@ -93,7 +93,8 @@ class RoomService {
                 p.gia AS GiaPhong,
                 p.TenChoO,
                 p.ThanhPho,
-                p.MaNguoiDung
+                p.MaNguoiDung,
+                nd.avartar
             FROM phong p
             JOIN loaiphong lp ON p.MaLoaiPhong = lp.MaLoaiPhong
             JOIN nguoidung nd ON p.MaNguoiDung = nd.MaNguoiDung
@@ -130,6 +131,7 @@ class RoomService {
         room.ThanhPho = row.ThanhPho;  
         room.MaNguoiDung = row.MaNguoiDung; 
         room.TrangThaiPhong = row.TrangThaiPhong; 
+        room.avartar = row.avartar; 
         return room;
 
     } catch (err) {
@@ -266,6 +268,26 @@ delete = async (id) => {
         throw err;
     }
 };
+
+async updateRating(roomId) {
+    const query = `
+        UPDATE phong
+        SET
+            Rating = (
+                SELECT AVG(SoSao)
+                FROM danhgia
+                WHERE MaPhong = ?
+            ),
+            SoLuotDanhGia = (
+                SELECT COUNT(*)
+                FROM danhgia
+                WHERE MaPhong = ?
+            )
+        WHERE MaPhong = ?
+    `;
+    await pool.execute(query, [roomId, roomId, roomId]);
+}
+
     /**
      * Cập nhật trạng thái phòng theo ID
      * @param {number} id - MaPhong

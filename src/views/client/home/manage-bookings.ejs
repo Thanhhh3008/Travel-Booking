@@ -27,8 +27,8 @@
 
     <% 
     // Phân loại đơn theo TrangThai
-    const completedBookings = bookings ? bookings.filter(b => b.TrangThai === 'Đã hoàn thành') : [];
-    const pendingBookings = bookings ? bookings.filter(b => b.TrangThai !== 'Đã hoàn thành') : [];
+    const completedBookings = bookings ? bookings.filter(b => b.TrangThai === '1') : [];
+    const pendingBookings = bookings ? bookings.filter(b => b.TrangThai !== '1') : [];
     
     // Tính thống kê
     const totalBookings = bookings ? bookings.length : 0;

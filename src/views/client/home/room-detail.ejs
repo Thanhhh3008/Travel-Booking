@@ -84,7 +84,11 @@
 
       <!-- Host Section -->
       <div class="host-section">
-        <img src="/admin/uploads/avatar/default-host.jpg" alt="Host" class="host-avatar" onerror="this.style.display='none'">
+        <img
+  src="<%= room.avartar ? '/avartar/' + room.avartar : '/avartar/avartar-mac-dinh.png' %>"
+  alt="Host"
+  class="host-avatar"
+>
         <div class="host-info">
           <h3>Host: <%= room.Username || 'Chưa rõ' %></h3>
           <p class="host-meta">11 năm làm host trên TripStay</p>
@@ -161,50 +165,150 @@
 
 
       <!-- Reviews -->
-      <div class="reviews-section">
-        <div class="reviews-header">
-          <h3>⭐ <%= room.Rating || '5.0' %></h3>
-          <span>· 2 đánh giá</span>
-        </div>
-        
-        <div class="reviews-grid">
-          <div class="review-item">
-            <div class="review-header">
-              <div class="reviewer-avatar">D</div>
-              <div class="reviewer-info">
-                <h4>Delphine</h4>
-                <p class="reviewer-meta">11 năm hoạt động trên TripStay</p>
-              </div>
-            </div>
-            <div class="review-rating">⭐⭐⭐⭐⭐</div>
-            <p class="reviewer-meta">2 ngày trước</p>
-            <p class="review-text">Très bon accueil, même si on a vraiment eu du mal à trouver et une personne nous a guidé avec son scooter. Nous étions à vélo. Il y a une belle côte à la fin. Sans réseau, j'ai réservé en...</p>
-            <button class="show-more-btn" onclick="alert('Hiển thị thêm đánh giá')">Hiển thị thêm</button>
-          </div>
+<div class="reviews-section">
 
-          <div class="review-item">
-            <div class="review-header">
-              <div class="reviewer-avatar">Г</div>
-              <div class="reviewer-info">
-                <h4>Георгий</h4>
-                <p class="reviewer-meta">7 năm hoạt động trên TripStay</p>
-              </div>
-            </div>
-            <div class="review-rating">⭐⭐⭐⭐⭐</div>
-            <p class="reviewer-meta">1 tuần trước</p>
-            <p class="review-text">amazing place, very beautiful surroundings, definitely will come back</p>
-            <button class="show-more-btn" onclick="alert('Hiển thị thêm đánh giá')">Hiển thị thêm</button>
+  <!-- Header -->
+  <div class="reviews-header">
+    <h3>
+      ⭐ <%= room.Rating ? Number(room.Rating).toFixed(1) : 'Chưa có' %>
+    </h3>
+    <span>· <%= reviews.length %> đánh giá</span>
+  </div>
+
+  <!-- Review Form -->
+  <div class="room-desc-block">
+    <h3>Đánh giá</h3>
+
+    <% if (!currentUser) { %>
+      <!-- Chưa đăng nhập -->
+      <p style="color:#717171;">
+        Vui lòng <a href="/login.html">đăng nhập</a> để viết đánh giá.
+      </p>
+
+    <% } else if (!canReview) { %>
+      <!-- Không đủ điều kiện -->
+      <p style="color:#717171;">
+        Bạn chỉ có thể đánh giá sau khi đã hoàn thành kỳ nghỉ tại phòng này.
+  
+      </p>
+
+    <% } else { %>
+      <!-- ĐƯỢC PHÉP ĐÁNH GIÁ -->
+      <form action="/rooms/<%= room.MaPhong || room.id %>/review"  method="post" class="review-form">
+
+        <input type="hidden" name="roomId" value="<%= room.MaPhong || room.id %>">
+
+        <!-- Rating -->
+        <div class="form-group">
+          <label>Đánh giá của bạn</label>
+          <div class="star-rating">
+            <% for (let i = 5; i >= 1; i--) { %>
+              <input
+                type="radio"
+                id="star-<%= i %>"
+                name="rate"
+                value="<%= i %>"
+                required
+              >
+              <label for="star-<%= i %>">★</label>
+            <% } %>
           </div>
         </div>
 
-        <button class="show-more-btn" style="margin-top: 24px;">Quy trình đánh giá</button>
+        <!-- Content -->
+        <div class="form-group">
+          <label>Nội dung đánh giá</label>
+          <textarea
+          name="content"
+          rows="4"
+          placeholder="Hãy chia sẻ trải nghiệm của bạn (tối đa 200 ký tự)..."
+          required
+          id="reviewContent"
+          maxlength="200"
+        ></textarea>
+
+<small id="charCount" style="color:#717171;">
+  0 / 200 ký tự
+</small>
+
+
+        </div>
+
+        <button type="submit" class="btn primary">
+          Gửi đánh giá
+        </button>
+      </form>
+    <% } %>
+  </div>
+
+  <!-- Review List -->
+  <div class="reviews-grid">
+
+
+    <% if (reviews.length === 0) { %>
+      <p style="color:#717171;">Chưa có đánh giá nào cho phòng này.</p>
+    <% } %>
+
+    <% reviews.forEach((review, index) => { %>
+      <div class="review-item <%= index >= 4 ? 'hidden-review' : '' %>">
+
+
+        <div class="review-header">
+          <div class="reviewer-avatar">
+  <img
+    src="<%= review.avartar 
+          ? '/avartar/' + review.avartar 
+          : '/avartar/avartar-mac-dinh.png' %>"
+    alt="<%= review.HoTen || 'Người dùng' %>"
+    onerror="this.src='/avartar/avartar-mac-dinh.png'"
+  >
+</div>
+
+
+          <div class="reviewer-info">
+            <h4><%= review.HoTen || 'Người dùng' %></h4>
+            <p class="reviewer-meta">
+              <%= new Date(review.NgayDanhGia).toLocaleDateString('vi-VN') %>
+            </p>
+          </div>
+        </div>
+
+        <div class="review-rating">
+          <% for (let i = 1; i <= review.Rating; i++) { %>★<% } %>
+          <% for (let i = review.Rating + 1; i <= 5; i++) { %>☆<% } %>
+        </div>
+
+        <p class="review-text clamp">
+          <%= review.NoiDung %>
+        </p>
+
+        <% if (review.NoiDung.length > 120) { %>
+          <button class="review-more-btn">Xem thêm</button>
+        <% } %>
+
+
       </div>
+    <% }) %>
+
+  </div>
+    <% if (reviews.length > 4) { %>
+  <div style="margin-top: 16px;">
+    <button id="showMoreReviews" class="btn">
+      Xem thêm đánh giá
+    </button>
+  </div>
+<% } %>
+</div>
 
       <!-- Host Profile -->
       <div class="room-desc-block">
         <h3>Gặp gỡ host của bạn</h3>
         <div class="host-section">
-          <img src="/admin/uploads/avatar/default-host.jpg" alt="Host" class="host-avatar" onerror="this.style.display='none'">
+          <img
+  src="<%= room.avartar ? '/avartar/' + room.avartar : '/avartar/avartar-mac-dinh.png' %>"
+  alt="Host"
+  class="host-avatar"
+>
           <div class="host-info">
             <h3><%= room.HoTen || 'Chưa rõ' %></h3>
             <p class="host-meta">Host</p>
@@ -256,5 +360,46 @@
     </div>
   </div>
 </main>
+<script>
+  const textarea = document.getElementById('reviewContent');
+  const counter = document.getElementById('charCount');
+
+  textarea.addEventListener('input', () => {
+    const length = textarea.value.length;
+
+    if (length > 200) {
+      textarea.value = textarea.value.slice(0, 200);
+    }
+
+    counter.textContent = `${textarea.value.length} / 200 ký tự`;
+  });
+  
+</script>
+<script>
+  const showMoreBtn = document.getElementById('showMoreReviews');
+
+  if (showMoreBtn) {
+    showMoreBtn.addEventListener('click', () => {
+      document.querySelectorAll('.hidden-review')
+        .forEach(el => el.style.display = 'block');
+
+      showMoreBtn.style.display = 'none';
+    });
+  }
+</script>
+
+<script>
+  document.querySelectorAll('.review-more-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const text = btn.previousElementSibling;
+
+      text.classList.toggle('clamp');
+
+      btn.textContent = text.classList.contains('clamp')
+        ? 'Xem thêm'
+        : 'Thu gọn';
+    });
+  });
+</script>
 
 <%- include('../layout/footer.ejs') %>

@@ -5,55 +5,81 @@
 
   <div class="table-responsive shadow-sm rounded-3">
     <table class="table table-hover align-middle">
-      <thead class="table-primary text-center">
-        <tr>
-          <th>#</th>
-          <th>Số phòng</th>
-          <th>Địa chỉ</th>
-          <th>Loại phòng</th>
-          <th>Chủ sở hữu</th>
-          <th>Trạng thái</th>
-          <th>Thao tác</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% if (rooms && rooms.length > 0) { %>
-          <% rooms.forEach(room => { %>
-            <tr>
-              <td class="text-center"><%= room.MaPhong %></td>
-              <td><%= room.SoPhong %></td>
-              <td><%= room.DiaChi %></td>
-              <td><%= room.TenLoaiPhong || "Không rõ" %></td>
-              <td><%= room.Username || "Không rõ" %></td>
-              <td>
-                <% if (room.TrangThaiPhong === 'Chờ xét duyệt') { %>
-                  <span class="badge bg-secondary">Chờ xét duyệt</span>
-                <% } else if (room.TrangThaiPhong === 'Đang hoạt động') { %>
-                  <span class="badge bg-success">Đang hoạt động</span>
-                <% } else if (room.TrangThaiPhong === 'Đã từ chối') { %>
-                  <span class="badge bg-danger">Đã từ chối</span>
-                <% } else { %>
-                  <span class="badge bg-warning text-dark"><%= room.TrangThaiPhong %></span>
-                <% } %>
-              </td>
-              <td class="text-center">
-                <a href="/admin/duyetphong/<%= room.MaPhong %>" class="btn btn-sm btn-outline-primary">🔍 Xem</a>
-                <form action="/admin/duyetphong/xoaphong/<%= room.MaPhong %>" method="POST" style="display:inline;">
-                    <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Bạn có chắc muốn xóa phòng này không?');">
-                      🗑️ Xóa
-                    </button>
-</form>
+  <thead class="table-primary text-center">
+    <tr>
+      <th>#</th>
+      <th>Số phòng</th>
+      <th>Địa chỉ</th>
+      <th>Thành phố</th>
+      <th>Loại phòng</th>
+      <th>Chủ sở hữu</th>
+      <th>Trạng thái</th>
+      <th>Thao tác</th>
+    </tr>
+  </thead>
 
-              </td>
-            </tr>
-          <% }) %>
-        <% } else { %>
-          <tr>
-            <td colspan="7" class="text-center text-muted py-4">Không có chỗ ở nào trong hệ thống.</td>
-          </tr>
-        <% } %>
-      </tbody>
-    </table>
+  <tbody>
+    <% if (rooms && rooms.length > 0) { %>
+      <% rooms.forEach(room => { %>
+        <tr>
+          <td class="text-center"><%= room.MaPhong %></td>
+
+          <td><%= room.SoPhong %></td>
+
+          <td><%= room.DiaChi %></td>
+
+          <td><%= room.ThanhPho || "Không rõ" %></td>
+
+          <td><%= room.TenLoaiPhong || "Không rõ" %></td>
+
+          <td><%= room.Username || "Không rõ" %></td>
+
+          <td>
+            <% if (room.TrangThaiPhong === 'Chờ xét duyệt') { %>
+              <span class="badge bg-secondary">Chờ xét duyệt</span>
+            <% } else if (room.TrangThaiPhong === 'Đang hoạt động') { %>
+              <span class="badge bg-success">Đang hoạt động</span>
+            <% } else if (room.TrangThaiPhong === 'Đã từ chối') { %>
+              <span class="badge bg-danger">Đã từ chối</span>
+            <% } else { %>
+              <span class="badge bg-warning text-dark">
+                <%= room.TrangThaiPhong %>
+              </span>
+            <% } %>
+          </td>
+
+          <td class="text-center">
+            <!-- Xem chi tiết -->
+            <a href="/admin/duyetphong/<%= room.MaPhong %>" 
+               class="btn btn-sm btn-outline-primary" 
+               title="Xem chi tiết">
+              <i class="fa-solid fa-eye"></i> Xem
+            </a>
+
+            <!-- Xóa -->
+            <form action="/admin/duyetphong/xoaphong/<%= room.MaPhong %>" 
+                  method="POST" 
+                  style="display:inline;">
+              <button type="submit" 
+                      class="btn btn-sm btn-outline-danger"
+                      title="Xóa phòng"
+                      onclick="return confirm('Bạn có chắc muốn xóa phòng này không?');">
+                <i class="fa-solid fa-trash"></i> Xóa
+              </button>
+            </form>
+          </td>
+        </tr>
+      <% }) %>
+    <% } else { %>
+      <tr>
+        <td colspan="8" class="text-center text-muted py-4">
+          Không có chỗ ở nào trong hệ thống.
+        </td>
+      </tr>
+    <% } %>
+  </tbody>
+</table>
+
   </div>
 </div>
 <script>

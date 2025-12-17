@@ -10,6 +10,13 @@ const NguoiDungModel = {
     `);
     return rows;
   },
+countAll: async () => {
+  const [rows] = await pool.query(
+    'SELECT COUNT(*) AS total FROM nguoidung'
+  );
+  return rows[0].total;
+},
+
 
   //  Tìm kiếm theo họ tên, SĐT hoặc email
   search: async (keyword) => {

@@ -8,13 +8,13 @@
       <tr><th>Mã người dùng</th><td><%= user.MaNguoiDung %></td></tr>
       <tr><th>Họ tên</th><td class="editable" data-field="HoTen"><%= user.HoTen %></td></tr>
       <tr><th>Ngày sinh</th><td class="editable" data-field="NgaySinh"><%= user.NgaySinh ? new Date(user.NgaySinh).toISOString().split('T')[0] : '' %></td></tr>
-      <tr><th>CCCD</th><td class="editable" data-field="CCCD"><%= user.CCCD %></td></tr>
+      
       <tr><th>Username</th><td><%= user.Username %></td></tr>
       <tr><th>Email</th><td class="editable" data-field="Email"><%= user.Email %></td></tr>
       <tr><th>Địa chỉ</th><td class="editable" data-field="DiaChi"><%= user.DiaChi %></td></tr>
       <tr><th>SĐT</th><td class="editable" data-field="SDT"><%= user.SDT %></td></tr>
       <tr><th>Quốc tịch</th><td class="editable" data-field="QuocTich"><%= user.QuocTich %></td></tr>
-      <tr><th>Đánh giá</th><td class="editable" data-field="Rating"><%= user.Rating %></td></tr>
+      <!-- <tr><th>Đánh giá</th><td class="editable" data-field="Rating"><%= user.Rating %></td></tr> -->
       
       <tr>
         <th>Vai trò</th>
@@ -89,11 +89,7 @@
         valid = false;
         errorMsg = "Số điện thoại phải từ 9-11 chữ số.";
       }
-      else if (name === "CCCD" && !/^[0-9]{9,12}$/.test(value)) {
-        valid = false;
-        errorMsg = "CCCD phải là số (9-12 chữ số).";
-      }
-
+      
       formData[name] = value;
     });
 

@@ -30,7 +30,13 @@ class RevenueService {
             return [];
         }
     };
-
+ static async sumRevenue() {
+    const [rows] = await pool.query(`
+      SELECT IFNULL(SUM(DoanhThuTuPhong) / 1000000, 0) AS total
+      FROM doanhthu
+    `);
+    return Number(rows[0].total).toFixed(1);
+  };
     // Tìm theo id
     findById = async (id) => {
         const list = await this.getAll('WHERE MaDoanhThu = ?', [id]);

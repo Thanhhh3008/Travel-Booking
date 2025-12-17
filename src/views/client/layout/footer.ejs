@@ -102,9 +102,9 @@
       }
 
       //  Chèn biến từ EJS xuống
-      <% if (typeof message !== 'undefined' ) { %>
-      showToast('<%= message.mess ?? "" %>', 3000);
-      <% } %>
+     <% if (message && message.mess) { %>
+  showToast('<%= message.mess %>', 3000);
+<% } %>
     })();
 
 

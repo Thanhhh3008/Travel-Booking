@@ -8,7 +8,7 @@
       <div>
         <h2>Lịch sử đặt phòng</h2>
         <p class="section-subtitle">
-          Quản lý và theo dõi các đơn đặt phòng của bạn.
+          Quản lý và theo dõi tất cả các đơn đặt phòng của bạn
         </p>
       </div>
     </header>
@@ -17,68 +17,115 @@
     <% if (message) { %>
     <div class="alert <%= message.type %>">
       <span class="alert-icon">
-        <%= message.type === 'success' ? '✅' : '⚠️' %>
+        <i class="fas <%= message.type === 'success' ? 'fa-check-circle' : 'fa-exclamation-triangle' %>"></i>
       </span>
       <span><%= message.mess %></span>
     </div>
     <% } %>
 
-    <!-- Bộ lọc theo trạng thái thanh toán -->
-    <div class="controls-center">
-      <div class="controls">
-        <a class="btn filter-btn active" data-filter="Tất cả" href="/bookings.html">Tất cả</a>
-        <a class="btn filter-btn" data-filter="Đã thanh toán" href="/bookings.html?status=1">Đã thanh toán</a>
-        <a class="btn filter-btn" data-filter="Chưa thanh toán" href="/bookings.html?status=0">Chưa thanh toán</a>
-      </div>
+    <!-- Tabs điều hướng -->
+    <div class="booking-tabs">
+      <a class="tab-item" data-filter="all" href="/bookings.html">
+        <i class="fas fa-list tab-icon"></i>
+        <span class="tab-text">Tất cả</span>
+      </a>
+      
     </div>
 
     <!-- Danh sách booking -->
-    <div class="row" id="booking-list">
+    <div class="booking-list-container" id="booking-list">
       <% if (!bookings || bookings.length === 0) { %>
-      <div class="empty-state" style="display: inline-block;">
-        <div class="empty-icon">🏨</div>
+      <div class="empty-state">
+        <i class="fas fa-hotel empty-icon"></i>
         <h3>Chưa có đơn đặt phòng nào</h3>
         <p>Bạn chưa có lịch sử đặt phòng. Hãy khám phá và đặt phòng ngay!</p>
-        <a href="/" class="btn btn-primary">Khám phá phòng</a>
+        <a href="/" class="btn btn-primary">
+          <i class="fas fa-search"></i>
+          Khám phá phòng
+        </a>
       </div>
       <% } else { %>
 
       <% bookings.forEach(booking => { %>
-      <article class="booking-card" data-status="<%= booking.TrangThai == 1 ? 'Đã thanh toán' : 'Chưa thanh toán' %>">
-        <div class="booking-header">
-          <div class="booking-info">
-            <h3 class="booking-title">
-              Phòng <%= booking.SoPhong %> - <%= booking.TenLoaiPhong %>
-            </h3>
-            <div class="booking-details">
-              <span class="detail-item">
-                <i class="icon-calendar"></i>
-                <%= new Date(booking.NgayNhanPhong).toLocaleDateString('vi-VN') %> -
-                <%= new Date(booking.NgayTraPhong).toLocaleDateString('vi-VN') %>
-              </span>
-              <span class="detail-item">
-                <i class="icon-users"></i>
-                <%= booking.SoLuongKhach %> khách
-              </span>
+        <% 
+          const isCompleted = booking.TrangThai == 1;
+        %>
+        
+      <article class="booking-card-new <%= isCompleted ? 'completed' : 'active' %>" 
+               data-status="<%= isCompleted ? 'completed' : 'active' %>">
+        <div class="card-left">
+          <div class="room-image">
+            <% const firstImage = booking.HinhAnh ? booking.HinhAnh.split(',')[0] : 'default.jpg'; %>
+            <img src="/admin/uploads/anhphong/<%= firstImage.trim() %>" alt="<%= booking.TenLoaiPhong %>">
+            <div class="status-badge <%= isCompleted ? 'completed' : 'active' %>">
+              <i class="fas <%= isCompleted ? 'fa-check-circle' : 'fa-clock' %>"></i>
+              <%= isCompleted ? 'Đã hoàn thành' : 'Đang diễn ra' %>
             </div>
           </div>
-
         </div>
 
-        <div class="booking-body">
-          <div class="booking-image">
-            <img src="<%= booking.HinhAnh ? booking.HinhAnh : '/image/logo.ico' %>" alt="<%= booking['TenLoaiPhong'] %>">
-          </div>
-          <div class="booking-price">
-            <div class="price-amount">
-              <%= helpers.formatMoney(booking['TongTien']) %>đ
+        <div class="card-right">
+          <div class="booking-header-new">
+            <div>
+              <h3 class="room-name">Phòng <%= booking.TenChoO %></h3>
+              <p class="room-type"><%= booking.TenLoaiPhong %></p>
             </div>
-            <div class="price-label">Tổng tiền</div>
-            <% if (booking.TrangThai != 1) { %>
-            <a class="btn btn-success pay-btn" href="/checkout/<%= booking['MaChiTietDatPhong']  %>">
-              Thanh toán ngay
-            </a>
-            <% } %>
+            <div class="booking-id">
+              <i class="fas fa-hashtag"></i><%= booking.MaChiTietDatPhong %>
+            </div>
+          </div>
+
+          <div class="booking-info-grid">
+            <div class="info-item">
+              <i class="fas fa-calendar-check info-icon"></i>
+              <div class="info-content">
+                <span class="info-label">Nhận phòng</span>
+                <span class="info-value"><%= new Date(booking.NgayNhanPhong).toLocaleDateString('vi-VN') %></span>
+              </div>
+            </div>
+
+            <div class="info-item">
+              <i class="fas fa-calendar-times info-icon"></i>
+              <div class="info-content">
+                <span class="info-label">Trả phòng</span>
+                <span class="info-value"><%= new Date(booking.NgayTraPhong).toLocaleDateString('vi-VN') %></span>
+              </div>
+            </div>
+
+            <div class="info-item">
+              <i class="fas fa-users info-icon"></i>
+              <div class="info-content">
+                <span class="info-label">Số khách</span>
+                <span class="info-value"><%= booking.SoLuongKhach %> người</span>
+              </div>
+            </div>
+
+            <div class="info-item">
+              <i class="fas fa-money-bill-wave info-icon"></i>
+              <div class="info-content">
+                <span class="info-label">Tổng tiền</span>
+                <span class="info-value price"><%= helpers.formatMoney(booking['TongTien']) %>đ</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="booking-footer-new">
+            <div class="payment-status <%= booking.TrangThai == 1 ? 'paid' : 'unpaid' %>">
+              <i class="fas <%= booking.TrangThai == 1 ? 'fa-check-circle' : 'fa-hourglass-half' %>"></i>
+              <%= booking.TrangThai == 1 ? 'Đã thanh toán' : 'Chưa thanh toán' %>
+            </div>
+            <div class="action-buttons">
+              <a href="/booking-detail/<%= booking.MaChiTietDatPhong %>" class="btn-detail">
+                <i class="fas fa-eye"></i>
+                Xem chi tiết
+              </a>
+              <% if (isCompleted) { %>
+              <a href="/rooms/<%= booking.MaPhong %>" class="btn-review">
+                <i class="fas fa-star"></i>
+                Đánh giá
+              </a>
+              <% } %>
+            </div>
           </div>
         </div>
       </article>
@@ -89,153 +136,426 @@
   </section>
 </main>
 
+
 <style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
   a {
     text-decoration: none !important;
   }
 
   .page-booking-history {
+    background: #f8fafc;
+    min-height: 100vh;
     padding: 2rem 0;
   }
 
-  .booking-card {
-    background: #fff;
-    border-radius: 8px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.1);
-    margin-bottom: 1.5rem;
-    overflow: hidden;
-    border-left: 4px solid #e5e7eb;
-    /* Default border */
-    transition: box-shadow 0.2s ease-in-out;
+  .section-head {
+    margin-bottom: 2rem;
   }
 
-  .booking-card:hover {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
-  }
-
-  .booking-card[data-status="Đã thanh toán"] {
-    border-left-color: #22c55e;
-    /* Green-500 */
-  }
-
-  .booking-card[data-status="Chưa thanh toán"] {
-    border-left-color: #f97316;
-    /* Orange-500 */
-  }
-
-  .booking-header {
-    padding: 1rem 1.5rem;
-    border-bottom: 1px solid #f3f4f6;
-  }
-
-  .booking-title {
-    font-size: 1.125rem;
-    /* 18px */
-    font-weight: 600;
-    color: #1f2937;
+  .section-head h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #0f172a;
     margin-bottom: 0.5rem;
   }
 
-  .booking-details {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
+  .section-subtitle {
+    color: #64748b;
+    font-size: 1rem;
   }
 
-  .detail-item {
+  /* Alert styles */
+  .alert {
+    padding: 1rem 1.25rem;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .alert.success {
+    background: #dcfce7;
+    color: #166534;
+    border: 1px solid #bbf7d0;
+  }
+
+  .alert.error {
+    background: #fee2e2;
+    color: #991b1b;
+    border: 1px solid #fecaca;
+  }
+
+  .alert-icon {
+    font-size: 1.25rem;
+  }
+
+  /* Tabs */
+  .booking-tabs {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    border-bottom: 2px solid #e2e8f0;
+    overflow-x: auto;
+  }
+
+  .tab-item {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    color: #6b7280;
-    font-size: 0.875rem;
-    /* 14px */
-  }
-
-  .detail-item .icon-calendar,
-  .detail-item .icon-users {
-    font-size: 1rem;
-    color: #9ca3af;
-  }
-
-  .booking-body {
     padding: 1rem 1.5rem;
+    color: #64748b;
+    font-weight: 500;
+    border-bottom: 3px solid transparent;
+    transition: all 0.2s;
+    white-space: nowrap;
+    margin-bottom: -2px;
+  }
+
+  .tab-item:hover {
+    color: #3b82f6;
+    background: #eff6ff;
+  }
+
+  .tab-item.active {
+    color: #3b82f6;
+    border-bottom-color: #3b82f6;
+    background: #eff6ff;
+  }
+
+  .tab-icon {
+    font-size: 1.125rem;
+  }
+
+  /* Booking List Container */
+  .booking-list-container {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    flex-direction: column;
     gap: 1.5rem;
   }
 
-  .booking-image img {
-    width: 120px;
-    height: 80px;
-    object-fit: cover;
-    border-radius: 6px;
+  /* New Booking Card */
+  .booking-card-new {
+    background: #ffffff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+    transition: all 0.3s ease;
+    display: flex;
+    gap: 0;
   }
 
-  .booking-price {
+  .booking-card-new:hover {
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08), 0 5px 10px rgba(0, 0, 0, 0.04);
+    transform: translateY(-2px);
+  }
+
+  .booking-card-new.completed {
+    border-left: 4px solid #10b981;
+  }
+
+  .booking-card-new.active {
+    border-left: 4px solid #3b82f6;
+  }
+
+  /* Card Left - Image */
+  .card-left {
+    width: 280px;
+    flex-shrink: 0;
+    position: relative;
+  }
+
+  .room-image {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .room-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+
+  .booking-card-new:hover .room-image img {
+    transform: scale(1.05);
+  }
+
+  .status-badge {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+  }
+
+  .status-badge.completed {
+    background: rgba(16, 185, 129, 0.9);
+    color: white;
+  }
+
+  .status-badge.active {
+    background: rgba(59, 130, 246, 0.9);
+    color: white;
+  }
+
+  /* Card Right - Content */
+  .card-right {
+    flex: 1;
+    padding: 1.5rem;
     display: flex;
     flex-direction: column;
-    align-items: flex-end;
-    gap: 0.5rem;
+    gap: 1.25rem;
   }
 
-  .price-amount {
-    font-size: 1.5rem;
-    /* 24px */
+  .booking-header-new {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #e2e8f0;
+  }
+
+  .room-name {
+    font-size: 1.375rem;
     font-weight: 700;
-    color: #111827;
+    color: #0f172a;
+    margin-bottom: 0.25rem;
   }
 
-  .price-label {
-    color: #6b7280;
+  .room-type {
+    color: #64748b;
     font-size: 0.875rem;
   }
 
-  .pay-btn {
-    background-color: #2563eb;
-    color: white;
-    border: none;
-    padding: 0.625rem 1rem;
-    /* 10px 16px */
+  .booking-id {
+    background: #f1f5f9;
+    color: #475569;
+    padding: 0.375rem 0.75rem;
     border-radius: 6px;
+    font-size: 0.875rem;
     font-weight: 600;
-    cursor: pointer;
-    transition: background-color 0.2s;
-    margin-top: 0.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
   }
 
-  .pay-btn:hover {
-    background-color: #1d4ed8;
+  /* Booking Info Grid */
+  .booking-info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
   }
 
+  .info-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .info-icon {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+    color: #3b82f6;
+  }
+
+  .info-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+  }
+
+  .info-label {
+    font-size: 0.75rem;
+    color: #94a3b8;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+  }
+
+  .info-value {
+    font-size: 0.9375rem;
+    color: #1e293b;
+    font-weight: 600;
+  }
+
+  .info-value.price {
+    color: #dc2626;
+    font-size: 1.125rem;
+  }
+
+  /* Booking Footer */
+  .booking-footer-new {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 1rem;
+    border-top: 1px solid #e2e8f0;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .payment-status {
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .payment-status.paid {
+    background: #dcfce7;
+    color: #166534;
+  }
+
+  .payment-status.unpaid {
+    background: #fef3c7;
+    color: #92400e;
+  }
+
+  .action-buttons {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .btn-detail {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1.25rem;
+    background: #3b82f6;
+    color: white;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.9375rem;
+    transition: all 0.2s;
+  }
+
+  .btn-detail:hover {
+    background: #2563eb;
+    transform: translateY(-1px);
+  }
+
+  .btn-review {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1.25rem;
+    background: #f59e0b;
+    color: white;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.9375rem;
+    transition: all 0.2s;
+  }
+
+  .btn-review:hover {
+    background: #d97706;
+    transform: translateY(-1px);
+  }
+
+  /* Empty State */
   .empty-state {
     text-align: center;
     padding: 4rem 2rem;
-    color: #6b7280;
+    background: white;
+    border-radius: 12px;
   }
 
-  @media (max-width: 640px) {
-    .booking-body {
+  .empty-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    color: #cbd5e1;
+  }
+
+  .empty-state h3 {
+    font-size: 1.5rem;
+    color: #1e293b;
+    margin-bottom: 0.5rem;
+  }
+
+  .empty-state p {
+    color: #64748b;
+    margin-bottom: 1.5rem;
+  }
+
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background: #3b82f6;
+    color: white;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: background 0.2s;
+  }
+
+  .btn-primary:hover {
+    background: #2563eb;
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .booking-card-new {
       flex-direction: column;
-      align-items: flex-start;
+    }
+
+    .card-left {
+      width: 100%;
+      height: 200px;
+    }
+
+    .booking-info-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .booking-footer-new {
+      flex-direction: column;
       gap: 1rem;
+      align-items: stretch;
     }
 
-    .booking-image img {
+    .action-buttons {
       width: 100%;
-      height: 150px;
+      flex-direction: column;
     }
 
-    .booking-price {
+    .btn-detail,
+    .btn-review {
       width: 100%;
-      flex-direction: row;
-      justify-content: space-between;
-      align-items: center;
+      justify-content: center;
     }
 
-    .pay-btn {
-      padding-left: 1.5rem;
-      padding-right: 1.5rem;
+    .payment-status {
+      justify-content: center;
+    }
+
+    .booking-tabs {
+      gap: 0.5rem;
+    }
+
+    .tab-item {
+      padding: 0.75rem 1rem;
+      font-size: 0.875rem;
     }
   }
 </style>
