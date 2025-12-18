@@ -24,62 +24,89 @@
 
 <!-- Các quy trình quản lý -->
 <div class="row g-3 mt-4">
+
+  <!-- Phê duyệt chỗ ở mới -->
   <div class="col-md-6">
-    <div class="card shadow-sm border-0">
+    <div class="card shadow-sm border-0 h-100">
       <div class="card-body">
-        <h5>📑 Quy trình phê duyệt chỗ ở mới</h5>
-        <p>Admin kiểm tra hồ sơ, hình ảnh, giấy tờ và chọn “Chấp thuận” hoặc “Từ chối”.</p>
-        <a href="/admin/duyetphong/" class="btn btn-primary btn-sm">Xem danh sách chờ duyệt</a>
-        
+        <h5>
+          <i class="fa-solid fa-file-circle-check text-primary me-2"></i>
+          Quy trình phê duyệt chỗ ở mới
+        </h5>
+        <p>
+          Admin kiểm tra hồ sơ, hình ảnh, giấy tờ và chọn
+          <strong>Chấp thuận</strong> hoặc <strong>Từ chối</strong>.
+        </p>
+        <a href="/admin/duyetphong/" class="btn btn-primary btn-sm">
+          <i class="fa-solid fa-list-check me-1"></i>
+          Xem danh sách chờ duyệt
+        </a>
       </div>
     </div>
   </div>
 
+  <!-- Phân quyền người dùng -->
   <div class="col-md-6">
-    <div class="card shadow-sm border-0">
+    <div class="card shadow-sm border-0 h-100">
       <div class="card-body">
-        <h5>⚙️ Quy trình phân quyền người dùng</h5>
-        <p>Admin chọn tài khoản và gán quyền phù hợp trong mục "Quản lý người dùng".</p>
-        <a href="/admin/user" class="btn btn-secondary btn-sm">Quản lý người dùng</a>
-
+        <h5>
+          <i class="fa-solid fa-user-gear text-secondary me-2"></i>
+          Quy trình phân quyền người dùng
+        </h5>
+        <p>
+          Admin chọn tài khoản và gán quyền phù hợp trong mục
+          <strong>Quản lý người dùng</strong>.
+        </p>
+        <a href="/admin/user" class="btn btn-secondary btn-sm">
+          <i class="fa-solid fa-users-gear me-1"></i>
+          Quản lý người dùng
+        </a>
       </div>
     </div>
   </div>
+
 </div>
 
 <div class="row g-3 mt-3">
+
+  <!-- Quản lý tất cả chỗ ở -->
   <div class="col-md-6">
-    <div class="card shadow-sm border-0">
+    <div class="card shadow-sm border-0 h-100">
       <div class="card-body">
-        <h5>💬 Quy trình hỗ trợ/khiếu nại</h5>
-        <p>Xem, phản hồi và lưu lại nội dung hỗ trợ/khiếu nại từ người dùng hoặc nhà cung cấp.</p>
-        <button class="btn btn-warning btn-sm">Xem khiếu nại</button>
-      </div>
-    </div>
-  </div>
-  <div class="col-md-6">
-    <div class="card shadow-sm border-0">
-      <div class="card-body">
-        <h5>📑 Quy trình phê duyệt chỗ ở mới</h5>
-        <p>Admin theo dõi và quản lý danh sách chỗ ở.</p>
-        <a href="/admin/duyetphong/tatca" class="btn btn-warning btn-sm">Xem danh sách chỗ ở</a>
-        
+        <h5>
+          <i class="fa-solid fa-house-circle-check text-warning me-2"></i>
+          Quản lý chỗ ở
+        </h5>
+        <p>
+          Admin theo dõi và quản lý toàn bộ danh sách chỗ ở trong hệ thống.
+        </p>
+        <a href="/admin/duyetphong/tatca" class="btn btn-warning btn-sm">
+          <i class="fa-solid fa-house me-1"></i>
+          Xem danh sách chỗ ở
+        </a>
       </div>
     </div>
   </div>
 
+  <!-- Quản lý thông báo -->
   <div class="col-md-6">
-    <div class="card shadow-sm border-0">
+    <div class="card shadow-sm border-0 h-100">
       <div class="card-body">
-        <h5>📢 Quản lý thông báo hệ thống</h5>
-        <p>Tạo, gửi và theo dõi thông báo đến người dùng hoặc nhà cung cấp.</p>
+        <h5>
+          <i class="fa-solid fa-bullhorn text-info me-2"></i>
+          Quản lý thông báo hệ thống
+        </h5>
+        <p>
+          Tạo, gửi và theo dõi thông báo đến người dùng hoặc nhà cung cấp.
+        </p>
         <a href="/admin/thongbao" class="btn btn-info btn-sm text-white">
+          <i class="fa-solid fa-plus me-1"></i>
           Tạo thông báo mới
-</a>
-
+        </a>
       </div>
     </div>
   </div>
+
 </div>
 
 <%- include('./layout/footer') %>

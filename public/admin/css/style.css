@@ -62,3 +62,20 @@ footer p {
 }
 
 
+.sidebar .nav-link {
+  border-radius: 8px;
+  margin-bottom: 6px;
+  transition: all 0.2s ease;
+}
+
+.sidebar .nav-link:hover {
+  background: rgba(255,255,255,0.12);
+  padding-left: 18px;
+}
+.card:hover {
+  transform: translateY(-3px);
+  transition: 0.2s ease;
+}
+.card h5 i {
+  font-size: 1.2rem;
+}
