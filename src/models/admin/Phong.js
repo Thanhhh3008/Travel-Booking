@@ -46,6 +46,22 @@ getById: async (id) => {
   `, [id]);
   return rows[0];
 },
+// Lấy danh sách phòng theo trạng thái
+getRoomsByStatus: async (status) => {
+  const [rows] = await pool.query(`
+    SELECT 
+      p.*, 
+      nd.Username, 
+      lp.TenLoaiPhong
+    FROM phong p
+    LEFT JOIN nguoidung nd ON p.MaNguoiDung = nd.MaNguoiDung
+    LEFT JOIN loaiphong lp ON p.MaLoaiPhong = lp.MaLoaiPhong
+    WHERE p.TrangThaiPhong = ?
+    ORDER BY p.MaPhong DESC
+  `, [status]);
+
+  return rows;
+},
 
   // Cập nhật trạng thái phòng
   

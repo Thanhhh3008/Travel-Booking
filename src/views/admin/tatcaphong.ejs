@@ -1,7 +1,62 @@
 <%- include('./layout/header') %>
+<style>
+  /* Bộ lọc trạng thái */
+.filter-form {
+  background: #ffffff;
+  padding: 8px 12px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
 
+.filter-select {
+  min-width: 220px;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.filter-select:focus {
+  border-color: #0d6efd;
+  box-shadow: 0 0 0 0.15rem rgba(13, 110, 253, 0.25);
+}
+
+.filter-reset {
+  border-radius: 8px;
+  padding: 6px 12px;
+  transition: all 0.2s ease;
+}
+
+.filter-reset:hover {
+  background-color: #f8f9fa;
+  color: #000;
+}
+
+</style>
 <div class="container mt-4">
-  <h3 class="fw-bold mb-4">🏠 Danh sách tất cả chỗ ở</h3>
+  <h3 class="fw-bold mb-4">Danh sách tất cả chỗ ở</h3>
+
+<!-- Bộ lọc -->
+<div class="d-flex justify-content-end mb-3">
+  <form method="GET" action="/admin/duyetphong/tatca" class="filter-form d-flex gap-2 align-items-center">
+    
+    <select name="status" class="form-select filter-select" onchange="this.form.submit()">
+      <option value="">Tất cả trạng thái</option>
+      <option value="Chờ xét duyệt" <%= status === 'Chờ xét duyệt' ? 'selected' : '' %>>
+        Chờ xét duyệt
+      </option>
+      <option value="Đang hoạt động" <%= status === 'Đang hoạt động' ? 'selected' : '' %>>
+        Đang hoạt động
+      </option>
+      <option value="Đã từ chối" <%= status === 'Đã từ chối' ? 'selected' : '' %>>
+        Đã từ chối
+      </option>
+    </select>
+
+    <a href="/admin/duyetphong/tatca" class="btn btn-outline-secondary filter-reset">
+      <i class="fa-solid fa-rotate-left"></i>
+    </a>
+
+  </form>
+</div>
 
   <div class="table-responsive shadow-sm rounded-3">
     <table class="table table-hover align-middle">
