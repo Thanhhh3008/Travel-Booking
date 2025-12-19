@@ -443,6 +443,27 @@ async updateRating(roomId) {
         }
     };
 
+    /**
+     * Lấy danh sách tất cả thành phố từ DB (từ trường ThanhPho)
+     * @returns {Promise<string[]>}
+     */
+    getAllCities = async () => {
+        try {
+            const [rows] = await pool.execute(`
+                SELECT DISTINCT ThanhPho
+                FROM phong 
+                WHERE ThanhPho IS NOT NULL 
+                    AND ThanhPho != ''
+                    AND TrangThaiPhong = 'Đang hoạt động'
+                ORDER BY ThanhPho
+            `);
+            return rows.map(r => r.ThanhPho?.trim()).filter(Boolean);
+        } catch (err) {
+            console.error('RoomService.getAllCities error:', err);
+            return [];
+        }
+    };
+
 
 }
 

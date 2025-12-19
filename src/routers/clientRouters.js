@@ -79,6 +79,9 @@ const uploadRoomImage = (req, res, next) => {
 // Trang chủ
 router.get('/', HomeController.index);
 
+// API tìm kiếm và lọc phòng
+router.get('/api/search-rooms', HomeController.searchRooms);
+
 router.get('/owner/bookings', BookingManageController.index);
 router.post('/owner/bookings/:bookingId/checkin', BookingManageController.checkIn);
 router.post('/owner/bookings/:bookingId/checkout', BookingManageController.checkOut);
