@@ -678,3 +678,15 @@
   object-fit: cover;
   border: 1px solid #e5e7eb;
 }
+.review-rating {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #f59e0b; 
+  font-size: 14px;
+}
+
+.review-rating .rating-number {
+  color: #64748b;
+  font-size: 13px;
+}

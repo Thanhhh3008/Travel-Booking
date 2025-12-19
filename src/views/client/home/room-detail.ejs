@@ -274,9 +274,15 @@
         </div>
 
         <div class="review-rating">
-          <% for (let i = 1; i <= review.Rating; i++) { %>★<% } %>
-          <% for (let i = review.Rating + 1; i <= 5; i++) { %>☆<% } %>
-        </div>
+  <span class="stars">
+    <% for (let i = 1; i <= review.SoSao; i++) { %>★<% } %>
+    <% for (let i = review.SoSao + 1; i <= 5; i++) { %>☆<% } %>
+  </span>
+  <span class="rating-number">
+    <%= review.SoSao %>.0 / 5
+  </span>
+</div>
+
 
         <p class="review-text clamp">
           <%= review.NoiDung %>
@@ -326,7 +332,9 @@
         <p style="margin-top: 16px; line-height: 1.6;">
           Xin chào, mình là <%= room.HoTen || 'Chưa rõ' %> – một người yêu thiên nhiên, yêu biển và đặc biệt đam mê những ngôi nhà đẹp mang hơi thở bình yên...
         </p>
-        <button class="show-more-btn">Nhắn tin cho host</button>
+        <a class="show-more-btn" href="https://mail.google.com/mail/?view=cm&fs=1
+&to=<%= room.Email|| 'Chưa rõ' %>" target="_blank">Nhắn tin cho host</a>
+        <!-- <button class="show-more-btn">Nhắn tin cho host</button> -->
       </div>
 
       <!-- Additional Info -->
@@ -334,7 +342,8 @@
         <h3>Thông tin Chủ nhà</h3>
         <p><strong>Tỉ lệ phản hồi:</strong> 100%</p>
         <p><strong>Phản hồi trong vòng:</strong> 1 giờ</p>
-        <button class="show-more-btn" style="margin-top: 16px;">Nhắn tin cho host</button>
+        <a class="show-more-btn" href="https://mail.google.com/mail/?view=cm&fs=1
+&to=<%= room.Email|| 'Chưa rõ' %>">Nhắn tin cho host</a>
         <p style="font-size: 12px; color: #717171; margin-top: 24px;">
           🛡️ Để bảo vệ khoản thanh toán của bạn, hãy luôn sử dụng TripStay để chuyển tiền và liên lạc với host.
         </p>

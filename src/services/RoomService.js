@@ -90,6 +90,7 @@ class RoomService {
                 lp.TenLoaiPhong,
                 nd.Username,
                 nd.HoTen,
+                nd.Email,
                 p.gia AS GiaPhong,
                 p.TenChoO,
                 p.ThanhPho,
@@ -122,7 +123,7 @@ class RoomService {
             row.MaNguoiDung,
             
         );
-
+        room.Email = row.Email;
         room.TenLoaiPhong = row.TenLoaiPhong;
         room.Gia = row.GiaPhong ?? null;
         room.Username = row.Username;

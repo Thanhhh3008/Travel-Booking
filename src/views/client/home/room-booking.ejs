@@ -41,8 +41,9 @@
 
     <div class="booking-panel">
       <h2>Đặt phòng này</h2>
+
       <form action="/rooms/<%= room.MaPhong || room.id %>/book" method="POST"
-        class="form-layout">
+        class="form-layout" id="bookingForm">
         <input type="hidden" name="MaPhong"
           value="<%= room.MaPhong || room.id %>">
 
@@ -58,10 +59,25 @@
             value="<%= (currentUser && currentUser.Email) ? currentUser.Email : '' %>">
         </label>
 
+        <!-- ✅ RÀNG BUỘC SỐ ĐIỆN THOẠI -->
         <label class="form-field">
           <span class="label">Số điện thoại *</span>
-          <input type="tel" name="SoDienThoai" required placeholder="090xxxxxxx"
+          <input
+            type="tel"
+            name="SoDienThoai"
+            id="SoDienThoai"
+            required
+            placeholder="090xxxxxxx"
+            inputmode="numeric"
+            autocomplete="tel"
+            maxlength="10"
+            pattern="^0[35789][0-9]{8}$"
+            title="SĐT VN: 10 số, bắt đầu bằng 03/05/07/08/09"
             value="<%= (currentUser && currentUser.SDT) ? currentUser.SDT : '' %>">
+          <small id="phoneHint"
+            style="color:#717171; display:block; margin-top:6px;">
+            Ví dụ: 0912345678 (10 số, bắt đầu 03/05/07/08/09)
+          </small>
         </label>
 
         <div class="form-grid">
@@ -103,7 +119,6 @@
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script>
   //  các ngày đã có người đặt (controller truyền sang)
-  
   const disabledDates = <%- JSON.stringify(bookedDates || []) %>;
 
   let checkoutPicker = null;
@@ -132,6 +147,45 @@
     dateFormat: "Y-m-d",
     minDate: "today",
     disable: disabledDates
+  });
+</script>
+
+<!-- ✅ JS CHUẨN HOÁ + CHẶN NHẬP KÝ TỰ LẠ -->
+<script>
+  const phoneInput = document.getElementById('SoDienThoai');
+  const form = document.getElementById('bookingForm');
+
+  function normalizePhone(v) {
+    if (!v) return '';
+    let s = String(v).trim().replace(/\s|\.|-/g, '');
+    // +84xxxxxxxxx hoặc 84xxxxxxxxx => 0xxxxxxxxx
+    if (s.startsWith('+84')) s = '0' + s.slice(3);
+    if (s.startsWith('84')) s = '0' + s.slice(2);
+    // chỉ giữ số
+    s = s.replace(/\D/g, '');
+    return s;
+  }
+
+  function isValidVNPhone(s) {
+    return /^0[35789]\d{8}$/.test(s);
+  }
+
+  // chỉ cho nhập số
+  phoneInput.addEventListener('input', () => {
+    const before = phoneInput.value;
+    const normalized = normalizePhone(before);
+    phoneInput.value = normalized.slice(0, 10);
+  });
+
+  form.addEventListener('submit', (e) => {
+    const normalized = normalizePhone(phoneInput.value);
+    phoneInput.value = normalized.slice(0, 10);
+
+    if (!isValidVNPhone(phoneInput.value)) {
+      e.preventDefault();
+      alert('Số điện thoại không hợp lệ! Vui lòng nhập SĐT VN 10 số (03/05/07/08/09).');
+      phoneInput.focus();
+    }
   });
 </script>
 
