@@ -1537,6 +1537,9 @@ label.error {
 .form-field input,
 .form-field select,
 .form-field textarea {
+  width: 100%;               /* QUAN TRỌNG */
+  box-sizing: border-box;    /* QUAN TRỌNG */
+
   padding: 12px 14px;
   border: 2px solid #e2e8f0;
   border-radius: 12px;
@@ -1546,6 +1549,7 @@ label.error {
   font-family: inherit;
   line-height: 1.4;
 }
+
 
 .form-field input:focus,
 .form-field select:focus,
