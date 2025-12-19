@@ -122,7 +122,8 @@ class RoomService {
             row.MaThietBi,
             row.MaNguoiDung,
             
-        );
+        );s
+        //
         room.Email = row.Email;
         room.TenLoaiPhong = row.TenLoaiPhong;
         room.Gia = row.GiaPhong ?? null;
@@ -160,51 +161,46 @@ class RoomService {
      * @returns {Promise<number>} 
      */
    create = async (data) => {
-    try {
-        const query = `
+        try {
+            const query = `
             INSERT INTO phong (
                 SoPhong,
                 ViTriTang,
-                TrangThaiPhong,
-                MaLoaiPhong,
-                View,
-                DiaChi,
-                ThanhPho,
-                Rating,
-                Gia,
-                MoTa,
+	
                 GiayToPhong,
                 HinhAnh,
                 MaThietBi,
-                MaNguoiDung
+                MaNguoiDung,
+                ward_id
             )
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `;
 
-        const params = [
-            data.SoPhong,
-            data.ViTriTang ?? null,
-            data.TrangThaiPhong ?? 'Chờ xét duyệt',
-            data.MaLoaiPhong,
-            data.View ?? null,
-            data.DiaChi ?? null,
-            data.ThanhPho ?? null,   
-            data.Rating ?? null,
-            data.Gia ?? null,
-            data.MoTa ?? null,
-            data.GiayToPhong ?? null,
-            data.HinhAnh ?? null,
-            data.MaThietBi ?? null,
-            data.MaNguoiDung,
-        ];
+            const params = [
+                data.SoPhong,
+                data.ViTriTang ?? null,
+                data.TrangThaiPhong ?? 'Chờ xét duyệt',
+                data.MaLoaiPhong,
+                data.View ?? null,
+                data.DiaChi ?? null,
+                data.ThanhPho ?? null,
+                data.Rating ?? null,
+                data.Gia ?? null,
+                data.MoTa ?? null,
+                data.GiayToPhong ?? null,
+                data.HinhAnh ?? null,
+                data.MaThietBi ?? null,
+                data.MaNguoiDung,
+                data.ward_id
+            ];
 
-        const [result] = await pool.execute(query, params);
-        return result.insertId;
-    } catch (err) {
-        console.error('RoomService.create error:', err);
-        throw err;
-    }
-};
+            const [result] = await pool.execute(query, params);
+            return result.insertId;
+        } catch (err) {
+            console.error('RoomService.create error:', err);
+            throw err;
+        }
+    };
 
     /**
      * @param {number} id       
@@ -439,6 +435,27 @@ async updateRating(roomId) {
             return rows.map(r => r.City?.trim()).filter(Boolean);
         } catch (err) {
             console.error('RoomService.getCities error:', err);
+            return [];
+        }
+    };
+
+    /**
+     * Lấy danh sách tất cả thành phố từ DB (từ trường ThanhPho)
+     * @returns {Promise<string[]>}
+     */
+    getAllCities = async () => {
+        try {
+            const [rows] = await pool.execute(`
+                SELECT DISTINCT ThanhPho
+                FROM phong 
+                WHERE ThanhPho IS NOT NULL 
+                    AND ThanhPho != ''
+                    AND TrangThaiPhong = 'Đang hoạt động'
+                ORDER BY ThanhPho
+            `);
+            return rows.map(r => r.ThanhPho?.trim()).filter(Boolean);
+        } catch (err) {
+            console.error('RoomService.getAllCities error:', err);
             return [];
         }
     };

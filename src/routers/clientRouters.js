@@ -15,6 +15,9 @@ const BookingManageController = require('../controllers/client/BookingManageCont
 const ImageController = require('../controllers/client/ImageController');
 const uploadAvartar = require('../middlewares/uploadMiddleware');
 const ContactController = require('../controllers/client/ContactController');
+const ProvinceController = require('../controllers/client/ProvinceController');
+const DistrictController = require('../controllers/client/DistrictController');
+const WardController = require('../controllers/client/WardController');
 // ================== CẤU HÌNH UPLOAD ẢNH ==================
 
 const uploadDir = path.join(__dirname, '..', '..', 'public', 'admin', 'uploads', 'anhphong');
@@ -79,6 +82,9 @@ const uploadRoomImage = (req, res, next) => {
 
 // Trang chủ
 router.get('/', HomeController.index);
+
+// API tìm kiếm và lọc phòng
+router.get('/api/search-rooms', HomeController.searchRooms);
 
 router.get('/owner/bookings', BookingManageController.index);
 router.post('/owner/bookings/:bookingId/checkin', BookingManageController.checkIn);
@@ -147,8 +153,15 @@ router.get('/change-avartar.html', requireLogin, ImageController.changeImageAvar
 
 // Review
 router.post('/rooms/:roomId/review', RoomController.review);
+router.get('/province', ProvinceController.getAllProvinces)
+router.get('/province/:id', ProvinceController.getProvinceById)
+
+router.get('/district/:id_province', DistrictController.getDistrictsByIdProvince)
+router.get('/find/district/:id', DistrictController.getDistrictById)
 
 
 router.get('/contact.html', ContactController.contactView)
 router.post('/contact', ContactController.senderEmail)
+router.get('/ward/:id_district', WardController.getWardsByIdDistrict)
+router.get('/find/ward/:id', WardController.getWardById)
 module.exports = router;
