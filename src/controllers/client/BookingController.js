@@ -2,6 +2,9 @@ const BookingService = require('../../services/BookingService');
 const RoomService = require('../../services/RoomService');
 const ThongBao = require('../../models/admin/ThongBao');
 const User = require('../../models/admin/NguoiDung');
+const QRCode = require('qrcode');
+const genQrCode = require('../../util/genQrCode');
+const { sendmallconfig } = require('../../util/mailer');
 
 class BookingController {
 
@@ -90,6 +93,10 @@ class BookingController {
             return req.session.save(() => res.redirect(`/rooms/${roomId}`));
         }
 
+
+
+
+
         const { NgayNhanPhong, NgayTraPhong, SoLuongKhach } = req.body;
         const currentUser = req.session.login;
 
@@ -155,7 +162,7 @@ class BookingController {
             // trạng thái phòng: đã đặt trước
             // await roomService.updateStatus(roomId, 'Đã đặt trước');
 
-            await bookingService.create({
+            const newId = await bookingService.create({
                 MaNguoiDung: currentUser.maNguoiDung,
                 MaPhong: roomId,
                 NgayNhanPhong: checkinDate,
@@ -165,6 +172,13 @@ class BookingController {
                 TrangThai: 'Chưa hoàn thành',
                 SoLuongKhach: SoLuongKhach
             });
+
+            const data = { order_id: newId, maPhong: roomId, checkIn: checkinDate, checkOut: checkoutDate, tongtien: totalPrice }
+
+            const fileName_qrcode = await genQrCode(JSON.stringify(data));
+
+            await sendmallconfig(req.session.login.email, 'GỬI MÃ QR CODE THÔNG TIN ĐƠN HÀNG', fileName_qrcode)
+
 
             req.session.message = { type: 'success', mess: 'Đặt phòng thành công!' };
             req.session.save(err => {

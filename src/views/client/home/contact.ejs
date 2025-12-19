@@ -1,0 +1,40 @@
+<%- include('../layout/header.ejs') %>
+
+<div class="contact-container">
+  <!-- MAP -->
+  <div class="contact-map">
+    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.057641632548!2d106.62647207583877!3d10.78987805895281!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752d2c4e2f7a5f%3A0x5a0b0b7c2f6dcb6!2zVHLGsOG7nW5nIMSQ4bqhaSBI4buNYyBDw7RuZyBOZ2jhu4cgVGjhuqF0IEjhu4MgQ8OtIE1pbmggKElVS Ck!5e0!3m2!1svi!2s!4v1700000000000" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
+    </iframe>
+  </div>
+
+  <!-- FORM -->
+  <div class="contact-form">
+    <h2>Liên hệ với chúng tôi</h2>
+    <p>Hãy để lại thông tin, chúng tôi sẽ phản hồi sớm nhất 💬</p>
+
+    <form action="/contact" method="post">
+      <div class="form-group">
+        <input type="text" name="fullname" required>
+        <label>Họ và tên</label>
+      </div>
+
+      <div class="form-group">
+        <input type="email" name="email" required>
+        <label>Email</label>
+      </div>
+
+      <div class="form-group">
+        <input type="text" name="phone" required>
+        <label>Số điện thoại</label>
+      </div>
+
+      <div class="form-group">
+        <textarea name="message" rows="4" required></textarea>
+        <label>Nội dung</label>
+      </div>
+
+      <button type="submit">Gửi liên hệ</button>
+    </form>
+  </div>
+</div>
+<%- include('../layout/footer.ejs') %>
