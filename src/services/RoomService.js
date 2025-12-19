@@ -124,7 +124,7 @@ class RoomService {
             
         );s
         //
-        room.Email = row.Email
+        room.Email = row.Email;
         room.TenLoaiPhong = row.TenLoaiPhong;
         room.Gia = row.GiaPhong ?? null;
         room.Username = row.Username;
@@ -161,51 +161,46 @@ class RoomService {
      * @returns {Promise<number>} 
      */
    create = async (data) => {
-    try {
-        const query = `
+        try {
+            const query = `
             INSERT INTO phong (
                 SoPhong,
                 ViTriTang,
-                TrangThaiPhong,
-                MaLoaiPhong,
-                View,
-                DiaChi,
-                ThanhPho,
-                Rating,
-                Gia,
-                MoTa,
+	
                 GiayToPhong,
                 HinhAnh,
                 MaThietBi,
-                MaNguoiDung
+                MaNguoiDung,
+                ward_id
             )
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `;
 
-        const params = [
-            data.SoPhong,
-            data.ViTriTang ?? null,
-            data.TrangThaiPhong ?? 'Chờ xét duyệt',
-            data.MaLoaiPhong,
-            data.View ?? null,
-            data.DiaChi ?? null,
-            data.ThanhPho ?? null,   
-            data.Rating ?? null,
-            data.Gia ?? null,
-            data.MoTa ?? null,
-            data.GiayToPhong ?? null,
-            data.HinhAnh ?? null,
-            data.MaThietBi ?? null,
-            data.MaNguoiDung,
-        ];
+            const params = [
+                data.SoPhong,
+                data.ViTriTang ?? null,
+                data.TrangThaiPhong ?? 'Chờ xét duyệt',
+                data.MaLoaiPhong,
+                data.View ?? null,
+                data.DiaChi ?? null,
+                data.ThanhPho ?? null,
+                data.Rating ?? null,
+                data.Gia ?? null,
+                data.MoTa ?? null,
+                data.GiayToPhong ?? null,
+                data.HinhAnh ?? null,
+                data.MaThietBi ?? null,
+                data.MaNguoiDung,
+                data.ward_id
+            ];
 
-        const [result] = await pool.execute(query, params);
-        return result.insertId;
-    } catch (err) {
-        console.error('RoomService.create error:', err);
-        throw err;
-    }
-};
+            const [result] = await pool.execute(query, params);
+            return result.insertId;
+        } catch (err) {
+            console.error('RoomService.create error:', err);
+            throw err;
+        }
+    };
 
     /**
      * @param {number} id       
