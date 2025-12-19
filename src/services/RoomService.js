@@ -122,8 +122,9 @@ class RoomService {
             row.MaThietBi,
             row.MaNguoiDung,
             
-        );
-        room.Email = row.Email;
+        );s
+        //
+        room.Email = row.Email
         room.TenLoaiPhong = row.TenLoaiPhong;
         room.Gia = row.GiaPhong ?? null;
         room.Username = row.Username;
