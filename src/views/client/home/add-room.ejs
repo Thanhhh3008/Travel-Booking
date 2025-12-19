@@ -41,47 +41,71 @@
 
       </div>
 
-      <!-- Dòng 3: Địa chỉ + Thành phố + Giá -->
-      <div class="form-grid">
-        <label class="form-field">
-          <span class="label">Địa chỉ*</span>
-          <input type="text" name="DiaChi" placeholder="Địa chỉ phòng (số nhà, tên đường)" required>
-        </label>
+       <!-- Dòng 3: Địa chỉ + Thành phố + Giá -->
+        <div class="form-grid">
+          <label class="form-field">
+            <span class="label">Địa chỉ</span>
+            <input type="text" name="DiaChi" placeholder="Địa chỉ phòng (số nhà, tên đường)">
+          </label>
 
-        <label class="form-field">
-          <span class="label">Thành phố *</span>
-          <select name="ThanhPho" id="city" required>
-            <option value disabled selected>-- Chọn thành phố --</option>
-          </select>
-        </label>
+          <!-- <label class="form-field">
+            <span class="label">Thành phố *</span>
+            <select name="ThanhPho" id="city" required>
+              <option value disabled selected>-- Chọn thành phố --</option>
+            </select>
+          </label> -->
 
-        <label class="form-field">
-          <span class="label">Giá phòng (VND) *</span>
-          <input type="number" min="0" step="1000" name="Gia" required placeholder="Ví dụ: 1200000">
-        </label>
-        
-        <label class="form-field">
-          <span class="label">View</span>
-          <input type="text" name="View" placeholder="Ví dụ: Hướng biển">
-        </label>
-      </div>
+          <label class="form-field">
+            <span class="label">Giá phòng (VND) *</span>
+            <input type="number" min="0" step="1000" name="Gia" required placeholder="Ví dụ: 1200000">
+          </label>
 
-      <!-- Ảnh phòng -->
-      <div class="form-grid">
-        <label class="form-field">
-          <span class="label">Ảnh phòng (tối đa 10 ảnh) *</span>
-          <input type="file" name="HinhAnh" accept="image/*" multiple required>
-        </label>
-      </div>
+          <label class="form-field">
+            <span class="label">View</span>
+            <input type="text" name="View" placeholder="Ví dụ: Hướng biển">
+          </label>
 
-      <!-- Ảnh giấy tờ -->
-      <div class="form-grid">
-        <label class="form-field">
-          <span class="label">Ảnh giấy tờ phòng (tối đa 10 ảnh)</span>
-          <input type="file" name="GiayToPhong" accept="image/*" multiple required>
-        </label>
-      </div>
+          <label class="form-field">
+            <span class="label">Ảnh phòng (tối đa 10 ảnh) *</span>
+            <input type="file" name="HinhAnh" accept="image/*" multiple>
+          </label>
 
+          <label class="form-field">
+            <span class="label">Ảnh giấy tờ phòng (tối đa 10 ảnh)</span>
+            <input type="file" name="GiayToPhong" accept="image/*" multiple>
+          </label>
+
+
+        </div>
+
+        <div class="form-grid-3">
+          <label class="form-field" style="margin-bottom: 10px;">
+            <span class="label">Chọn tỉnh thành</span>
+            <select name="province_id" class="choose_province">
+              <option value="">-- Vui Lòng Chọn Tỉnh Thành --</option>
+              <% provinces.forEach(province=> { %>
+                <option value="<%= province.id %>">
+                  <%= province.name %>
+                </option>
+                <% }) %>
+            </select>
+          </label>
+
+          <label class="form-field" style="margin-bottom: 10px;">
+            <span class="label">Chọn quận</span>
+            <select name="district_id" class="choose_district">
+              <option value="">-- Vui Lòng Chọn Quận --</option>
+
+            </select>
+          </label>
+
+          <label class="form-field" style="margin-bottom: 10px;">
+            <span class="label">Chọn phường</span>
+            <select name="ward_id" class="choose_ward">
+              <option value="">-- Vui Lòng Chọn Phường --</option>
+            </select>
+          </label>
+        </div>
       <!-- Mô tả -->
       <label class="form-field">
         <span class="label">Mô tả</span>
@@ -96,7 +120,7 @@
     </form>
   </section>
 </main>
-
+<!-- 
 <script>
 fetch("https://provinces.open-api.vn/api/p/")
   .then(res => res.json())
@@ -109,6 +133,56 @@ fetch("https://provinces.open-api.vn/api/p/")
       select.appendChild(opt);
     });
   });
+</script> -->
+<script>
+  
+  // update box selector địa chỉ
+  updateSelectBox2 = (selector, data) => {
+    $(selector).find('option').not(':first').remove();
+    if (!data) return;
+    const tmp = data;
+    for (const tmp1 of tmp) {
+      const option = `<option value='${tmp1.id}'>${tmp1.name}</option>`;
+      $(selector).append(option);
+    }
+  }
+  // update thẻ select chọn tỉnh thành
+  $('select.choose_province').change(function () {
+    const id_province = $(this).val();
+    // console.log(id_province);
+    if (id_province) {
+      $.ajax({
+        type: "GET",
+        url: `/district/${id_province}`,
+        success: function (data) {
+          // console.log(data);
+          updateSelectBox2('.choose_district', data);
+          updateSelectBox2('.choose_ward', null);
+        }
+      });
+    }
+    else {
+      updateSelectBox2('.choose_district', null);
+      updateSelectBox2('.choose_ward', null);
+    }
+  })
+  // update thẻ select chọn quận
+  $('select.choose_district').change(function () {
+    const id_ward = $(this).val();
+    if (id_ward) {
+      $.ajax({
+        type: "GET",
+        url: `/ward/${id_ward}`,
+        success: function (data) {
+          // console.log(data);
+          updateSelectBox2('.choose_ward', data);
+        }
+      });
+    }
+    else {
+      // updateSelectBox2('.choose_district', null);
+      updateSelectBox2('.choose_ward', null);
+    }
+  })
 </script>
-
 <%- include('../layout/footer.ejs') %>

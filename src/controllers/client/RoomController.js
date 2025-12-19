@@ -7,7 +7,7 @@ const RoomService = require('../../services/RoomService');
 const ThongBao = require('../../models/admin/ThongBao');
 const User = require('../../models/admin/NguoiDung');
 const RevenueService = require('../../services/RevenueService');
-
+const ProvinceService = require('../../services/ProvinceService');
 const BookingService = require('../../services/BookingService');
 const ReviewService = require('../../services/ReviewService');
 class RoomController {
@@ -89,10 +89,11 @@ class RoomController {
         }
 
         try {
+            const provinceService = new ProvinceService();
             const categoryRoomService = new CategoryRoomService();
             const roomTypes = await categoryRoomService.getAll();
-
-            res.render('client/home/add-room', { message, roomTypes, thongbao, currentUser });
+            const provinces = await provinceService.getAll();
+            res.render('client/home/add-room', { message, roomTypes, thongbao, currentUser, provinces });
         } catch (error) {
             console.error('Error loading add room form:', error);
             res.status(500).send('Internal Server Error');
@@ -129,84 +130,86 @@ class RoomController {
         }
     }
 //Thêm phòng
-   static async store(req, res) {
-    const roomService = new RoomService();
-    let redirectPath = '/';
+    static async store(req, res) {
+        const roomService = new RoomService();
+        let redirectPath = '/';
 
-    try {
-        if (!req.session.login || !req.session.login.maNguoiDung) {
-            throw new Error('Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.');
-        }
+        try {
+            if (!req.session.login || !req.session.login.maNguoiDung) {
+                throw new Error('Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.');
+            }
 
-        const {
-            SoPhong,
-            ViTriTang,
-            TrangThaiPhong,
-            MaLoaiPhong,
-            View,
-            DiaChi,
-            ThanhPho,
-            Rating,
-            Gia,
-            MoTa,
-            MaThietBi,
-        } = req.body;
+            const {
+                SoPhong,
+                ViTriTang,
+                TrangThaiPhong,
+                MaLoaiPhong,
+                View,
+                DiaChi,
+                ThanhPho,
+                Rating,
+                Gia,
+                MoTa,
+                MaThietBi,
+                ward_id
+            } = req.body;
 
-        if (!SoPhong || !MaLoaiPhong || !Gia) {
-            throw new Error('Vui lòng nhập đầy đủ Số phòng, Loại phòng và Giá.');
-        }
+            if (!SoPhong || !MaLoaiPhong || !Gia) {
+                throw new Error('Vui lòng nhập đầy đủ Số phòng, Loại phòng và Giá.');
+            }
 
-        if (!ThanhPho || ThanhPho.trim() === '') {
-            throw new Error('Vui lòng nhập Thành phố.');
-        }
+            // if (!ThanhPho || ThanhPho.trim() === '') {
+            //     throw new Error('Vui lòng nhập Thành phố.');
+            // }
 
-        const parsedLoaiPhong = Number(MaLoaiPhong);
-        const parsedGia = Number(Gia);
-        const parsedTang = ViTriTang ? Number(ViTriTang) : null;
-        const parsedRating = Rating ? Number(Rating) : null;
-        const parsedThietBi = MaThietBi ? Number(MaThietBi) : null;
+            const parsedLoaiPhong = Number(MaLoaiPhong);
+            const parsedGia = Number(Gia);
+            const parsedTang = ViTriTang ? Number(ViTriTang) : null;
+            const parsedRating = Rating ? Number(Rating) : null;
+            const parsedThietBi = MaThietBi ? Number(MaThietBi) : null;
 
-        if (!Number.isInteger(parsedLoaiPhong) || parsedLoaiPhong <= 0)
-            throw new Error('Loại phòng không hợp lệ.');
+            if (!Number.isInteger(parsedLoaiPhong) || parsedLoaiPhong <= 0)
+                throw new Error('Loại phòng không hợp lệ.');
 
-        if (!Number.isFinite(parsedGia) || parsedGia <= 0)
-            throw new Error('Giá phòng phải là số lớn hơn 0.');
+            if (!Number.isFinite(parsedGia) || parsedGia <= 0)
+                throw new Error('Giá phòng phải là số lớn hơn 0.');
 
-        if (parsedTang !== null && (!Number.isInteger(parsedTang) || parsedTang < 0))
-            throw new Error('Vị trí tầng phải là số nguyên không âm.');
+            if (parsedTang !== null && (!Number.isInteger(parsedTang) || parsedTang < 0))
+                throw new Error('Vị trí tầng phải là số nguyên không âm.');
 
-        if (parsedRating !== null && (parsedRating < 0 || parsedRating > 5))
-            throw new Error('Đánh giá phải nằm trong khoảng từ 0 đến 5.');
+            if (parsedRating !== null && (parsedRating < 0 || parsedRating > 5))
+                throw new Error('Đánh giá phải nằm trong khoảng từ 0 đến 5.');
 
-        const imagesPhong = req.files?.HinhAnh
-            ? req.files.HinhAnh.map(f => f.filename).join(',')
-            : null;
+            const imagesPhong = req.files?.HinhAnh
+                ? req.files.HinhAnh.map(f => f.filename).join(',')
+                : null;
 
-        const imagesGiayTo = req.files?.GiayToPhong
-            ? req.files.GiayToPhong.map(f => f.filename).join(',')
-            : null;
+            const imagesGiayTo = req.files?.GiayToPhong
+                ? req.files.GiayToPhong.map(f => f.filename).join(',')
+                : null;
 
-        await roomService.create({
-            SoPhong,
-            ViTriTang: parsedTang,
-            TrangThaiPhong: TrangThaiPhong || 'Chờ xét duyệt',
-            MaLoaiPhong: parsedLoaiPhong,
-            View: View || null,
-            DiaChi: DiaChi || null,
-            ThanhPho: ThanhPho.trim(),    
-            Rating: parsedRating,
-            Gia: parsedGia,
-            MoTa: MoTa || null,
-            HinhAnh: imagesPhong,
-            GiayToPhong: imagesGiayTo,
-            MaThietBi: parsedThietBi,
-            MaNguoiDung: req.session.login.maNguoiDung,
-        });
+            await roomService.create({
+                SoPhong,
+                ViTriTang: parsedTang,
+                TrangThaiPhong: TrangThaiPhong || 'Chờ xét duyệt',
+                MaLoaiPhong: parsedLoaiPhong,
+                View: View || null,
+                DiaChi: DiaChi || null,
+                ThanhPho: ThanhPho?.trim() || null,
+                Rating: parsedRating,
+                Gia: parsedGia,
+                MoTa: MoTa || null,
+                HinhAnh: imagesPhong,
+                GiayToPhong: imagesGiayTo,
+                MaThietBi: parsedThietBi,
+                MaNguoiDung: req.session.login.maNguoiDung,
+                ward_id: ward_id
+            });
 
-        req.session.message = {
-            mess: 'Thêm phòng thành công. Xin vui lòng chờ admin xét duyệt. Thông báo sẽ được gửi tới bạn trong 24h',
-            type: 'success',
-        };
+            req.session.message = {
+                mess: 'Thêm phòng thành công. Xin vui lòng chờ admin xét duyệt. Thông báo sẽ được gửi tới bạn trong 24h',
+                type: 'success',
+            };
 
     } catch (error) {
         console.error('Error saving room:', error);
