@@ -44,8 +44,8 @@
       <!-- Dòng 3: Địa chỉ + Thành phố + Giá -->
       <div class="form-grid">
         <label class="form-field">
-          <span class="label">Địa chỉ</span>
-          <input type="text" name="DiaChi" placeholder="Địa chỉ phòng (số nhà, tên đường)">
+          <span class="label">Địa chỉ*</span>
+          <input type="text" name="DiaChi" placeholder="Địa chỉ phòng (số nhà, tên đường)" required>
         </label>
 
         <label class="form-field">
@@ -70,7 +70,7 @@
       <div class="form-grid">
         <label class="form-field">
           <span class="label">Ảnh phòng (tối đa 10 ảnh) *</span>
-          <input type="file" name="HinhAnh" accept="image/*" multiple>
+          <input type="file" name="HinhAnh" accept="image/*" multiple required>
         </label>
       </div>
 
@@ -78,7 +78,7 @@
       <div class="form-grid">
         <label class="form-field">
           <span class="label">Ảnh giấy tờ phòng (tối đa 10 ảnh)</span>
-          <input type="file" name="GiayToPhong" accept="image/*" multiple>
+          <input type="file" name="GiayToPhong" accept="image/*" multiple required>
         </label>
       </div>
 

@@ -39,7 +39,7 @@ class BookingService {
     }
 
     /**
-     * ✅ KIỂM TRA PHÒNG CÓ TRÙNG LỊCH KHÔNG
+     *  KIỂM TRA PHÒNG CÓ TRÙNG LỊCH KHÔNG
      * Overlap: NOT (oldCheckout <= newCheckin OR oldCheckin >= newCheckout)
      */
     async isRoomAvailable(roomId, checkinDate, checkoutDate) {
@@ -49,7 +49,7 @@ class BookingService {
             WHERE MaPhong = ?
               AND TrangThai = '0'
               AND NOT (
-                NgayTraPhong <= ?
+                NgayTraPhong < ?
                 OR NgayNhanPhong >= ?
               )
         `;
@@ -80,7 +80,7 @@ class BookingService {
         let cur = new Date(r.startDate);
         const end = new Date(r.endDate);
 
-        while (cur < end) {
+        while (cur <= end) {
             disabled.push(cur.toISOString().split('T')[0]);
             cur.setDate(cur.getDate() + 1);
         }
