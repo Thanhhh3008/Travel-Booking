@@ -14,6 +14,9 @@ const RevenueController = require('../controllers/client/RevenueController');
 const BookingManageController = require('../controllers/client/BookingManageController');
 const ImageController = require('../controllers/client/ImageController');
 const uploadAvartar = require('../middlewares/uploadMiddleware');
+const ProvinceController = require('../controllers/client/ProvinceController');
+const DistrictController = require('../controllers/client/DistrictController');
+const WardController = require('../controllers/client/WardController');
 // ================== CẤU HÌNH UPLOAD ẢNH ==================
 
 const uploadDir = path.join(__dirname, '..', '..', 'public', 'admin', 'uploads', 'anhphong');
@@ -97,8 +100,8 @@ router.get('/logout.html', AuthController.logout);
 // Room
 // router.get('/rooms', RoomController.index);
 
-router.get('/rooms/add',requireLogin, RoomController.createView);
-router.post('/rooms', uploadRoomImage,requireLogin, RoomController.store);
+router.get('/rooms/add', requireLogin, RoomController.createView);
+router.post('/rooms', uploadRoomImage, requireLogin, RoomController.store);
 router.get('/rooms/city/:city', RoomController.listByCity);
 router.get('/rooms/my-rooms', RoomController.myRooms);
 router.post('/rooms/:id/delete', RoomController.delete);
@@ -141,10 +144,21 @@ router.get('/change-password.html', requireLogin, AuthController.changePasswordV
 router.post('/changepassword', requireLogin, AuthController.changepassword);
 
 
-router.post('/change-avatar' , uploadAvartar.single('avatar'), ImageController.changeImageAvartar)
-router.get('/change-avartar.html',  requireLogin , ImageController.changeImageAvartarView)
+router.post('/change-avatar', uploadAvartar.single('avatar'), ImageController.changeImageAvartar)
+router.get('/change-avartar.html', requireLogin, ImageController.changeImageAvartarView)
 
 // Review
 router.post('/rooms/:roomId/review', RoomController.review);
+
+
+router.get('/province', ProvinceController.getAllProvinces)
+router.get('/province/:id', ProvinceController.getProvinceById)
+
+router.get('/district/:id_province', DistrictController.getDistrictsByIdProvince)
+router.get('/find/district/:id', DistrictController.getDistrictById)
+
+router.get('/ward/:id_district', WardController.getWardsByIdDistrict)
+router.get('/find/ward/:id', WardController.getWardById)
+
 
 module.exports = router;

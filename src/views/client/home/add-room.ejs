@@ -1,114 +1,146 @@
 <%- include('../layout/header.ejs') %>
 
-<main class="page-add-room">
-  <section class="container section">
-    <header class="section-head with-action">
-      <h2>Thêm phòng mới</h2>
-      <a class="btn secondary" href="/">← Quay lại trang chủ</a>
-    </header>
+  <main class="page-add-room">
+    <section class="container section">
+      <header class="section-head with-action">
+        <h2>Thêm phòng mới</h2>
+        <a class="btn secondary" href="/">← Quay lại trang chủ</a>
+      </header>
 
-    <form class="form" action="/rooms" method="post" enctype="multipart/form-data">
+      <form class="form" action="/rooms" method="post" enctype="multipart/form-data">
 
-      <!-- Dòng 1: Số phòng + Tên chỗ ở -->
-      <div class="form-grid">
+        <!-- Dòng 1: Số phòng + Tên chỗ ở -->
+        <div class="form-grid">
+          <label class="form-field">
+            <span class="label">Số phòng *</span>
+            <input type="text" name="SoPhong" required placeholder="Ví dụ: P101">
+          </label>
+
+          <label class="form-field">
+            <span class="label">Tên chỗ ở *</span>
+            <input type="text" name="TenChoO" required placeholder="Ví dụ: Sunrise Homestay">
+          </label>
+        </div>
+
+        <!-- Dòng 2: Vị trí tầng + Loại phòng + View -->
+        <div class="form-grid">
+          <label class="form-field">
+            <span class="label">Vị trí tầng</span>
+            <input type="number" name="ViTriTang" min="0" placeholder="Ví dụ: 5">
+          </label>
+
+          <label class="form-field">
+            <span class="label">Loại phòng *</span>
+            <select name="MaLoaiPhong" required>
+              <option value disabled selected>-- Chọn loại phòng --</option>
+              <% roomTypes.forEach(type=> { %>
+                <option value="<%= type.MaLoaiPhong %>">
+                  <%= type.TenLoaiPhong %>
+                </option>
+                <% }) %>
+            </select>
+          </label>
+
+        </div>
+
+        <!-- Dòng 3: Địa chỉ + Thành phố + Giá -->
+        <div class="form-grid">
+          <label class="form-field">
+            <span class="label">Địa chỉ</span>
+            <input type="text" name="DiaChi" placeholder="Địa chỉ phòng (số nhà, tên đường)">
+          </label>
+
+          <!-- <label class="form-field">
+            <span class="label">Thành phố *</span>
+            <select name="ThanhPho" id="city" required>
+              <option value disabled selected>-- Chọn thành phố --</option>
+            </select>
+          </label> -->
+
+          <label class="form-field">
+            <span class="label">Giá phòng (VND) *</span>
+            <input type="number" min="0" step="1000" name="Gia" required placeholder="Ví dụ: 1200000">
+          </label>
+
+          <label class="form-field">
+            <span class="label">View</span>
+            <input type="text" name="View" placeholder="Ví dụ: Hướng biển">
+          </label>
+
+          <label class="form-field">
+            <span class="label">Ảnh phòng (tối đa 10 ảnh) *</span>
+            <input type="file" name="HinhAnh" accept="image/*" multiple>
+          </label>
+
+          <label class="form-field">
+            <span class="label">Ảnh giấy tờ phòng (tối đa 10 ảnh)</span>
+            <input type="file" name="GiayToPhong" accept="image/*" multiple>
+          </label>
+
+
+        </div>
+
+        <div class="form-grid-3">
+          <label class="form-field" style="margin-bottom: 10px;">
+            <span class="label">Chọn tỉnh thành</span>
+            <select name="province_id" class="choose_province">
+              <option value="">-- Vui Lòng Chọn Tỉnh Thành --</option>
+              <% provinces.forEach(province=> { %>
+                <option value="<%= province.id %>">
+                  <%= province.name %>
+                </option>
+                <% }) %>
+            </select>
+          </label>
+
+          <label class="form-field" style="margin-bottom: 10px;">
+            <span class="label">Chọn quận</span>
+            <select name="district_id" class="choose_district">
+              <option value="">-- Vui Lòng Chọn Quận --</option>
+
+            </select>
+          </label>
+
+          <label class="form-field" style="margin-bottom: 10px;">
+            <span class="label">Chọn phường</span>
+            <select name="ward_id" class="choose_ward">
+              <option value="">-- Vui Lòng Chọn Phường --</option>
+            </select>
+          </label>
+        </div>
+
+        <!-- Mô tả -->
         <label class="form-field">
-          <span class="label">Số phòng *</span>
-          <input type="text" name="SoPhong" required placeholder="Ví dụ: P101">
+          <span class="label">Mô tả</span>
+          <textarea name="MoTa" rows="4" placeholder="Mô tả chi tiết về phòng"></textarea>
         </label>
 
-        <label class="form-field">
-          <span class="label">Tên chỗ ở *</span>
-          <input type="text" name="TenChoO" required placeholder="Ví dụ: Sunrise Homestay">
-        </label>
-      </div>
+        <div class="form-actions">
+          <button type="submit" class="btn primary">Lưu phòng</button>
+          <a class="btn" href="/">Huỷ</a>
+        </div>
 
-      <!-- Dòng 2: Vị trí tầng + Loại phòng + View -->
-      <div class="form-grid">
-        <label class="form-field">
-          <span class="label">Vị trí tầng</span>
-          <input type="number" name="ViTriTang" min="0" placeholder="Ví dụ: 5">
-        </label>
+      </form>
+    </section>
+  </main>
 
-        <label class="form-field">
-          <span class="label">Loại phòng *</span>
-          <select name="MaLoaiPhong" required>
-            <option value disabled selected>-- Chọn loại phòng --</option>
-            <% roomTypes.forEach(type => { %>
-              <option value="<%= type.MaLoaiPhong %>"><%= type.TenLoaiPhong %></option>
-            <% }) %>
-          </select>
-        </label>
+  <script>
+    // fetch("https://provinces.open-api.vn/api/p/")
+    //   .then(res => res.json())
+    //   .then(data => {
+    //     const select = document.getElementById("city");
+    //     data.forEach(item => {
+    //       const opt = document.createElement("option");
+    //       opt.value = item.name;
+    //       opt.textContent = item.name;
+    //       select.appendChild(opt);
+    //     });
+    //   });
 
-      </div>
 
-      <!-- Dòng 3: Địa chỉ + Thành phố + Giá -->
-      <div class="form-grid">
-        <label class="form-field">
-          <span class="label">Địa chỉ</span>
-          <input type="text" name="DiaChi" placeholder="Địa chỉ phòng (số nhà, tên đường)">
-        </label>
 
-        <label class="form-field">
-          <span class="label">Thành phố *</span>
-          <select name="ThanhPho" id="city" required>
-            <option value disabled selected>-- Chọn thành phố --</option>
-          </select>
-        </label>
 
-        <label class="form-field">
-          <span class="label">Giá phòng (VND) *</span>
-          <input type="number" min="0" step="1000" name="Gia" required placeholder="Ví dụ: 1200000">
-        </label>
-        
-        <label class="form-field">
-          <span class="label">View</span>
-          <input type="text" name="View" placeholder="Ví dụ: Hướng biển">
-        </label>
-      </div>
 
-      <!-- Ảnh phòng -->
-      <div class="form-grid">
-        <label class="form-field">
-          <span class="label">Ảnh phòng (tối đa 10 ảnh) *</span>
-          <input type="file" name="HinhAnh" accept="image/*" multiple>
-        </label>
-      </div>
+  </script>
 
-      <!-- Ảnh giấy tờ -->
-      <div class="form-grid">
-        <label class="form-field">
-          <span class="label">Ảnh giấy tờ phòng (tối đa 10 ảnh)</span>
-          <input type="file" name="GiayToPhong" accept="image/*" multiple>
-        </label>
-      </div>
-
-      <!-- Mô tả -->
-      <label class="form-field">
-        <span class="label">Mô tả</span>
-        <textarea name="MoTa" rows="4" placeholder="Mô tả chi tiết về phòng"></textarea>
-      </label>
-
-      <div class="form-actions">
-        <button type="submit" class="btn primary">Lưu phòng</button>
-        <a class="btn" href="/">Huỷ</a>
-      </div>
-
-    </form>
-  </section>
-</main>
-
-<script>
-fetch("https://provinces.open-api.vn/api/p/")
-  .then(res => res.json())
-  .then(data => {
-    const select = document.getElementById("city");
-    data.forEach(item => {
-      const opt = document.createElement("option");
-      opt.value = item.name;
-      opt.textContent = item.name;
-      select.appendChild(opt);
-    });
-  });
-</script>
-
-<%- include('../layout/footer.ejs') %>
+  <%- include('../layout/footer.ejs') %>

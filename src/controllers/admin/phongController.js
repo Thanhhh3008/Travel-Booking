@@ -17,27 +17,16 @@ exports.getPendingRooms = async (req, res) => {
 //  Hiển thị danh sách tất cả phòng
 exports.getAllRooms = async (req, res) => {
   try {
-    const { status } = req.query;
-
-    let rooms;
-    if (status) {
-      rooms = await PhongModel.getRoomsByStatus(status);
-    } else {
-      rooms = await PhongModel.getAllRooms();
-    }
-
-    res.render('admin/tatcaphong', {
+    const rooms = await PhongModel.getAllRooms();
+    res.render('admin/tatcaphong', { 
       title: 'Tất cả chỗ ở',
-      rooms,
-      status 
+      rooms 
     });
-
   } catch (error) {
     console.error('Lỗi lấy danh sách phòng:', error);
     res.status(500).send('Lỗi server: ' + error.message);
   }
 };
-
 // Xem chi tiết phòng
 exports.getRoomDetail = async (req, res) => {
   try {

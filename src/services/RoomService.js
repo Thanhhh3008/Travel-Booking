@@ -83,8 +83,8 @@ class RoomService {
      * @param {number} id
      */
     findById = async (id) => {
-    try {
-        const query = `
+        try {
+            const query = `
             SELECT 
                 p.*,
                 lp.TenLoaiPhong,
@@ -101,44 +101,44 @@ class RoomService {
             WHERE p.MaPhong = ?
         `;
 
-        const [rows] = await pool.execute(query, [id]);
+            const [rows] = await pool.execute(query, [id]);
 
-        if (!rows.length) return null;
+            if (!rows.length) return null;
 
-        const row = rows[0];
+            const row = rows[0];
 
-        const room = new Phong(
-            row.MaPhong,
-            row.SoPhong,
-            row.ViTriTang,
-            row.TrangThaiPhong,
-            row.MaLoaiPhong,
-            row.View,
-            row.DiaChi,
-            row.Rating,
-            row.MoTa,
-            row.HinhAnh,
-            row.MaThietBi,
-            row.MaNguoiDung,
-            
-        );
+            const room = new Phong(
+                row.MaPhong,
+                row.SoPhong,
+                row.ViTriTang,
+                row.TrangThaiPhong,
+                row.MaLoaiPhong,
+                row.View,
+                row.DiaChi,
+                row.Rating,
+                row.MoTa,
+                row.HinhAnh,
+                row.MaThietBi,
+                row.MaNguoiDung,
 
-        room.TenLoaiPhong = row.TenLoaiPhong;
-        room.Gia = row.GiaPhong ?? null;
-        room.Username = row.Username;
-        room.HoTen = row.HoTen;       
-        room.TenChoO = row.TenChoO;  
-        room.ThanhPho = row.ThanhPho;  
-        room.MaNguoiDung = row.MaNguoiDung; 
-        room.TrangThaiPhong = row.TrangThaiPhong; 
-        room.avartar = row.avartar; 
-        return room;
+            );
 
-    } catch (err) {
-        console.error("RoomService.findById error:", err);
-        return null;
-    }
-};
+            room.TenLoaiPhong = row.TenLoaiPhong;
+            room.Gia = row.GiaPhong ?? null;
+            room.Username = row.Username;
+            room.HoTen = row.HoTen;
+            room.TenChoO = row.TenChoO;
+            room.ThanhPho = row.ThanhPho;
+            room.MaNguoiDung = row.MaNguoiDung;
+            room.TrangThaiPhong = row.TrangThaiPhong;
+            room.avartar = row.avartar;
+            return room;
+
+        } catch (err) {
+            console.error("RoomService.findById error:", err);
+            return null;
+        }
+    };
 
 
     /**
@@ -158,9 +158,9 @@ class RoomService {
      * @param {Object} data
      * @returns {Promise<number>} 
      */
-   create = async (data) => {
-    try {
-        const query = `
+    create = async (data) => {
+        try {
+            const query = `
             INSERT INTO phong (
                 SoPhong,
                 ViTriTang,
@@ -175,35 +175,37 @@ class RoomService {
                 GiayToPhong,
                 HinhAnh,
                 MaThietBi,
-                MaNguoiDung
+                MaNguoiDung,
+                ward_id
             )
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `;
 
-        const params = [
-            data.SoPhong,
-            data.ViTriTang ?? null,
-            data.TrangThaiPhong ?? 'Chờ xét duyệt',
-            data.MaLoaiPhong,
-            data.View ?? null,
-            data.DiaChi ?? null,
-            data.ThanhPho ?? null,   
-            data.Rating ?? null,
-            data.Gia ?? null,
-            data.MoTa ?? null,
-            data.GiayToPhong ?? null,
-            data.HinhAnh ?? null,
-            data.MaThietBi ?? null,
-            data.MaNguoiDung,
-        ];
+            const params = [
+                data.SoPhong,
+                data.ViTriTang ?? null,
+                data.TrangThaiPhong ?? 'Chờ xét duyệt',
+                data.MaLoaiPhong,
+                data.View ?? null,
+                data.DiaChi ?? null,
+                data.ThanhPho ?? null,
+                data.Rating ?? null,
+                data.Gia ?? null,
+                data.MoTa ?? null,
+                data.GiayToPhong ?? null,
+                data.HinhAnh ?? null,
+                data.MaThietBi ?? null,
+                data.MaNguoiDung,
+                data.ward_id
+            ];
 
-        const [result] = await pool.execute(query, params);
-        return result.insertId;
-    } catch (err) {
-        console.error('RoomService.create error:', err);
-        throw err;
-    }
-};
+            const [result] = await pool.execute(query, params);
+            return result.insertId;
+        } catch (err) {
+            console.error('RoomService.create error:', err);
+            throw err;
+        }
+    };
 
     /**
      * @param {number} id       
@@ -253,24 +255,24 @@ class RoomService {
             throw err;
         }
     };
-delete = async (id) => {
-    try {
-        const query = `
+    delete = async (id) => {
+        try {
+            const query = `
             DELETE FROM phong
             WHERE MaPhong = ?
         `;
 
-        const [result] = await pool.execute(query, [id]);
+            const [result] = await pool.execute(query, [id]);
 
-        return result.affectedRows > 0;
-    } catch (err) {
-        console.error('RoomService.delete error:', err);
-        throw err;
-    }
-};
+            return result.affectedRows > 0;
+        } catch (err) {
+            console.error('RoomService.delete error:', err);
+            throw err;
+        }
+    };
 
-async updateRating(roomId) {
-    const query = `
+    async updateRating(roomId) {
+        const query = `
         UPDATE phong
         SET
             Rating = (
@@ -285,8 +287,8 @@ async updateRating(roomId) {
             )
         WHERE MaPhong = ?
     `;
-    await pool.execute(query, [roomId, roomId, roomId]);
-}
+        await pool.execute(query, [roomId, roomId, roomId]);
+    }
 
     /**
      * Cập nhật trạng thái phòng theo ID

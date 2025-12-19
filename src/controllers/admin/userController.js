@@ -2,7 +2,7 @@ const User = require('../../models/admin/NguoiDung');
 const Notification = require('../../models/admin/ThongBao');
 const Room = require('../../models/admin/Phong');
 const VaiTro = require('../../models/admin/VaiTro');
-//  Lấy danh sách người dùng (có tìm kiếm)
+// 📋 Lấy danh sách người dùng (có tìm kiếm)
 exports.getAllUsers = async (req, res) => {
   try {
     const search = req.query.search || '';

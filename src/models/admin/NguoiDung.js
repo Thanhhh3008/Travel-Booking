@@ -18,30 +18,21 @@ countAll: async () => {
 },
 
 
- // Tìm kiếm theo họ tên, Username, SĐT hoặc email
-search: async (keyword) => {
-  if (!keyword) {
+  //  Tìm kiếm theo họ tên, SĐT hoặc email
+  search: async (keyword) => {
+    if (!keyword) {
+      const [rows] = await pool.query('SELECT * FROM nguoidung ORDER BY MaNguoiDung DESC');
+      return rows;
+    }
+    const likeKeyword = `%${keyword}%`;
     const [rows] = await pool.query(
-      'SELECT * FROM nguoidung ORDER BY MaNguoiDung DESC'
+      `SELECT * FROM nguoidung 
+       WHERE HoTen LIKE ? OR SDT LIKE ? OR Email LIKE ? 
+       ORDER BY MaNguoiDung DESC`,
+      [likeKeyword, likeKeyword, likeKeyword]
     );
     return rows;
-  }
-
-  const likeKeyword = `%${keyword}%`;
-
-  const [rows] = await pool.query(
-    `SELECT * FROM nguoidung 
-     WHERE HoTen LIKE ?
-        OR Username LIKE ?
-        OR SDT LIKE ?
-        OR Email LIKE ?
-     ORDER BY MaNguoiDung DESC`,
-    [likeKeyword, likeKeyword, likeKeyword, likeKeyword]
-  );
-
-  return rows;
-},
-
+  },
 
 
   // Xem chi tiết 1 người dùng
