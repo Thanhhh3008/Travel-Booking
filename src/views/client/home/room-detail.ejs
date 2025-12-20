@@ -23,7 +23,7 @@
         <% } %>
         <span><%= room.View || 'Chưa rõ' %></span>
         <span class="divider">·</span>
-        <span><%= room.ThanhPho || 'Chưa rõ' %></span>
+        
       </div>
     </div>
    <div class="room-header-actions">
@@ -73,7 +73,7 @@
     <div class="room-info-section">
       <!-- Title Section -->
       <div class="room-title-section">
-        <h2>Toàn bộ nhà nghỉ <%= room.TenChoO || 'Chưa rõ' %>  tại <%= room.DiaChi ? room.DiaChi.split(',')[0] : 'Liên Sơn' %>, Việt Nam</h2>
+        <h2>Toàn bộ nhà nghỉ <%= room.TenChoO || 'Chưa rõ' %>  tại <%= room.DiaChi ? room.DiaChi : 'Liên Sơn' %>, Việt Nam</h2>
         <div class="room-meta-inline">
           <span>3 khách</span>
           <span>1 phòng ngủ</span>

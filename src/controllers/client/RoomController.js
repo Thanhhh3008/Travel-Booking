@@ -114,7 +114,7 @@ class RoomController {
             const roomService = new RoomService();
 
             const rooms = await roomService.getAll(
-                `WHERE p.TrangThaiPhong = 'Đang hoạt động' and p.ThanhPho LIKE ?`,
+                `WHERE p.TrangThaiPhong = 'Đang hoạt động' and DiaChi LIKE ?`,
                 [`%${city}%`]
             );
 
@@ -129,124 +129,140 @@ class RoomController {
             res.status(500).send("Internal Server Error");
         }
     }
-//Thêm phòng
-    static async store(req, res) {
-        const roomService = new RoomService();
-        let redirectPath = '/';
+//     static async listByCity(req, res) {
+//     const thongbao = req.session.login
+//         ? await ThongBao.getByUser(req.session.login.maNguoiDung)
+//         : [];
 
-        try {
-            if (!req.session.login || !req.session.login.maNguoiDung) {
-                throw new Error('Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.');
-            }
+//     const currentUser = req.session.login
+//         ? await User.getById(req.session.login.maNguoiDung)
+//         : null;
 
-            const {
-                SoPhong,
-                ViTriTang,
-                TrangThaiPhong,
-                MaLoaiPhong,
-                View,
-                DiaChi,
-                ThanhPho,
-                Rating,
-                Gia,
-                MoTa,
-                MaThietBi,
-                ward_id
-            } = req.body;
+//     try {
+//         const provinceName = req.params.city;
+//         const roomService = new RoomService();
 
-            if (!SoPhong || !MaLoaiPhong || !Gia) {
-                throw new Error('Vui lòng nhập đầy đủ Số phòng, Loại phòng và Giá.');
-            }
+//         const rooms = await roomService.getAll(
+//             `WHERE pr.name = ? AND p.TrangThaiPhong = 'Đang hoạt động'`,
+//             [provinceName]
+//         );
 
-            // if (!ThanhPho || ThanhPho.trim() === '') {
-            //     throw new Error('Vui lòng nhập Thành phố.');
-            // }
+//         res.render('client/home/byCity', {
+//             city: provinceName,
+//             rooms,
+//             thongbao,
+//             currentUser
+//         });
+//     } catch (error) {
+//         console.error(error);
+//         res.status(500).send("Internal Server Error");
+//     }
+// }
 
-            const parsedLoaiPhong = Number(MaLoaiPhong);
-            const parsedGia = Number(Gia);
-            const parsedTang = ViTriTang ? Number(ViTriTang) : null;
-            const parsedRating = Rating ? Number(Rating) : null;
-            const parsedThietBi = MaThietBi ? Number(MaThietBi) : null;
+// Thêm phòng
 
-            if (!Number.isInteger(parsedLoaiPhong) || parsedLoaiPhong <= 0)
-                throw new Error('Loại phòng không hợp lệ.');
+static async store(req, res) {
+    const roomService = new RoomService();
+   
+    let redirectPath = '/';
 
-            if (!Number.isFinite(parsedGia) || parsedGia <= 0)
-                throw new Error('Giá phòng phải là số lớn hơn 0.');
+    try {
+        if (!req.session.login?.maNguoiDung) {
+            throw new Error('Phiên đăng nhập đã hết hạn.');
+        }
 
-            if (parsedTang !== null && (!Number.isInteger(parsedTang) || parsedTang < 0))
-                throw new Error('Vị trí tầng phải là số nguyên không âm.');
+        const {
+            TenChoO,
+            SoPhong,
+            ViTriTang,
+            TrangThaiPhong,
+            MaLoaiPhong,
+            View,
+            DiaChi,
+            Rating,
+            Gia,
+            MoTa,
+            MaThietBi,
+            ward_id
+        } = req.body;
 
-            if (parsedRating !== null && (parsedRating < 0 || parsedRating > 5))
-                throw new Error('Đánh giá phải nằm trong khoảng từ 0 đến 5.');
+        if (!SoPhong || !MaLoaiPhong || !Gia || !ward_id) {
+            throw new Error('Vui lòng nhập đầy đủ thông tin bắt buộc.');
+        }
 
-            const imagesPhong = req.files?.HinhAnh
-                ? req.files.HinhAnh.map(f => f.filename).join(',')
-                : null;
+        // Parse số
+        const parsedLoaiPhong = Number(MaLoaiPhong);
+        const parsedGia = Number(Gia);
+        const parsedTang = ViTriTang ? Number(ViTriTang) : null;
+        const parsedRating = Rating ? Number(Rating) : null;
+        const parsedThietBi = MaThietBi ? Number(MaThietBi) : null;
 
-            const imagesGiayTo = req.files?.GiayToPhong
-                ? req.files.GiayToPhong.map(f => f.filename).join(',')
-                : null;
+        // Validate
+        if (!Number.isInteger(parsedLoaiPhong) || parsedLoaiPhong <= 0)
+            throw new Error('Loại phòng không hợp lệ.');
 
-            await roomService.create({
-                SoPhong,
-                ViTriTang: parsedTang,
-                TrangThaiPhong: TrangThaiPhong || 'Chờ xét duyệt',
-                MaLoaiPhong: parsedLoaiPhong,
-                View: View || null,
-                DiaChi: DiaChi || null,
-                ThanhPho: ThanhPho?.trim() || null,
-                Rating: parsedRating,
-                Gia: parsedGia,
-                MoTa: MoTa || null,
-                HinhAnh: imagesPhong,
-                GiayToPhong: imagesGiayTo,
-                MaThietBi: parsedThietBi,
-                MaNguoiDung: req.session.login.maNguoiDung,
-                ward_id: ward_id
-            });
+        if (!Number.isFinite(parsedGia) || parsedGia <= 0)
+            throw new Error('Giá phòng phải > 0.');
 
-            req.session.message = {
-                mess: 'Thêm phòng thành công. Xin vui lòng chờ admin xét duyệt. Thông báo sẽ được gửi tới bạn trong 24h',
-                type: 'success',
-            };
+        // 🔥 LẤY TÊN PHƯỜNG / QUẬN / TỈNH
+        const addressInfo = await roomService.getFullAddressByWardId(ward_id);
+        if (!addressInfo) {
+            throw new Error('Không tìm thấy địa chỉ hành chính.');
+        }
+
+        // 🔥 GHÉP ĐỊA CHỈ HOÀN CHỈNH
+        const fullDiaChi = [
+            DiaChi?.trim(),
+            addressInfo.ward_name,
+            addressInfo.district_name,
+            addressInfo.province_name
+        ].filter(Boolean).join(', ');
+
+        // Ảnh
+        const imagesPhong = req.files?.HinhAnh
+            ? req.files.HinhAnh.map(f => f.filename).join(',')
+            : null;
+
+        const imagesGiayTo = req.files?.GiayToPhong
+            ? req.files.GiayToPhong.map(f => f.filename).join(',')
+            : null;
+
+        // 🔥 LƯU PHÒNG
+        await roomService.create({
+            SoPhong,
+            ViTriTang: parsedTang,
+            TenChoO:TenChoO,
+            TrangThaiPhong: TrangThaiPhong || 'Chờ xét duyệt',
+            MaLoaiPhong: parsedLoaiPhong,
+            View: View || null,
+            DiaChi: fullDiaChi,     // ⭐ ĐỊA CHỈ ĐÃ GHÉP
+            Rating: parsedRating,
+            Gia: parsedGia,
+            MoTa: MoTa || null,
+            HinhAnh: imagesPhong,
+            GiayToPhong: imagesGiayTo,
+            MaThietBi: parsedThietBi,
+            MaNguoiDung: req.session.login.maNguoiDung,
+            ward_id
+        });
+
+        req.session.message = {
+            mess: 'Thêm phòng thành công. Vui lòng chờ admin xét duyệt.',
+            type: 'success'
+        };
 
     } catch (error) {
         console.error('Error saving room:', error);
 
-        if (req.files) {
-            ['HinhAnh', 'GiayToPhong'].forEach(field => {
-                if (req.files[field]) {
-                    req.files[field].forEach(file => {
-                        const filePath = path.join(
-                            __dirname,
-                            '..',
-                            '..',
-                            '..',
-                            'public',
-                            'admin',
-                            'uploads',
-                            'anhphong',
-                            file.filename
-                        );
-                        fs.unlink(filePath, err => {
-                            if (err) console.error('Cannot remove file:', err);
-                        });
-                    });
-                }
-            });
-        }
-
         req.session.message = {
-            mess: error.message || 'Không thể thêm phòng. Vui lòng thử lại sau.',
-            type: 'danger',
+            mess: error.message || 'Không thể thêm phòng.',
+            type: 'danger'
         };
-
-        redirectPath = '/';
     }
 
     req.session.save(() => res.redirect(redirectPath));
 }
+
 
 
     // =============== CẬP NHẬT PHÒNG ===============

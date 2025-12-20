@@ -49,20 +49,7 @@
       <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
 
         <!-- Lọc theo thành phố -->
-        <div>
-          <label style="display: block; margin-bottom: 8px; font-weight: 600; font-size: 14px; color: #333;">Thành phố</label>
-          <select 
-            id="filterCity" 
-            style="width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; font-family: 'Inter', sans-serif; background: #fff; cursor: pointer; outline: none;"
-          >
-            <option value="">Tất cả thành phố</option>
-            <% if (allCities && allCities.length > 0) { %>
-              <% allCities.forEach(city => { %>
-                <option value="<%= city %>"><%= city %></option>
-              <% }); %>
-            <% } %>
-          </select>
-        </div>
+       
 
         <!-- Lọc theo loại phòng -->
         <div>
@@ -162,7 +149,7 @@
         </div>
 
         <div class="card-body">
-          <h3 class="title">Phòng <%= room.TenChoO %> tại <%= room.DiaChi %></h3>
+          <h3 class="title">Phòng <%= room.TenChoO %> tại <%= room.District %>, <%=room.ThanhPho %></h3>
 
           <div class="meta">
             <%= helpers.formatMoney(room.Gia) %>đ / đêm · ★
@@ -187,7 +174,7 @@
     document.addEventListener('DOMContentLoaded', () => {
       // Lấy các phần tử
       const searchInput = document.getElementById('searchInput');
-      const filterCity = document.getElementById('filterCity');
+      //const filterCity = document.getElementById('filterCity');
       const filterRoomType = document.getElementById('filterRoomType');
       const filterPrice = document.getElementById('filterPrice');
       const filterRating = document.getElementById('filterRating');
@@ -197,41 +184,37 @@
 
       // Hàm lọc phòng từ DATABASE
       async function filterRooms() {
-        // Lấy giá trị filter
-        const searchText = searchInput.value.trim();
-        const selectedCity = filterCity.value;
-        const selectedRoomType = filterRoomType.value;
-        const selectedPrice = filterPrice.value;
-        const selectedRating = filterRating.value;
+  const searchText = searchInput.value.trim();
+  const selectedRoomType = filterRoomType.value;
+  const selectedPrice = filterPrice.value;
+  const selectedRating = filterRating.value;
 
-        // Xây dựng query string
-        const params = new URLSearchParams();
-        if (searchText) params.append('search', searchText);
-        if (selectedCity) params.append('city', selectedCity);
-        if (selectedRoomType) params.append('roomType', selectedRoomType);
-        if (selectedPrice) params.append('priceRange', selectedPrice);
-        if (selectedRating) params.append('rating', selectedRating);
+  const params = new URLSearchParams();
 
-        try {
-          // Hiển thị loading
-          showLoading(true);
+  if (searchText) params.append('search', searchText);
+  if (selectedRoomType) params.append('roomType', selectedRoomType);
+  if (selectedPrice) params.append('priceRange', selectedPrice);
+  if (selectedRating) params.append('rating', selectedRating);
 
-          // Gọi API
-          const response = await fetch(`/api/search-rooms?${params.toString()}`);
-          const result = await response.json();
+  try {
+    showLoading(true);
 
-          if (result.success) {
-            renderRooms(result.data);
-          } else {
-            showError('Có lỗi xảy ra khi tìm kiếm phòng');
-          }
-        } catch (error) {
-          console.error('Error filtering rooms:', error);
-          showError('Không thể kết nối đến server');
-        } finally {
-          showLoading(false);
-        }
-      }
+    const response = await fetch(`/api/search-rooms?${params.toString()}`);
+    const result = await response.json();
+
+    if (result.success) {
+      renderRooms(result.data);
+    } else {
+      showError('Có lỗi xảy ra khi tìm kiếm phòng');
+    }
+  } catch (err) {
+    console.error(err);
+    showError('Không thể kết nối server');
+  } finally {
+    showLoading(false);
+  }
+}
+
 
       // Hàm render danh sách phòng
       function renderRooms(rooms) {
@@ -299,7 +282,7 @@
                 </span>
               </div>
               <div class="card-body">
-                <h3 class="title">Phòng ${room.TenChoO} tại ${room.DiaChi}</h3>
+                <h3 class="title">Phòng ${room.TenChoO} tại ${room.DistrictName},${room.DistrictName} </h3>
                 <div class="meta">
                   ${formatMoney(room.Gia)}đ / đêm · ★ ${room.Rating || 'Chưa có'}
                 </div>
@@ -349,7 +332,7 @@
       }
 
       // Gắn sự kiện cho các filter
-      if (filterCity) filterCity.addEventListener('change', filterRooms);
+      //if (filterCity) filterCity.addEventListener('change', filterRooms);
       if (filterRoomType) filterRoomType.addEventListener('change', filterRooms);
       if (filterPrice) filterPrice.addEventListener('change', filterRooms);
       if (filterRating) filterRating.addEventListener('change', filterRooms);
@@ -358,7 +341,7 @@
       if (resetFilter) {
         resetFilter.addEventListener('click', () => {
           if (searchInput) searchInput.value = '';
-          if (filterCity) filterCity.value = '';
+          //if (filterCity) filterCity.value = '';
           if (filterRoomType) filterRoomType.value = '';
           if (filterPrice) filterPrice.value = '';
           if (filterRating) filterRating.value = '';

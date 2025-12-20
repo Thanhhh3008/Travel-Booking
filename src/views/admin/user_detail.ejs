@@ -5,21 +5,65 @@
 
   <form id="editForm">
     <table class="table table-bordered mt-3" id="userTable">
-      <tr><th>Mã người dùng</th><td><%= user.MaNguoiDung %></td></tr>
-      <tr><th>Họ tên</th><td class="editable" data-field="HoTen"><%= user.HoTen %></td></tr>
-      <tr><th>Ngày sinh</th><td class="editable" data-field="NgaySinh"><%= user.NgaySinh ? new Date(user.NgaySinh).toISOString().split('T')[0] : '' %></td></tr>
-      
-      <tr><th>Username</th><td><%= user.Username %></td></tr>
-      <tr><th>Email</th><td class="editable" data-field="Email"><%= user.Email %></td></tr>
-      <tr><th>Địa chỉ</th><td class="editable" data-field="DiaChi"><%= user.DiaChi %></td></tr>
-      <tr><th>SĐT</th><td class="editable" data-field="SDT"><%= user.SDT %></td></tr>
-      <tr><th>Quốc tịch</th><td class="editable" data-field="QuocTich"><%= user.QuocTich %></td></tr>
-      <!-- <tr><th>Đánh giá</th><td class="editable" data-field="Rating"><%= user.Rating %></td></tr> -->
-      
+      <tr>
+        <th>Mã người dùng</th>
+        <td><%= user.MaNguoiDung %></td>
+      </tr>
+
+      <tr>
+        <th>Họ tên</th>
+        <td class="editable" data-field="HoTen">
+          <%= user.HoTen || '' %>
+        </td>
+      </tr>
+
+      <tr>
+        <th>Ngày sinh</th>
+        <td class="editable" data-field="NgaySinh">
+          <%= user.NgaySinh ? new Date(user.NgaySinh).toISOString().split('T')[0] : '' %>
+        </td>
+      </tr>
+
+      <tr>
+        <th>Username</th>
+        <td><%= user.Username %></td>
+      </tr>
+
+      <tr>
+        <th>Email</th>
+        <td class="editable" data-field="Email">
+          <%= user.Email || '' %>
+        </td>
+      </tr>
+
+      <tr>
+        <th>Địa chỉ</th>
+        <td class="editable" data-field="DiaChi">
+          <%= user.DiaChi || '' %>
+        </td>
+      </tr>
+
+      <tr>
+        <th>SĐT</th>
+        <td class="editable" data-field="SDT">
+          <%= user.SDT || '' %>
+        </td>
+      </tr>
+
+      <tr>
+        <th>Quốc tịch</th>
+        <td class="editable" data-field="QuocTich">
+          <%= user.QuocTich || '' %>
+        </td>
+      </tr>
+
       <tr>
         <th>Vai trò</th>
-        <td class="editable" data-field="MaVaiTro" data-type="select" data-current="<%= user.MaVaiTro %>">
-          <!-- Hiển thị text role hiện tại -->
+        <td class="editable"
+            data-field="MaVaiTro"
+            data-type="select"
+            data-current="<%= user.MaVaiTro %>">
+
           <span class="role-text">
             <%= roles.find(r => String(r.MaVaiTro) === String(user.MaVaiTro))?.TenVaiTro || 'Chưa có vai trò' %>
           </span>
@@ -31,8 +75,11 @@
       <a href="/admin/user" class="btn btn-secondary">⬅️ Quay lại</a>
       <button type="button" id="editBtn" class="btn btn-warning">✏️ Sửa</button>
       <button type="button" id="saveBtn" class="btn btn-success d-none">💾 Lưu</button>
-      <a href="/admin/user/delete/<%= user.MaNguoiDung %>" class="btn btn-danger"
-        onclick="return confirm('Bạn có chắc muốn xóa người dùng này không?')">🗑️ Xóa</a>
+      <a href="/admin/user/delete/<%= user.MaNguoiDung %>"
+         class="btn btn-danger"
+         onclick="return confirm('Bạn có chắc muốn xóa người dùng này không?')">
+        🗑️ Xóa
+      </a>
     </div>
   </form>
 </div>
@@ -42,58 +89,70 @@
   const saveBtn = document.getElementById('saveBtn');
   const table = document.getElementById('userTable');
   const userId = "<%= user.MaNguoiDung %>";
-
   const roles = <%- JSON.stringify(roles) %>;
-  
 
-
+  /* ====== BẬT CHẾ ĐỘ SỬA ====== */
   editBtn.addEventListener('click', () => {
     table.querySelectorAll('.editable').forEach(td => {
-      if (td.dataset.type === "select") {
+
+      if (td.dataset.type === 'select') {
         const current = td.dataset.current;
-        let options = roles.map(r => 
-          `<option value="${r.MaVaiTro}" ${String(r.MaVaiTro) === String(current) ? 'selected' : ''}>${r.TenVaiTro}</option>`
-        ).join('');
-        td.innerHTML = `<select class="form-select" name="${td.dataset.field}">${options}</select>`;
-      } else {
+        const options = roles.map(r => `
+          <option value="${r.MaVaiTro}" ${String(r.MaVaiTro) === String(current) ? 'selected' : ''}>
+            ${r.TenVaiTro}
+          </option>
+        `).join('');
+
+        td.innerHTML = `
+          <select class="form-select" name="${td.dataset.field}">
+            ${options}
+          </select>
+        `;
+      } 
+      else {
         const value = td.textContent.trim();
-        td.innerHTML = `<input type="text" class="form-control" name="${td.dataset.field}" value="${value}">`;
+        td.innerHTML = `
+          <input type="text"
+                 class="form-control"
+                 name="${td.dataset.field}"
+                 value="${value}">
+        `;
       }
     });
+
     editBtn.classList.add('d-none');
     saveBtn.classList.remove('d-none');
   });
 
+  /* ====== LƯU DỮ LIỆU ====== */
   saveBtn.addEventListener('click', async () => {
     const formData = {};
-    let valid = true;
-    let errorMsg = "";
+    let errorMsg = '';
 
     table.querySelectorAll('.editable input, .editable select').forEach(input => {
       const name = input.name;
       const value = input.value.trim();
 
-      if (!value) {
-        valid = false;
-        errorMsg = "Không được để trống các trường bắt buộc.";
-      } 
-      else if (name === "HoTen" && value.length > 50) {
-        valid = false;
-        errorMsg = "Họ tên không được vượt quá 50 ký tự.";
+      // 👉 CHỈ VALIDATE KHI CÓ NHẬP
+      if (value !== '') {
+
+        if (name === 'HoTen' && value.length > 50) {
+          errorMsg = 'Họ tên không được vượt quá 50 ký tự';
+        }
+
+        if (name === 'Email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+          errorMsg = 'Email không hợp lệ';
+        }
+
+        if (name === 'SDT' && !/^[0-9]{9,11}$/.test(value)) {
+          errorMsg = 'Số điện thoại phải từ 9–11 chữ số';
+        }
       }
-      else if (name === "Email" && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-        valid = false;
-        errorMsg = "Email không hợp lệ.";
-      }
-      else if (name === "SDT" && !/^[0-9]{9,11}$/.test(value)) {
-        valid = false;
-        errorMsg = "Số điện thoại phải từ 9-11 chữ số.";
-      }
-      
-      formData[name] = value;
+
+      formData[name] = value || null;
     });
 
-    if (!valid) {
+    if (errorMsg) {
       alert('⚠️ ' + errorMsg);
       return;
     }
@@ -105,11 +164,12 @@
     });
 
     const result = await res.json();
+
     if (result.success) {
-      alert('✅ Cập nhật thành công!');
-      window.location.href = `/admin/user/detail/${userId}?updated=1`;
+      alert(' Cập nhật thành công');
+      location.reload();
     } else {
-      alert('❌ Lỗi cập nhật: ' + result.message);
+      alert(' Lỗi: ' + result.message);
     }
   });
 </script>

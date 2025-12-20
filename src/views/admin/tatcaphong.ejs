@@ -64,8 +64,8 @@
     <tr>
       <th>#</th>
       <th>Số phòng</th>
-      <th>Địa chỉ</th>
-      <th>Thành phố</th>
+      <th>Tên chỗ ở</th>
+      <th>Tỉnh/Thành phố</th>
       <th>Loại phòng</th>
       <th>Chủ sở hữu</th>
       <th>Trạng thái</th>
@@ -81,9 +81,9 @@
 
           <td><%= room.SoPhong %></td>
 
-          <td><%= room.DiaChi %></td>
+          <td><%= room.TenChoO %></td>
 
-          <td><%= room.ThanhPho || "Không rõ" %></td>
+          <td><%= room.ProvinceName|| "Không rõ" %></td>
 
           <td><%= room.TenLoaiPhong || "Không rõ" %></td>
 
