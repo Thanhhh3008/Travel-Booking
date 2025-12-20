@@ -8,10 +8,16 @@ getAllRooms: async () => {
     SELECT 
       p.*, 
       nd.Username, 
-      lp.TenLoaiPhong
+      lp.TenLoaiPhong,
+       pr.name AS ProvinceName,
+       d.name  AS DistrictName,
+       w.name  AS WardName
     FROM phong p
     LEFT JOIN nguoidung nd ON p.MaNguoiDung = nd.MaNguoiDung
     LEFT JOIN loaiphong lp ON p.MaLoaiPhong = lp.MaLoaiPhong
+    JOIN ward w ON p.ward_id = w.id
+    JOIN district d ON w.district_id = d.id
+    JOIN province pr ON d.province_id = pr.id
     ORDER BY p.MaPhong DESC
   `);
   return rows;
@@ -21,9 +27,15 @@ getAllRooms: async () => {
   // Lấy danh sách phòng chờ duyệt
  getPendingRooms: async () => {
   const [rows] = await pool.query(`
-    SELECT p.*, nd.Username
+    SELECT p.*, nd.Username,
+     pr.name AS ProvinceName,
+       d.name  AS DistrictName,
+       w.name  AS WardName
     FROM phong p
     LEFT JOIN nguoidung nd ON p.MaNguoiDung = nd.MaNguoiDung
+      JOIN ward w ON p.ward_id = w.id
+    JOIN district d ON w.district_id = d.id
+    JOIN province pr ON d.province_id = pr.id
     WHERE p.TrangThaiPhong = 'Chờ xét duyệt'
     ORDER BY p.MaPhong DESC
   `);

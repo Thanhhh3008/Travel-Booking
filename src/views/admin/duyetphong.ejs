@@ -8,7 +8,8 @@
       <tr>
         <th>#</th>
         <th>Số phòng</th>
-        <th>Địa chỉ</th>
+        <th>Tên chỗ ở</th>
+        <th>Tỉnh/Thành phố</th>
          <th>Người đăng</th>
         <th>Trạng thái</th>
         <th>Thao tác</th>
@@ -20,7 +21,8 @@
           <tr>
             <td><%= room.MaPhong %></td>
             <td><%= room.SoPhong %></td>
-            <td><%= room.DiaChi %></td>
+            <td><%= room.TenChoO %></td>
+            <td><%= room.ProvinceName %></td>
              <td><%= room.Username || 'Không xác định' %></td> 
             <td>
   <span class="badge bg-secondary"><%= room.TrangThaiPhong %></span>

@@ -29,9 +29,15 @@ class RoomService {
                     p.gia AS GiaPhong,
                     p.ThanhPho,
                     p.TenChoO,
-                    lp.TenLoaiPhong
+                    lp.TenLoaiPhong,
+                    pr.name AS ProvinceName,
+                    d.name  AS DistrictName,
+                    w.name  AS WardName
                 FROM phong p
                 JOIN loaiphong lp ON p.MaLoaiPhong = lp.MaLoaiPhong
+                JOIN ward w ON p.ward_id = w.id
+                JOIN district d ON w.district_id = d.id
+                JOIN province pr ON d.province_id = pr.id
             `;
 
             if (cond && cond.trim() !== '') {
@@ -57,7 +63,9 @@ class RoomService {
                     row.MaThietBi,
                     row.MaNguoiDung
                 );
-                room.ThanhPho = row.ThanhPho;
+                // room.ThanhPho = row.ThanhPho;
+                room.ThanhPho = row.ProvinceName;  // Lấy từ JOIN
+                room.District=row.DistrictName;
                 room.TenChoO = row.TenChoO;
                 room.TenLoaiPhong = row.TenLoaiPhong;
                 room.Gia = row.GiaPhong ?? null;
@@ -122,7 +130,7 @@ class RoomService {
             row.MaThietBi,
             row.MaNguoiDung,
             
-        );s
+        )
         //
         room.Email = row.Email;
         room.TenLoaiPhong = row.TenLoaiPhong;
@@ -164,19 +172,28 @@ class RoomService {
         try {
             const query = `
             INSERT INTO phong (
+                TenChoO,
                 SoPhong,
                 ViTriTang,
-	
+                TrangThaiPhong,
+                MaLoaiPhong,
+                View,
+                DiaChi,
+                ThanhPho,
+                Rating,
+                Gia,
+                MoTa,
                 GiayToPhong,
                 HinhAnh,
                 MaThietBi,
                 MaNguoiDung,
                 ward_id
             )
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `;
 
             const params = [
+                data.TenChoO,
                 data.SoPhong,
                 data.ViTriTang ?? null,
                 data.TrangThaiPhong ?? 'Chờ xét duyệt',
@@ -265,7 +282,20 @@ delete = async (id) => {
         throw err;
     }
 };
+async getFullAddressByWardId(ward_id) {
+        const [rows] = await pool.execute(`
+            SELECT 
+                w.name  AS ward_name,
+                d.name  AS district_name,
+                p.name  AS province_name
+            FROM ward w
+            JOIN district d ON w.district_id = d.id
+            JOIN province p ON d.province_id = p.id
+            WHERE w.id = ?
+        `, [ward_id]);
 
+        return rows[0] || null;
+    }
 async updateRating(roomId) {
     const query = `
         UPDATE phong
@@ -459,6 +489,31 @@ async updateRating(roomId) {
             return [];
         }
     };
+async getRoomsByProvince(provinceId) {
+    const [rows] = await pool.execute(`
+        SELECT p.*
+        FROM phong p
+        JOIN ward w ON p.ward_id = w.id
+        JOIN district d ON w.district_id = d.id
+        JOIN province pr ON d.province_id = pr.id
+        WHERE pr.id = ?
+          AND p.TrangThaiPhong = 'Đang hoạt động'
+    `, [provinceId]);
+
+    return rows;
+}
+getAllProvinces = async () => {
+    const [rows] = await pool.execute(`
+        SELECT DISTINCT pr.id, pr.name
+        FROM phong p
+        JOIN ward w ON p.ward_id = w.id
+        JOIN district d ON w.district_id = d.id
+        JOIN province pr ON d.province_id = pr.id
+        WHERE p.TrangThaiPhong = 'Đang hoạt động'
+        ORDER BY pr.name
+    `);
+    return rows;
+};
 
 
 }
