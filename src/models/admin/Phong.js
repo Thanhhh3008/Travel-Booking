@@ -23,7 +23,36 @@ getAllRooms: async () => {
   return rows;
 },
 
+// Đếm tổng số phòng chờ duyệt
+countPendingRooms : async () => {
+  const query = `
+    SELECT COUNT(*) as total 
+    FROM phong 
+    WHERE TrangThaiPhong = 'Chờ xét duyệt'
+  `;
+  const [result] = await pool.query(query);
+  return result[0].total;
+},
 
+// Lấy danh sách phòng chờ duyệt với phân trang
+getPendingRoomsWithPagination : async (limit, offset) => {
+  const query = `
+    SELECT p.*, nd.Username,
+     pr.name AS ProvinceName,
+       d.name  AS DistrictName,
+       w.name  AS WardName
+    FROM phong p
+    LEFT JOIN nguoidung nd ON p.MaNguoiDung = nd.MaNguoiDung
+      JOIN ward w ON p.ward_id = w.id
+    JOIN district d ON w.district_id = d.id
+    JOIN province pr ON d.province_id = pr.id
+    WHERE p.TrangThaiPhong = 'Chờ xét duyệt'
+    ORDER BY p.MaPhong DESC
+    LIMIT ? OFFSET ?
+  `;
+  const [rooms] = await pool.query(query, [limit, offset]);
+  return rooms;
+},
   // Lấy danh sách phòng chờ duyệt
  getPendingRooms: async () => {
   const [rows] = await pool.query(`
@@ -104,7 +133,65 @@ deleteRoom: async (maPhong) => {
  deleteByUser: async (userId) => {
     const [result] = await pool.query('DELETE FROM phong WHERE MaNguoiDung = ?', [userId]);
     return result;
-  }
+  },
+  // Thêm vào PhongModel của bạn
+
+// Đếm tổng số phòng
+ countAllRooms : async () => {
+  const query = `SELECT COUNT(*) as total FROM phong`;
+  const [result] = await pool.query(query);
+  return result[0].total;
+},
+
+// Đếm số phòng theo trạng thái
+countRoomsByStatus : async (status) => {
+  const query = `SELECT COUNT(*) as total FROM phong WHERE TrangThaiPhong = ?`;
+  const [result] = await pool.query(query, [status]);
+  return result[0].total;
+},
+
+// Lấy tất cả phòng với phân trang
+getAllRoomsWithPagination : async (limit, offset) => {
+  const query = `
+    SELECT 
+      p.*,
+      lp.TenLoaiPhong,
+      u.Username,
+      pr.name AS ProvinceName
+    FROM phong p
+    LEFT JOIN LoaiPhong lp ON p.MaLoaiPhong = lp.MaLoaiPhong
+    LEFT JOIN NguoiDung u ON p.MaNguoiDung = u.MaNguoiDung
+    JOIN ward w ON p.ward_id = w.id
+    JOIN district d ON w.district_id = d.id
+    JOIN province pr ON d.province_id = pr.id
+    ORDER BY p.MaPhong DESC
+    LIMIT ? OFFSET ?
+  `;
+  const [rooms] = await pool.query(query, [limit, offset]);
+  return rooms;
+},
+
+// Lấy phòng theo trạng thái với phân trang
+getRoomsByStatusWithPagination : async (status, limit, offset) => {
+  const query = `
+    SELECT 
+      p.*,
+      lp.TenLoaiPhong,
+      u.Username,
+      pr.name AS ProvinceName
+    FROM phong p
+    LEFT JOIN LoaiPhong lp ON p.MaLoaiPhong = lp.MaLoaiPhong
+     LEFT JOIN NguoiDung u ON p.MaNguoiDung = u.MaNguoiDung
+     JOIN ward w ON p.ward_id = w.id
+    JOIN district d ON w.district_id = d.id
+    JOIN province pr ON d.province_id = pr.id
+    WHERE p.TrangThaiPhong = ?
+    ORDER BY p.MaPhong DESC
+    LIMIT ? OFFSET ?
+  `;
+  const [rooms] = await pool.query(query, [status, limit, offset]);
+  return rooms;
+}
 };
 
 module.exports = PhongModel;

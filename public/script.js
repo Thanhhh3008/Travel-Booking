@@ -1,4 +1,6 @@
-// thêm rule regex
+/*************************************************
+ * THÊM RULE REGEX CHUNG
+ *************************************************/
 $.validator.addMethod(
     "regex",
     function (value, element, regexp) {
@@ -8,12 +10,25 @@ $.validator.addMethod(
     "Định dạng không hợp lệ"
 );
 
-// validate login
+/*************************************************
+ * RULE EMAIL GMAIL
+ *************************************************/
+$.validator.addMethod(
+    "gmail",
+    function (value, element) {
+        return this.optional(element) || /^[a-zA-Z0-9._%+-]+@gmail\.com$/.test(value);
+    },
+    "Vui lòng nhập email Gmail hợp lệ (vd: ten@gmail.com)"
+);
+
+/*************************************************
+ * VALIDATE LOGIN
+ *************************************************/
 $(".form-login").validate({
     rules: {
         email: {
             required: true,
-            email: true
+            gmail: true
         },
         password: {
             required: true,
@@ -25,7 +40,7 @@ $(".form-login").validate({
     messages: {
         email: {
             required: "Vui lòng nhập email",
-            email: "Vui lòng nhập đúng định dạng email (vd: tenban@gmail.com)"
+            gmail: "Chỉ chấp nhận email Gmail (vd: ten@gmail.com)"
         },
         password: {
             required: "Vui lòng nhập mật khẩu",
@@ -35,7 +50,9 @@ $(".form-login").validate({
     }
 });
 
-// validate register
+/*************************************************
+ * VALIDATE REGISTER
+ *************************************************/
 $(".form-register").validate({
     rules: {
         nfirst: {
@@ -52,17 +69,17 @@ $(".form-register").validate({
             required: true,
             minlength: 4,
             maxlength: 30,
-            regex: /^[a-z0-9_]+$/ // chỉ chữ thường, số, dấu gạch dưới, không khoảng trắng
+            regex: /^[a-z0-9_]+$/ // chữ thường, số, gạch dưới
         },
         email: {
             required: true,
-            email: true
+            gmail: true
         },
         password: {
             required: true,
             minlength: 8,
-            regex: /^(?=.*[A-Z])(?=.*\d).{6,}$/
-            // ít nhất 1 chữ thường, 1 hoa, 1 số, 1 ký tự đặc biệt
+            regex: /^(?=.*[A-Z])(?=.*\d).{8,}$/
+            // Ít nhất 1 chữ hoa + 1 số + tối thiểu 8 ký tự
         },
         "re-password": {
             required: true,
@@ -84,15 +101,15 @@ $(".form-register").validate({
             required: "Vui lòng nhập tên đăng nhập",
             minlength: "Tên đăng nhập ít nhất 4 ký tự",
             maxlength: "Tên đăng nhập tối đa 30 ký tự",
-            regex: "Chỉ dùng chữ thường, số hoặc dấu gạch dưới (không khoảng trắng)"
+            regex: "Chỉ dùng chữ thường, số hoặc dấu gạch dưới"
         },
         email: {
             required: "Vui lòng nhập email",
-            email: "Email không hợp lệ (vd: tenban@gmail.com)"
+            gmail: "Chỉ chấp nhận email Gmail (vd: ten@gmail.com)"
         },
         password: {
             required: "Vui lòng nhập mật khẩu",
-            minlength: "Mật khẩu phải có ít nhất 6 ký tự",
+            minlength: "Mật khẩu phải có ít nhất 8 ký tự",
             regex: "Mật khẩu phải chứa ít nhất 1 chữ hoa và 1 số"
         },
         "re-password": {

@@ -2028,3 +2028,319 @@ label.error {
         flex-direction: column;
     }
 }
+.location-showcase {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    /* Header với nút điều hướng */
+    .showcase-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+      gap: 16px;
+    }
+
+    .showcase-title {
+      font-size: 26px;
+      font-weight: 700;
+      color: #222;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .showcase-nav {
+      display: flex;
+      gap: 12px;
+    }
+
+    .nav-arrow {
+      width: 40px;
+      height: 40px;
+      border: 1px solid #ddd;
+      border-radius: 50%;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .nav-arrow:hover {
+      background: #f5f5f5;
+      border-color: #222;
+      transform: scale(1.05);
+    }
+
+    .nav-arrow:active {
+      transform: scale(0.95);
+    }
+
+    .nav-arrow svg {
+      width: 16px;
+      height: 16px;
+      stroke: #222;
+      stroke-width: 2.5;
+    }
+
+    /* Wrapper carousel */
+    .carousel-wrapper {
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Track carousel */
+    .carousel-track {
+      display: flex;
+      gap: 20px;
+      overflow-x: auto;
+      scroll-behavior: smooth;
+      padding-bottom: 8px;
+      scrollbar-width: none; /* Firefox */
+      -ms-overflow-style: none; /* IE/Edge */
+    }
+
+    .carousel-track::-webkit-scrollbar {
+      display: none; /* Chrome/Safari */
+    }
+
+    /* Card địa điểm */
+    .location-card {
+      flex: 0 0 auto;
+      width: 300px;
+      border-radius: 16px;
+      overflow: hidden;
+      background: #fff;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      position: relative;
+    }
+
+    .location-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    }
+
+    /* Ảnh */
+    .location-image {
+      position: relative;
+      width: 100%;
+      height: 280px;
+      overflow: hidden;
+    }
+
+    .location-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.4s ease;
+    }
+
+    .location-card:hover .location-image img {
+      transform: scale(1.08);
+    }
+
+    /* Badge yêu thích */
+    .favorite-badge {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      background: rgba(255, 255, 255, 0.95);
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #222;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    /* Icon trái tim */
+    .heart-icon {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: 36px;
+      height: 36px;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .heart-icon:hover {
+      background: #ff385c;
+      transform: scale(1.1);
+    }
+
+    .heart-icon svg {
+      width: 18px;
+      height: 18px;
+      stroke: #222;
+      fill: none;
+      stroke-width: 2;
+      transition: all 0.3s ease;
+    }
+
+    .heart-icon:hover svg {
+      stroke: #fff;
+      fill: #fff;
+    }
+
+    /* Thông tin */
+    .location-info {
+      padding: 16px;
+    }
+
+    .location-name {
+      font-size: 16px;
+      font-weight: 700;
+      color: #222;
+      margin-bottom: 6px;
+    }
+
+    .location-meta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      color: #717171;
+    }
+
+    .location-distance {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .location-rating {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .star-icon {
+      color: #ff385c;
+      font-size: 14px;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .showcase-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .location-card {
+        width: 260px;
+      }
+
+      .location-image {
+        height: 240px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .location-card {
+        width: 240px;
+      }
+
+      .location-image {
+        height: 200px;
+      }
+    }
+    .location-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+
+/* Khung thẻ Xem tất cả */
+.see-all-card {
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  color: #333;
+  min-height: 300px; /* Chiều cao bằng với các thẻ phòng bên cạnh */
+  position: relative;
+  transition: box-shadow 0.3s ease;
+  overflow: hidden; /* Tránh ảnh bị lòi ra ngoài */
+}
+
+.see-all-card:hover {
+  box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+
+/* Nhóm chứa ảnh */
+.collage-group {
+  position: relative;
+  width: 140px;
+  height: 120px;
+  margin-bottom: 24px;
+}
+
+/* Định dạng chung cho từng tấm ảnh nhỏ */
+.collage-item {
+  position: absolute;
+  width: 80px;
+  height: 80px;
+  border: 3px solid #fff; /* Viền trắng kiểu polaroid */
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+  overflow: hidden;
+  transition: transform 0.3s;
+}
+
+.collage-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Vị trí và góc xoay của 3 ảnh */
+
+/* Ảnh 1: Trái, xoay trái */
+.item-0 {
+  left: 0;
+  top: 10px;
+  z-index: 1;
+  transform: rotate(-15deg);
+}
+
+/* Ảnh 2: Phải, xoay phải */
+.item-1 {
+  right: 0;
+  top: 10px;
+  z-index: 1;
+  transform: rotate(15deg);
+}
+
+/* Ảnh 3: Giữa, thẳng, nằm trên cùng */
+.item-2 {
+  left: 50%;
+  top: 0;
+  transform: translateX(-50%);
+  z-index: 2;
+  width: 90px; /* Ảnh giữa to hơn chút cho đẹp */
+  height: 90px;
+}
+
+/* Chữ Xem tất cả */
+.see-all-text {
+  font-size: 16px;
+  font-weight: 700;
+  color: #222;
+}

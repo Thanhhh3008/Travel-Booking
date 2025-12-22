@@ -4,32 +4,70 @@ const NguoiDungModel = require('../../models/admin/NguoiDung');
 const { sendMail } = require('../../util/admin/mailer'); 
 //  Hiển thị danh sách phòng chờ duyệt
 exports.getPendingRooms = async (req, res) => {
-  try {
-    const rooms = await PhongModel.getPendingRooms();
-    res.render('admin/duyetphong', { 
-      title: 'Xét duyệt chỗ ở',
-      rooms });
-  } catch (err) {
-    console.error(err);
-    res.status(500).send('Lỗi khi lấy danh sách phòng chờ duyệt: ' + err.message);
+ try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = 10; // Số phòng mỗi trang
+    const offset = (page - 1) * limit;
+
+    // Đếm tổng số phòng chờ duyệt
+    const totalRooms = await PhongModel.countPendingRooms();
+
+    // Lấy danh sách phòng chờ duyệt với phân trang
+    const rooms = await PhongModel.getPendingRoomsWithPagination(limit, offset);
+
+    // Tính tổng số trang
+    const totalPages = Math.ceil(totalRooms / limit);
+    const currentPage = page;
+
+    res.render('admin/duyetphong', {
+      title: 'Phòng chờ duyệt',
+      rooms,
+      currentPage,
+      totalPages,
+      totalRooms,
+      limit
+    });
+
+  } catch (error) {
+    console.error('Lỗi lấy danh sách phòng chờ duyệt:', error);
+    res.status(500).send('Lỗi server: ' + error.message);
   }
 };
-//  Hiển thị danh sách tất cả phòng
+
+//  Hiển thị danh sách tất cả phòng với phân trang
 exports.getAllRooms = async (req, res) => {
   try {
-    const { status } = req.query;
+    const { status, page = 1 } = req.query;
+    const limit = 10; // Số phòng mỗi trang
+    const offset = (page - 1) * limit;
 
-    let rooms;
+    let rooms, totalRooms;
+
+    // Lấy dữ liệu theo trạng thái hoặc tất cả
     if (status) {
-      rooms = await PhongModel.getRoomsByStatus(status);
+      // Đếm tổng số phòng theo trạng thái
+      totalRooms = await PhongModel.countRoomsByStatus(status);
+      // Lấy danh sách phòng có phân trang
+      rooms = await PhongModel.getRoomsByStatusWithPagination(status, limit, offset);
     } else {
-      rooms = await PhongModel.getAllRooms();
+      // Đếm tổng số phòng
+      totalRooms = await PhongModel.countAllRooms();
+      // Lấy danh sách tất cả phòng có phân trang
+      rooms = await PhongModel.getAllRoomsWithPagination(limit, offset);
     }
+
+    // Tính tổng số trang
+    const totalPages = Math.ceil(totalRooms / limit);
+    const currentPage = parseInt(page);
 
     res.render('admin/tatcaphong', {
       title: 'Tất cả chỗ ở',
       rooms,
-      status 
+      status: status || '',
+      currentPage,
+      totalPages,
+      totalRooms,
+      limit
     });
 
   } catch (error) {
@@ -37,7 +75,6 @@ exports.getAllRooms = async (req, res) => {
     res.status(500).send('Lỗi server: ' + error.message);
   }
 };
-
 // Xem chi tiết phòng
 exports.getRoomDetail = async (req, res) => {
   try {

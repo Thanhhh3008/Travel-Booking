@@ -26,7 +26,7 @@
       <div class="form-grid">
         <label class="form-field">
           <span class="label">Vị trí tầng</span>
-          <input type="number" name="ViTriTang" min="0" placeholder="Ví dụ: 5">
+          <input type="number" name="ViTriTang" required min="0" placeholder="Ví dụ: 5">
         </label>
 
         <label class="form-field">
@@ -45,7 +45,7 @@
         <div class="form-grid">
           <label class="form-field">
             <span class="label">Địa chỉ</span>
-            <input type="text" name="DiaChi" placeholder="Địa chỉ phòng (số nhà, tên đường)">
+            <input type="text" name="DiaChi" required placeholder="Địa chỉ phòng (số nhà, tên đường)">
           </label>
 
           <!-- <label class="form-field">
@@ -67,12 +67,12 @@
 
           <label class="form-field">
             <span class="label">Ảnh phòng (tối đa 10 ảnh) *</span>
-            <input type="file" name="HinhAnh" accept="image/*" multiple>
+            <input type="file" name="HinhAnh" accept="image/*" multiple required >
           </label>
 
           <label class="form-field">
             <span class="label">Ảnh giấy tờ phòng (tối đa 10 ảnh)</span>
-            <input type="file" name="GiayToPhong" accept="image/*" multiple>
+            <input type="file" name="GiayToPhong" accept="image/*" multiple required >
           </label>
 
 
@@ -81,7 +81,7 @@
         <div class="form-grid-3">
           <label class="form-field" style="margin-bottom: 10px;">
             <span class="label">Chọn tỉnh thành</span>
-            <select name="province_id" class="choose_province">
+            <select name="province_id" class="choose_province" required >
               <option value="">-- Vui Lòng Chọn Tỉnh Thành --</option>
               <% provinces.forEach(province=> { %>
                 <option value="<%= province.id %>">
@@ -93,7 +93,7 @@
 
           <label class="form-field" style="margin-bottom: 10px;">
             <span class="label">Chọn quận</span>
-            <select name="district_id" class="choose_district">
+            <select name="district_id" class="choose_district" required > 
               <option value="">-- Vui Lòng Chọn Quận --</option>
 
             </select>
@@ -101,7 +101,7 @@
 
           <label class="form-field" style="margin-bottom: 10px;">
             <span class="label">Chọn phường</span>
-            <select name="ward_id" class="choose_ward">
+            <select name="ward_id" class="choose_ward" required >
               <option value="">-- Vui Lòng Chọn Phường --</option>
             </select>
           </label>
@@ -120,20 +120,7 @@
     </form>
   </section>
 </main>
-<!-- 
-<script>
-fetch("https://provinces.open-api.vn/api/p/")
-  .then(res => res.json())
-  .then(data => {
-    const select = document.getElementById("city");
-    data.forEach(item => {
-      const opt = document.createElement("option");
-      opt.value = item.name;
-      opt.textContent = item.name;
-      select.appendChild(opt);
-    });
-  });
-</script> -->
+
 <script>
   
   // update box selector địa chỉ

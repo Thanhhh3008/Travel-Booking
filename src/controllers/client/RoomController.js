@@ -11,69 +11,7 @@ const ProvinceService = require('../../services/ProvinceService');
 const BookingService = require('../../services/BookingService');
 const ReviewService = require('../../services/ReviewService');
 class RoomController {
-    // =============== TRANG DANH SÁCH PHÒNG ===============
-    // static async index(req, res) {
-    //     console.log("LOGIN SESSION:", req.session.login);
-
-    //     const message = req.session.message;
-    //     delete req.session.message;
-
-    //     const thongbao = req.session.login ? await ThongBao.getByUser(req.session.login.maNguoiDung) : [];
-    //     let currentUser = null;
-
-    //     if (req.session.login) {
-    //         console.log("ma nguoi dung", req.session.login.maNguoiDung);
-    //         currentUser = await User.getById(req.session.login.maNguoiDung);
-    //     }
-
-    //     try {
-    //         const categoryRoomService = new CategoryRoomService();
-    //         const roomService = new RoomService();
-
-    //         // luôn chỉ lấy phòng Trống
-    //         const status = 'Trống';
-
-    //         const [roomTypes, rooms] = await Promise.all([
-    //             categoryRoomService.getAll(),
-    //             roomService.getAll('WHERE p.TrangThaiPhong = ?', [status]),
-    //         ]);
-
-    //         console.log(rooms);
-
-    //         res.render('client/home/list-room', {
-    //             message,
-    //             roomTypes,
-    //             rooms,
-    //             thongbao,
-    //             currentUser,
-    //             helpers: {
-    //                 formatMoney: (value) =>
-    //                     (value || 0).toLocaleString('vi-VN', {
-    //                         maximumFractionDigits: 0,
-    //                     }),
-    //             },
-    //         });
-    //     } catch (error) {
-    //         console.error('Error loading room list:', error);
-
-    //         res.render('client/home/list-room', {
-    //             message: {
-    //                 type: 'danger',
-    //                 mess: 'Không thể tải danh sách phòng. Vui lòng thử lại sau.',
-    //             },
-    //             roomTypes: [],
-    //             rooms: [],
-    //             thongbao: [],
-    //             currentUser: [],
-    //             helpers: {
-    //                 formatMoney: (value) =>
-    //                     (value || 0).toLocaleString('vi-VN', {
-    //                         maximumFractionDigits: 0,
-    //                     }),
-    //             },
-    //         });
-    //     }
-    // }
+   
 
     // =============== FORM THÊM PHÒNG ===============
     static async createView(req, res) {
@@ -100,7 +38,57 @@ class RoomController {
         }
     }
 
-    static async listByCity(req, res) {
+   static async listByCitySlug(req, res) {
+    const thongbao = req.session.login
+        ? await ThongBao.getByUser(req.session.login.maNguoiDung)
+        : [];
+
+    let currentUser = null;
+    if (req.session.login) {
+        currentUser = await User.getById(req.session.login.maNguoiDung);
+    }
+
+    try {
+        const slug = req.params.city;
+
+        // Map slug → tên thành phố
+        const cityMap = {
+            'thanh-pho-ho-chi-minh': 'Hồ Chí Minh',
+            'ha-noi': 'Hà Nội',
+            'da-lat': 'Đà Lạt',
+            'hoi-an': 'Hội An',
+            'vung-tau': 'Vũng Tàu',
+            'nha-trang': 'Nha Trang'
+        };
+
+        const cityName = cityMap[slug];
+        if (!cityName) {
+            return res.status(404).render('404');
+        }
+
+        const roomService = new RoomService();
+        console.log(cityName)
+        const rooms = await roomService.getAll(
+            `WHERE p.TrangThaiPhong = 'Đang hoạt động'
+             AND p.DiaChi LIKE ?`,
+            [`%${cityName}%`]
+        );
+
+        res.render('client/home/byCity', {
+            city: cityName,
+            rooms,
+            thongbao,
+            currentUser
+        });
+
+    } catch (error) {
+        console.error('listByCity error:', error);
+        res.status(500).send("Internal Server Error");
+    }
+}
+
+
+static async listByCity(req, res) {
         const thongbao = req.session.login ? await ThongBao.getByUser(req.session.login.maNguoiDung) : [];
         let currentUser = null;
 

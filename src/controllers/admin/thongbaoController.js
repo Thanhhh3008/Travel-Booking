@@ -3,25 +3,40 @@ const ThongBao = require('../../models/admin/ThongBao');
 const { sendMail } = require('../../util/admin/mailer');
 const NguoiDungModel = require('../../models/admin/NguoiDung');
 
-//  Lấy danh sách thông báo
+//  Lấy danh sách thông báo với phân trang
 exports.getAllThongBao = async (req, res) => {
   try {
     const search = req.query.search || '';
-    
+    const page = parseInt(req.query.page) || 1;
+    const limit = 10; // Số thông báo mỗi trang
+    const offset = (page - 1) * limit;
 
-    let thongbaos;
+    let thongbaos, totalThongBaos;
 
-    if (search.trim() !== '' ) {
-      thongbaos = await ThongBao.search(search);
+    if (search.trim() !== '') {
+      // Đếm tổng số thông báo tìm kiếm được
+      totalThongBaos = await ThongBao.countSearch(search);
+      // Lấy danh sách thông báo có phân trang
+      thongbaos = await ThongBao.searchWithPagination(search, limit, offset);
     } else {
-      thongbaos = await ThongBao.getAll();
+      // Đếm tổng số thông báo
+      totalThongBaos = await ThongBao.countAll();
+      // Lấy tất cả thông báo có phân trang
+      thongbaos = await ThongBao.getAllWithPagination(limit, offset);
     }
+
+    // Tính tổng số trang
+    const totalPages = Math.ceil(totalThongBaos / limit);
+    const currentPage = page;
 
     res.render('admin/thongbao', {
       title: 'Quản lý thông báo',
       thongbaos,
       search,
-      
+      currentPage,
+      totalPages,
+      totalThongBaos,
+      limit
     });
   } catch (err) {
     console.error(err);
@@ -49,10 +64,7 @@ async function sendNotificationEmails(thongbao) {
 
   // Nếu là toàn cục
   let users = [];
-
- 
-    users = await NguoiDungModel.getAll(); // gửi cho tất cả
-  
+  users = await NguoiDungModel.getAll(); // gửi cho tất cả
 
   for (const user of users) {
     if (user.Email) await sendMail(user.Email, subject, html);
@@ -76,16 +88,15 @@ exports.viewThongBaoDetail = async (req, res) => {
       thongbao
     });
   } catch (err) {
-    console.error('❌ Lỗi khi xem chi tiết thông báo:', err);
+    console.error(' Lỗi khi xem chi tiết thông báo:', err);
     res.status(500).send('Lỗi khi xem chi tiết thông báo: ' + err.message);
   }
 };
+
 //  Thêm thông báo mới
 exports.addThongBao = async (req, res) => {
   const { TieuDe, NoiDung, LoaiThongBao, NguoiNhan } = req.body;
-const thumbnail = req.file ? req.file.filename : null;
-console.log("BODY:", req.body);
-console.log("FILE:", req.file);
+  const thumbnail = req.file ? req.file.filename : null;
 
   try {
     let MaNguoiDung = null;
@@ -94,7 +105,7 @@ console.log("FILE:", req.file);
     // Nếu là cá nhân → kiểm tra email người nhận
     if (LoaiThongBao === 'ca_nhan') {
       if (!NguoiNhan || NguoiNhan.trim() === '') {
-        return res.status(400).send('❌ Bạn cần nhập email người nhận cho thông báo cá nhân.');
+        return res.status(400).send(' Bạn cần nhập email người nhận cho thông báo cá nhân.');
       }
 
       const user = await NguoiDungModel.findByEmail(NguoiNhan.trim());
@@ -114,18 +125,16 @@ console.log("FILE:", req.file);
     await sendNotificationEmails({
       TieuDe,
       NoiDung,
-     
       LoaiThongBao,
       EmailNguoiNhan
     });
 
     res.redirect('/admin/thongbao?added=1');
   } catch (err) {
-    console.error('❌ Lỗi khi thêm thông báo:', err);
+    console.error(' Lỗi khi thêm thông báo:', err);
     res.status(500).send('Lỗi khi thêm thông báo: ' + err.message);
   }
 };
-
 
 
 //  Sửa thông báo
@@ -139,7 +148,7 @@ exports.editThongBao = async (req, res) => {
 
     if (LoaiThongBao === 'ca_nhan') {
       if (!NguoiNhan || NguoiNhan.trim() === '') {
-        return res.status(400).send('❌ Bạn cần nhập email người nhận cho thông báo cá nhân.');
+        return res.status(400).send(' Bạn cần nhập email người nhận cho thông báo cá nhân.');
       }
 
       const user = await NguoiDungModel.findByEmail(NguoiNhan.trim());
@@ -151,33 +160,30 @@ exports.editThongBao = async (req, res) => {
       EmailNguoiNhan = user.Email;
     }
 
-    // 
     await ThongBao.updateFull(id, TieuDe, NoiDung, LoaiThongBao, MaNguoiDung);
 
     // Gửi lại email sau khi chỉnh sửa
     await sendNotificationEmails({
       TieuDe,
       NoiDung,
-     
       LoaiThongBao,
       EmailNguoiNhan
     });
 
     res.redirect('/admin/thongbao?edited=1');
   } catch (err) {
-    console.error('❌ Lỗi khi sửa thông báo:', err);
+    console.error(' Lỗi khi sửa thông báo:', err);
     res.status(500).send('Lỗi khi sửa thông báo: ' + err.message);
   }
 };
 
 
-
-// 🗑️ Xóa thông báo
+//  Xóa thông báo
 exports.deleteThongBao = async (req, res) => {
   const { id } = req.params;
   try {
     await ThongBao.delete(id);
-    res.redirect('/admin/thongbao?deleted=1'); // xóa thành công
+    res.redirect('/admin/thongbao?deleted=1');
   } catch (err) {
     res.status(500).send('Lỗi khi xóa thông báo: ' + err.message);
   }

@@ -107,6 +107,8 @@ router.get('/logout.html', AuthController.logout);
 router.get('/rooms/add', requireLogin, RoomController.createView);
 router.post('/rooms', uploadRoomImage, requireLogin, RoomController.store);
 router.get('/rooms/city/:city', RoomController.listByCity);
+router.get('/rooms/city-slug/:city', RoomController.listByCitySlug);
+
 router.get('/rooms/my-rooms', RoomController.myRooms);
 router.post('/rooms/:id/delete', RoomController.delete);
 

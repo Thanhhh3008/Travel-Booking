@@ -1,45 +1,181 @@
 <%- include('./layout/header') %>
 
-<div class="container mt-4">
-  <h3>📋 Danh sách chỗ ở chờ duyệt</h3>
+<style>
+  /* Pagination styles */
+  .pagination-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 2rem;
+    gap: 1rem;
+  }
 
-  <table class="table table-striped mt-3">
-    <thead>
-      <tr>
-        <th>#</th>
-        <th>Số phòng</th>
-        <th>Tên chỗ ở</th>
-        <th>Tỉnh/Thành phố</th>
-         <th>Người đăng</th>
-        <th>Trạng thái</th>
-        <th>Thao tác</th>
-      </tr>
-    </thead>
-    <tbody>
-      <% if (rooms && rooms.length > 0) { %>
-        <% rooms.forEach(room => { %>
+  .pagination {
+    margin: 0;
+  }
+
+  .pagination .page-link {
+    border-radius: 8px;
+    margin: 0 4px;
+    padding: 8px 14px;
+    color: #0d6efd;
+    border: 1px solid #dee2e6;
+    transition: all 0.2s ease;
+  }
+
+  .pagination .page-link:hover {
+    background-color: #e7f1ff;
+    border-color: #0d6efd;
+  }
+
+  .pagination .page-item.active .page-link {
+    background-color: #e7f1ff;
+    border-color: #0d6efd;
+    font-weight: 600;
+  }
+
+  .pagination .page-item.disabled .page-link {
+    color: #6c757d;
+    background-color: #f8f9fa;
+    cursor: not-allowed;
+  }
+
+  .page-info {
+    color: #6c757d;
+    font-size: 14px;
+  }
+
+  .table-container {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+  }
+</style>
+
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h3>📋 Danh sách chỗ ở chờ duyệt</h3>
+    <div class="badge bg-warning text-dark fs-6">
+      <i class="fa-solid fa-clock"></i> <%= totalRooms %> phòng chờ duyệt
+    </div>
+  </div>
+
+  <div class="table-container">
+    <table class="table table-striped table-hover mb-0">
+      <thead class="table-light">
+        <tr>
+          <th>#</th>
+          <th>Số phòng</th>
+          <th>Tên chỗ ở</th>
+          <th>Tỉnh/Thành phố</th>
+          <th>Người đăng</th>
+          <th>Trạng thái</th>
+          <th>Thao tác</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% if (rooms && rooms.length > 0) { %>
+          <% rooms.forEach((room, index) => { %>
+            <tr>
+              <td><%= room.MaPhong %></td>
+              <td><%= room.SoPhong %></td>
+              <td><%= room.TenChoO %></td>
+              <td><%= room.ProvinceName || 'Không xác định' %></td>
+              <td><%= room.Username || 'Không xác định' %></td>
+              <td>
+                <span class="badge bg-secondary">
+                  <i class="fa-solid fa-hourglass-half"></i> <%= room.TrangThaiPhong %>
+                </span>
+              </td>
+              <td>
+                <a href="/admin/duyetphong/<%= room.MaPhong %>" 
+                   class="btn btn-info btn-sm"
+                   title="Xem chi tiết và duyệt">
+                  <i class="fa-solid fa-eye"></i> Xem chi tiết
+                </a>
+              </td>
+            </tr>
+          <% }) %>
+        <% } else { %>
           <tr>
-            <td><%= room.MaPhong %></td>
-            <td><%= room.SoPhong %></td>
-            <td><%= room.TenChoO %></td>
-            <td><%= room.ProvinceName %></td>
-             <td><%= room.Username || 'Không xác định' %></td> 
-            <td>
-  <span class="badge bg-secondary"><%= room.TrangThaiPhong %></span>
-</td>
-            <td>
-              <a href="/admin/duyetphong/<%= room.MaPhong %>" class="btn btn-info btn-sm">Xem chi tiết</a>
+            <td colspan="7" class="text-center text-muted py-5">
+              <i class="fa-solid fa-inbox fa-3x mb-3 d-block text-secondary"></i>
+              <p class="mb-0">Không có phòng nào chờ duyệt.</p>
             </td>
           </tr>
-        <% }) %>
-      <% } else { %>
-        <tr>
-          <td colspan="5" class="text-center text-muted">Không có phòng nào chờ duyệt.</td>
-        </tr>
-      <% } %>
-    </tbody>
-  </table>
+        <% } %>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Phân trang -->
+  <% if (totalPages > 1) { %>
+  <div class="pagination-wrapper">
+    <div class="page-info">
+      Hiển thị <%= (currentPage - 1) * limit + 1 %> - <%= Math.min(currentPage * limit, totalRooms) %> 
+      trong tổng số <%= totalRooms %> phòng
+    </div>
+    
+    <nav aria-label="Phân trang">
+      <ul class="pagination mb-0">
+        <!-- Nút Previous -->
+        <li class="page-item <%= currentPage === 1 ? 'disabled' : '' %>">
+          <a class="page-link" href="?page=<%= currentPage - 1 %>" 
+             aria-label="Trang trước">
+            <i class="fa-solid fa-chevron-left"></i>
+          </a>
+        </li>
+
+        <!-- Trang đầu -->
+        <% if (currentPage > 3) { %>
+          <li class="page-item">
+            <a class="page-link" href="?page=1">1</a>
+          </li>
+          <% if (currentPage > 4) { %>
+            <li class="page-item disabled">
+              <span class="page-link">...</span>
+            </li>
+          <% } %>
+        <% } %>
+
+        <!-- Các trang xung quanh trang hiện tại -->
+        <% for (let i = Math.max(1, currentPage - 2); i <= Math.min(totalPages, currentPage + 2); i++) { %>
+          <li class="page-item <%= i === currentPage ? 'active' : '' %>">
+            <a class="page-link" href="?page=<%= i %>">
+              <%= i %>
+            </a>
+          </li>
+        <% } %>
+
+        <!-- Trang cuối -->
+        <% if (currentPage < totalPages - 2) { %>
+          <% if (currentPage < totalPages - 3) { %>
+            <li class="page-item disabled">
+              <span class="page-link">...</span>
+            </li>
+          <% } %>
+          <li class="page-item">
+            <a class="page-link" href="?page=<%= totalPages %>">
+              <%= totalPages %>
+            </a>
+          </li>
+        <% } %>
+
+        <!-- Nút Next -->
+        <li class="page-item <%= currentPage === totalPages ? 'disabled' : '' %>">
+          <a class="page-link" href="?page=<%= currentPage + 1 %>" 
+             aria-label="Trang sau">
+            <i class="fa-solid fa-chevron-right"></i>
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+  <% } %>
+
 </div>
+
 <script>
   const params = new URLSearchParams(window.location.search);
 
@@ -48,11 +184,11 @@
     window.history.replaceState({}, document.title, window.location.pathname);
   } 
   else if (params.get('rejected') === '1') {
-    alert('Phòng đã bị từ chối thành công!');
+    alert(' Phòng đã bị từ chối thành công!');
     window.history.replaceState({}, document.title, window.location.pathname);
   } 
   else if (params.get('error') === '1') {
-    alert('Có lỗi xảy ra khi xử lý yêu cầu!');
+    alert(' Có lỗi xảy ra khi xử lý yêu cầu!');
     window.history.replaceState({}, document.title, window.location.pathname);
   }
 </script>
