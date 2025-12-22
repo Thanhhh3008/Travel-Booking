@@ -1,5 +1,56 @@
 <%- include('../layout/header.ejs') %>
  <link rel="stylesheet" href="/style-roomdetail.css">
+ <style>
+  /* Container riêng biệt cho phần đánh giá sao */
+  .rating-wrapper {
+    display: block !important; /* Bắt buộc xuống dòng */
+    margin-bottom: 20px;
+    position: relative;
+    clear: both; /* Tránh bị các phần tử float khác làm phiền */
+  }
+
+  /* Label tiêu đề */
+  .rating-label {
+    display: block !important;
+    font-weight: 600;
+    font-size: 16px;
+    margin-bottom: 12px !important; /* Khoảng cách rõ ràng với sao */
+    color: #222;
+  }
+
+  /* Khung chứa sao */
+  .star-rating-custom {
+    display: inline-flex !important;
+    flex-direction: row-reverse !important; /* Đảo ngược cho logic CSS */
+    justify-content: flex-start;
+    border: none;
+    position: relative;
+    z-index: 10; /* Đưa sao nổi lên trên để chắc chắn click được */
+  }
+
+  /* Input ẩn */
+  .star-rating-custom input {
+    display: none;
+  }
+
+  /* Hình ngôi sao */
+  .star-rating-custom label {
+    font-size: 36px !important; /* Sao to rõ */
+    color: #e0e0e0; /* Màu xám nhạt mặc định */
+    cursor: pointer;
+    padding: 0 5px;
+    margin: 0;
+    line-height: 1;
+    transition: color 0.2s;
+  }
+
+  /* Hiệu ứng chọn và hover (Vàng) */
+  .star-rating-custom input:checked ~ label,
+  .star-rating-custom label:hover,
+  .star-rating-custom label:hover ~ label {
+    color: #ffb400 !important;
+  }
+</style>
 <main class="container section page-room-detail">
   <!-- Thông báo flash -->
   <% if (message) { %>
@@ -199,22 +250,22 @@
         <input type="hidden" name="roomId" value="<%= room.MaPhong || room.id %>">
 
         <!-- Rating -->
-        <div class="form-group">
-          <label>Đánh giá của bạn</label>
-          <div class="star-rating">
-            <% for (let i = 5; i >= 1; i--) { %>
-              <input
-                type="radio"
-                id="star-<%= i %>"
-                name="rate"
-                value="<%= i %>"
-                required
-              >
-              <label for="star-<%= i %>">★</label>
-            <% } %>
-          </div>
-        </div>
-
+       <div class="rating-wrapper">
+  <label class="rating-label">Đánh giá của bạn</label>
+  
+  <div class="star-rating-custom">
+    <% for (let i = 5; i >= 1; i--) { %>
+      <input
+        type="radio"
+        id="star-<%= i %>-unique" 
+        name="rate"
+        value="<%= i %>"
+        required
+      >
+      <label for="star-<%= i %>-unique" title="<%= i %> sao">★</label>
+    <% } %>
+  </div>
+</div>
         <!-- Content -->
         <div class="form-group">
           <label>Nội dung đánh giá</label>

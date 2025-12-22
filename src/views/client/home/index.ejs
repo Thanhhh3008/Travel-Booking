@@ -141,7 +141,7 @@
     <div class="carousel-wrapper">
       <div class="carousel-track" id="carouselTrack">
         <!-- Card 1 -->
-       <!-- Card 1 -->
+       
   <a href="/rooms/city-slug/thanh-pho-ho-chi-minh" class="location-link">
     <div class="location-card">
       <div class="location-image">
@@ -383,9 +383,12 @@
         
         // Xóa các section cũ (trừ header và filter)
         const oldH2s = section.querySelectorAll('h2');
+         const oldH3s = section.querySelectorAll('h3');
         const oldSections = section.querySelectorAll('.room-section');
         const oldNoResult = document.getElementById('noResultMessage');
-        
+        const oldSections2 = section.querySelectorAll('.carousel-wrapper');
+        oldSections2.forEach(sec => sec.remove());
+        oldH3s.forEach(h2 => h2.remove());
         oldH2s.forEach(h2 => h2.remove());
         oldSections.forEach(sec => sec.remove());
         if (oldNoResult) oldNoResult.remove();

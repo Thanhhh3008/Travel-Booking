@@ -744,7 +744,7 @@ static async review(req, res) {
                 return req.session.save(() => res.redirect('/rooms/my-rooms'));
             }
 
-            await roomService.updateStatus(id, 'Hoàn thành kỳ');
+            await roomService.updateStatus(id, 'Đang hoạt động');
 
             function getVietnamDateTime() {
                 const now = new Date();
