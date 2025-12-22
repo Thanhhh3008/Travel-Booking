@@ -1,10 +1,69 @@
 <%- include('./layout/header') %>
 
+<style>
+  .search-bar { max-width: 500px; }
+  .search-input { width: 220px; font-size: 14px; }
+  .btn-sm { padding: 4px 10px; font-size: 13px; }
+  textarea { font-size: 14px; }
+  
+  /* Giới hạn chiều rộng của cột */
+  table th:nth-child(1), table td:nth-child(1) { width: 50px; }
+  table th:nth-child(2), table td:nth-child(2) { width: 150px; }
+  table th:nth-child(3), table td:nth-child(3) { width: 360px; }
+  table th:nth-child(4), table td:nth-child(4) { width: 100px; }
+  table th:nth-child(5), table td:nth-child(5) { width: 200px; }
+  table th:nth-child(6), table td:nth-child(6) { width: 120px; }
+
+  /* Pagination styles */
+  .pagination-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 2rem;
+    gap: 1rem;
+  }
+
+  .pagination {
+    margin: 0;
+  }
+
+  .pagination .page-link {
+    border-radius: 8px;
+    margin: 0 4px;
+    padding: 8px 14px;
+    color: #0d6efd;
+    border: 1px solid #dee2e6;
+    transition: all 0.2s ease;
+  }
+
+  .pagination .page-link:hover {
+    background-color: #e7f1ff;
+    border-color: #0d6efd;
+  }
+
+  .pagination .page-item.active .page-link {
+    background-color: #e7f1ff;
+    border-color: #0d6efd;
+    font-weight: 600;
+  }
+
+  .pagination .page-item.disabled .page-link {
+    color: #6c757d;
+    background-color: #f8f9fa;
+    cursor: not-allowed;
+  }
+
+  .page-info {
+    color: #6c757d;
+    font-size: 14px;
+  }
+</style>
+
 <div class="container mt-4">
   <div class="d-flex justify-content-between align-items-center">
-    <h3>📢 Quản lý Thông báo</h3>
+    <h3><i class="fa-solid fa-bullhorn me-2"></i>Quản lý Thông báo</h3>
 
-    <!-- Thanh tìm kiếm và lọc -->
+    <!-- Thanh tìm kiếm -->
     <form action="/admin/thongbao" method="get" class="d-flex align-items-center gap-2 search-bar">
       <input 
         type="text" 
@@ -13,163 +72,206 @@
         placeholder="Tìm theo tiêu đề..." 
         value="<%= search || '' %>"
       >
-   
-      <button type="submit" class="btn btn-primary btn-sm">🔍</button>
+      <button type="submit" class="btn btn-primary btn-sm">
+        <i class="fa-solid fa-magnifying-glass"></i>
+      </button>
+
       <% if (search) { %>
-        <a href="/admin/thongbao" class="btn btn-secondary btn-sm">❌</a>
+       <a href="/admin/thongbao" class="btn btn-secondary btn-sm">
+  <i class="fa-solid fa-xmark"></i>
+</a>
+
       <% } %>
     </form>
   </div>
 
-  <!-- Form thêm thông báo -->
-   <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addThongBaoModal">
-  ➕ Thêm Thông Báo
+  <!-- Nút thêm thông báo -->
+ <button class="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#addThongBaoModal">
+  <i class="fa-solid fa-plus me-1"></i>Thêm Thông Báo
 </button>
-<!-- Modal Thêm Thông Báo -->
-<div class="modal fade" id="addThongBaoModal" tabindex="-1">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
 
-      <!-- Header -->
-      <div class="modal-header">
-        <h5 class="modal-title">Thêm Thông Báo</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+
+  <!-- Modal Thêm Thông Báo -->
+  <div class="modal fade" id="addThongBaoModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Thêm Thông Báo</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <form action="/admin/thongbao/add" method="POST" enctype="multipart/form-data" id="addThongBaoForm">
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label">Tiêu đề</label>
+                <input type="text" name="TieuDe" class="form-control" placeholder="Tiêu đề" required>
+              </div>
+              <div class="col-md-3">
+                <label class="form-label">Loại thông báo</label>
+                <select name="LoaiThongBao" class="form-select">
+                  <option value="toan_cuc">Tất cả</option>
+                  <option value="ca_nhan">Cá nhân</option>
+                </select>
+              </div>
+              <div class="col-md-12">
+                <label class="form-label">Email người nhận (nếu là cá nhân)</label>
+                <input type="text" name="NguoiNhan" class="form-control" placeholder="Email" disabled>
+              </div>
+              <div class="col-md-12">
+                <label class="form-label">Nội dung thông báo</label>
+                <textarea name="NoiDung" rows="4" class="form-control" placeholder="Nội dung thông báo" required></textarea>
+              </div>
+              <div class="col-md-12">
+                <label for="thumbnailAdd" class="form-label">Ảnh đại diện (thumbnail)</label>
+                <input type="file" id="thumbnailAdd" name="thumbnail" accept="image/*" class="form-control">
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+          <button type="submit" form="addThongBaoForm" class="btn btn-primary">Thêm Thông Báo</button>
+        </div>
       </div>
-
-      <!-- Body -->
-      <div class="modal-body">
-        <form action="/admin/thongbao/add" method="POST" enctype="multipart/form-data" id="addThongBaoForm">
-
-          <div class="row g-3">
-
-            <!-- Tiêu đề -->
-            <div class="col-md-6">
-              <label class="form-label">Tiêu đề</label>
-              <input type="text" name="TieuDe" class="form-control" placeholder="Tiêu đề" required>
-            </div>
-
-            <!-- Loại thông báo -->
-            <div class="col-md-3">
-              <label class="form-label">Loại thông báo</label>
-              <select name="LoaiThongBao" class="form-select">
-                <option value="toan_cuc">Tất cả</option>
-                <option value="ca_nhan">Cá nhân</option>
-              </select>
-            </div>
-
-
-            <!-- Email người nhận -->
-            <div class="col-md-12">
-              <label class="form-label">Email người nhận (nếu là cá nhân)</label>
-              <input type="text" name="NguoiNhan" class="form-control" placeholder="Email" disabled>
-            </div>
-
-            <!-- Nội dung -->
-            <div class="col-md-12">
-              <label class="form-label">Nội dung thông báo</label>
-              <textarea name="NoiDung" rows="4" class="form-control" placeholder="Nội dung thông báo" required></textarea>
-            </div>
-
-            <!-- Ảnh đại diện -->
-            <div class="col-md-12">
-              <label for="thumbnailAdd" class="form-label">Ảnh đại diện (thumbnail)</label>
-              <input type="file" id="thumbnailAdd" name="thumbnail" accept="image/*" class="form-control">
-            </div>
-
-          </div>
-
-        </form>
-      </div>
-
-      <!-- Footer -->
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-        <button type="submit" form="addThongBaoForm" class="btn btn-primary">Thêm Thông Báo</button>
-      </div>
-
     </div>
   </div>
-</div>
-
 
   <!-- Bảng danh sách thông báo -->
   <table class="table table-striped mt-4" style="table-layout: fixed; width: 100%; border-collapse: collapse;">
-  <thead>
-    <tr>
-      <th>#</th>
-      <th>Tiêu đề</th>
-      <th>Nội dung</th>
-      <th>Loại</th>
-      <th>Người nhận</th>
-      <th>Thao tác</th>
-    </tr>
-  </thead>
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Tiêu đề</th>
+        <th>Nội dung</th>
+        <th>Loại</th>
+        <th>Người nhận</th>
+        <th>Thao tác</th>
+      </tr>
+    </thead>
 
-  <tbody>
-    <% if (thongbaos && thongbaos.length > 0) { %>
-      <% thongbaos.forEach(tb => { %>
+    <tbody>
+      <% if (thongbaos && thongbaos.length > 0) { %>
+        <% thongbaos.forEach((tb, index) => { %>
+          <tr>
+            <td><%= (currentPage - 1) * limit + index + 1 %></td>
+            <td><%= tb.TieuDe %></td>
+            <td class="text-truncate" title="<%= tb.NoiDung %>">
+              <%= tb.NoiDung %>
+            </td>
+            <td>
+              <span class="badge <%= tb.LoaiThongBao === 'ca_nhan' ? 'bg-info' : 'bg-secondary' %>">
+                <%= tb.LoaiThongBao === 'ca_nhan' ? 'Cá nhân' : 'Toàn cục' %>
+              </span>
+            </td>
+            <td><%= tb.EmailNguoiNhan || 'Tất cả' %></td>
+            <td>
+              <a href="/admin/thongbao/detail/<%= tb.MaThongBao %>" 
+                 class="btn btn-info btn-sm" 
+                 title="Xem chi tiết">
+                <i class="fa-solid fa-eye"></i>
+              </a>
+              <button 
+                class="btn btn-warning btn-sm" 
+                title="Chỉnh sửa"
+                data-bs-toggle="modal" 
+                data-bs-target="#editModal"
+                onclick="openEditModal(
+                  '<%= tb.MaThongBao %>',
+                  '<%= tb.TieuDe %>',
+                  '<%= tb.NoiDung %>',
+                  '<%= tb.LoaiThongBao %>',
+                  '<%= tb.EmailNguoiNhan || '' %>'
+                )">
+                <i class="fa-solid fa-pen-to-square"></i>
+              </button>
+              <a href="/admin/thongbao/delete/<%= tb.MaThongBao %>" 
+                 class="btn btn-danger btn-sm"
+                 title="Xóa"
+                 onclick="return confirm('Xóa thông báo này?')">
+                <i class="fa-solid fa-trash"></i>
+              </a>
+            </td>
+          </tr>
+        <% }) %>
+      <% } else { %>
         <tr>
-          <td><%= tb.MaThongBao %></td>
-
-          <td><%= tb.TieuDe %></td>
-
-          <td class="text-truncate" title="<%= tb.NoiDung %>">
-            <%= tb.NoiDung %>
-          </td>
-
-          <td>
-            <span class="badge <%= tb.LoaiThongBao === 'ca_nhan' ? 'bg-info' : 'bg-secondary' %>">
-              <%= tb.LoaiThongBao === 'ca_nhan' ? 'Cá nhân' : 'Toàn cục' %>
-            </span>
-          </td>
-
-          <td>
-            <%= tb.EmailNguoiNhan || 'Tất cả' %>
-          </td>
-
-          <td>
-            <!-- Xem chi tiết -->
-            <a href="/admin/thongbao/detail/<%= tb.MaThongBao %>" 
-               class="btn btn-info btn-sm" 
-               title="Xem chi tiết">
-              <i class="fa-solid fa-eye"></i>
-            </a>
-
-            <!-- Chỉnh sửa -->
-            <button 
-              class="btn btn-warning btn-sm" 
-              title="Chỉnh sửa"
-              data-bs-toggle="modal" 
-              data-bs-target="#editModal"
-              onclick="openEditModal(
-                '<%= tb.MaThongBao %>',
-                '<%= tb.TieuDe %>',
-                '<%= tb.NoiDung %>',
-                '<%= tb.LoaiThongBao %>',
-                '<%= tb.EmailNguoiNhan || '' %>'
-              )">
-              <i class="fa-solid fa-pen-to-square"></i>
-            </button>
-
-            <!-- Xóa -->
-            <a href="/admin/thongbao/delete/<%= tb.MaThongBao %>" 
-               class="btn btn-danger btn-sm"
-               title="Xóa"
-               onclick="return confirm('Xóa thông báo này?')">
-              <i class="fa-solid fa-trash"></i>
-            </a>
+          <td colspan="6" class="text-center text-muted">
+            Không có thông báo nào phù hợp.
           </td>
         </tr>
-      <% }) %>
-    <% } else { %>
-      <tr>
-        <td colspan="6" class="text-center text-muted">
-          Không có thông báo nào phù hợp.
-        </td>
-      </tr>
-    <% } %>
-  </tbody>
-</table>
+      <% } %>
+    </tbody>
+  </table>
+
+  <!-- Phân trang -->
+  <% if (totalPages > 1) { %>
+  <div class="pagination-wrapper">
+    <div class="page-info">
+      Hiển thị <%= (currentPage - 1) * limit + 1 %> - <%= Math.min(currentPage * limit, totalThongBaos) %> 
+      trong tổng số <%= totalThongBaos %> thông báo
+    </div>
+    
+    <nav aria-label="Phân trang">
+      <ul class="pagination mb-0">
+        <!-- Nút Previous -->
+        <li class="page-item <%= currentPage === 1 ? 'disabled' : '' %>">
+          <a class="page-link" 
+             href="?page=<%= currentPage - 1 %><%= search ? '&search=' + encodeURIComponent(search) : '' %>" 
+             aria-label="Trang trước">
+            <i class="fa-solid fa-chevron-left"></i>
+          </a>
+        </li>
+
+        <!-- Trang đầu -->
+        <% if (currentPage > 3) { %>
+          <li class="page-item">
+            <a class="page-link" 
+               href="?page=1<%= search ? '&search=' + encodeURIComponent(search) : '' %>">1</a>
+          </li>
+          <% if (currentPage > 4) { %>
+            <li class="page-item disabled">
+              <span class="page-link">...</span>
+            </li>
+          <% } %>
+        <% } %>
+
+        <!-- Các trang xung quanh trang hiện tại -->
+        <% for (let i = Math.max(1, currentPage - 2); i <= Math.min(totalPages, currentPage + 2); i++) { %>
+          <li class="page-item <%= i === currentPage ? 'active' : '' %>">
+            <a class="page-link" 
+               href="?page=<%= i %><%= search ? '&search=' + encodeURIComponent(search) : '' %>">
+              <%= i %>
+            </a>
+          </li>
+        <% } %>
+
+        <!-- Trang cuối -->
+        <% if (currentPage < totalPages - 2) { %>
+          <% if (currentPage < totalPages - 3) { %>
+            <li class="page-item disabled">
+              <span class="page-link">...</span>
+            </li>
+          <% } %>
+          <li class="page-item">
+            <a class="page-link" 
+               href="?page=<%= totalPages %><%= search ? '&search=' + encodeURIComponent(search) : '' %>">
+              <%= totalPages %>
+            </a>
+          </li>
+        <% } %>
+
+        <!-- Nút Next -->
+        <li class="page-item <%= currentPage === totalPages ? 'disabled' : '' %>">
+          <a class="page-link" 
+             href="?page=<%= currentPage + 1 %><%= search ? '&search=' + encodeURIComponent(search) : '' %>" 
+             aria-label="Trang sau">
+            <i class="fa-solid fa-chevron-right"></i>
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+  <% } %>
 
 </div>
 
@@ -195,13 +297,10 @@
               <option value="ca_nhan">Cá nhân</option>
             </select>
           </div>
-         
-          
           <div class="mb-2">
             <label>Email người nhận (nếu cá nhân)</label>
             <input type="text" name="NguoiNhan" id="editNguoiNhan" class="form-control" placeholder="Email người nhận">
           </div>
-
           <div class="mb-2">
             <label>Nội dung</label>
             <textarea name="NoiDung" id="editNoiDung" rows="3" class="form-control"></textarea>
@@ -215,37 +314,54 @@
     </form>
   </div>
 </div>
+
+<div class="alert alert-success position-fixed top-0 end-0 m-3 d-none" id="notifyBox" role="alert"></div>
+
 <script>
-  // --- Mở modal sửa ---
+  // Xử lý thông báo từ query params
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('added') === '1') {
+    alert(' Thêm thông báo thành công!');
+    window.history.replaceState({}, document.title, window.location.pathname);
+  } 
+  else if (params.get('edited') === '1') {
+    alert(' Cập nhật thông báo thành công!');
+    window.history.replaceState({}, document.title, window.location.pathname);
+  } 
+  else if (params.get('deleted') === '1') {
+    alert(' Xóa thông báo thành công!');
+    window.history.replaceState({}, document.title, window.location.pathname);
+  } 
+  else if (params.get('error') === 'notfound') {
+    alert(' Không tìm thấy người dùng với email đã nhập!');
+    window.history.replaceState({}, document.title, window.location.pathname);
+  } 
+  else if (params.get('error') === 'invalid') {
+    alert('Vui lòng nhập email hợp lệ cho thông báo cá nhân!');
+    window.history.replaceState({}, document.title, window.location.pathname);
+  }
+
+  // Mở modal sửa
   function openEditModal(id, title, content, loai, nguoiNhan) {
     document.getElementById('editMaThongBao').value = id;
     document.getElementById('editTieuDe').value = title;
     document.getElementById('editNoiDung').value = content;
-    
     document.getElementById('editLoaiThongBao').value = loai.trim();
-console.log(loai);
     document.getElementById('editNguoiNhan').value = nguoiNhan;
     document.getElementById('editForm').action = `/admin/thongbao/edit/${id}`;
-
-    toggleEditFields(); // 
+    toggleEditFields();
   }
 
-  // --- FORM THÊM MỚI ---
+  // Toggle fields cho form thêm
   const formAdd = document.querySelector('form[action="/admin/thongbao/add"]');
   const loaiSelect = formAdd.querySelector('select[name="LoaiThongBao"]');
-
   const nguoiNhanInput = formAdd.querySelector('input[name="NguoiNhan"]');
 
   function toggleAddFields() {
     if (loaiSelect.value === 'ca_nhan') {
-      //
-     
-     
       nguoiNhanInput.disabled = false;
       nguoiNhanInput.placeholder = 'Email người nhận';
     } else {
-      // 
-      
       nguoiNhanInput.value = '';
       nguoiNhanInput.disabled = true;
       nguoiNhanInput.placeholder = '';
@@ -255,19 +371,15 @@ console.log(loai);
   loaiSelect.addEventListener('change', toggleAddFields);
   document.addEventListener('DOMContentLoaded', toggleAddFields);
 
-  // --- MODAL SỬA ---
+  // Toggle fields cho modal sửa
   const loaiSelectEdit = document.getElementById('editLoaiThongBao');
-
   const nguoiNhanInputEdit = document.getElementById('editNguoiNhan');
 
   function toggleEditFields() {
     if (loaiSelectEdit.value === 'ca_nhan') {
-     
-      
       nguoiNhanInputEdit.disabled = false;
       nguoiNhanInputEdit.placeholder = 'Email người nhận';
     } else {
-     
       nguoiNhanInputEdit.value = '';
       nguoiNhanInputEdit.disabled = true;
       nguoiNhanInputEdit.placeholder = '';
@@ -276,21 +388,18 @@ console.log(loai);
 
   loaiSelectEdit.addEventListener('change', toggleEditFields);
 
-  // RÀNG BUỘC HỢP LỆ FORM THÊM
-
+  // Validation form thêm
   formAdd.addEventListener('submit', (e) => {
     const title = formAdd.querySelector('input[name="TieuDe"]').value.trim();
     const content = formAdd.querySelector('textarea[name="NoiDung"]').value.trim();
     const email = nguoiNhanInput.value.trim();
 
-    // Không để trống
     if (!title || !content) {
       e.preventDefault();
       alert('Tiêu đề và nội dung không được để trống!');
       return;
     }
 
-    // Giới hạn ký tự
     if (title.length > 50) {
       e.preventDefault();
       alert('Tiêu đề không được vượt quá 50 ký tự!');
@@ -302,47 +411,43 @@ console.log(loai);
       return;
     }
 
-    // Nếu là cá nhân thì phải có email hợp lệ
     if (loaiSelect.value === 'ca_nhan') {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!email) {
         e.preventDefault();
-        alert('⚠️ Vui lòng nhập email người nhận!');
+        alert(' Vui lòng nhập email người nhận!');
         return;
       }
       if (!emailRegex.test(email)) {
         e.preventDefault();
-        alert('⚠️ Email người nhận không hợp lệ!');
+        alert(' Email người nhận không hợp lệ!');
         return;
       }
     }
   });
 
-  
-  // RÀNG BUỘC HỢP LỆ FORM SỬA
- 
-  
+  // Validation form sửa
   const editForm = document.getElementById('editForm');
   editForm.addEventListener('submit', (e) => {
     const title = document.getElementById('editTieuDe').value.trim();
     const content = document.getElementById('editNoiDung').value.trim();
-    const loai = document.getElementById('editLoaiThongBao').value.trim()
+    const loai = document.getElementById('editLoaiThongBao').value.trim();
     const email = document.getElementById('editNguoiNhan').value.trim();
 
     if (!title || !content) {
       e.preventDefault();
-      alert('⚠️ Tiêu đề và nội dung không được để trống!');
+      alert(' Tiêu đề và nội dung không được để trống!');
       return;
     }
 
     if (title.length > 50) {
       e.preventDefault();
-      alert('⚠️ Tiêu đề không được vượt quá 50 ký tự!');
+      alert(' Tiêu đề không được vượt quá 50 ký tự!');
       return;
     }
     if (content.length > 300) {
       e.preventDefault();
-      alert('⚠️ Nội dung không được vượt quá 300 ký tự!');
+      alert('Nội dung không được vượt quá 300 ký tự!');
       return;
     }
 
@@ -350,67 +455,16 @@ console.log(loai);
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!email) {
         e.preventDefault();
-        alert('⚠️ Vui lòng nhập email người nhận!');
+        alert(' Vui lòng nhập email người nhận!');
         return;
       }
       if (!emailRegex.test(email)) {
         e.preventDefault();
-        alert('⚠️ Email người nhận không hợp lệ!');
+        alert(' Email người nhận không hợp lệ!');
         return;
       }
     }
   });
 </script>
-
-
-<style>
-
-  .search-bar { max-width: 500px; }
-  .search-input { width: 220px; font-size: 14px; }
-  .btn-sm { padding: 4px 10px; font-size: 13px; }
-  textarea { font-size: 14px; }
-  /* Giới hạn chiều rộng của cột nội dung */
-
-
-/* Đảm bảo các cột có width cố định */
-table th:nth-child(1), table td:nth-child(1) { width: 50px; } /* # */
-table th:nth-child(2), table td:nth-child(2) { width: 150px; } /* Tiêu đề */
-table th:nth-child(3), table td:nth-child(3) { width: 360px; } /* Nội dung */
-table th:nth-child(4), table td:nth-child(4) { width: 100px; } /* Loại */
-table th:nth-child(5), table td:nth-child(5) { width: 200px; } /* Người nhận */
-table th:nth-child(6), table td:nth-child(6) { width: 120px; } /* Thao tác */
-
-
-</style>
-<div class="alert alert-success position-fixed top-0 end-0 m-3 d-none" id="notifyBox" role="alert"></div>
-
-<script>
-  const params = new URLSearchParams(window.location.search);
-
-  if (params.get('added') === '1') {
-    alert('✅ Thêm thông báo thành công!');
-    window.history.replaceState({}, document.title, window.location.pathname);
-  } 
-  else if (params.get('edited') === '1') {
-    alert('✏️ Cập nhật thông báo thành công!');
-    window.history.replaceState({}, document.title, window.location.pathname);
-  } 
-  else if (params.get('deleted') === '1') {
-    alert('🗑️ Xóa thông báo thành công!');
-    window.history.replaceState({}, document.title, window.location.pathname);
-  } 
-  else if (params.get('error') === 'notfound') {
-    alert('❌ Không tìm thấy người dùng với email đã nhập!');
-    window.history.replaceState({}, document.title, window.location.pathname);
-  } 
-  else if (params.get('error') === 'invalid') {
-    alert('⚠️ Vui lòng nhập email hợp lệ cho thông báo cá nhân!');
-    window.history.replaceState({}, document.title, window.location.pathname);
-  }
-
-  
-</script>
-
-
 
 <%- include('./layout/footer') %>

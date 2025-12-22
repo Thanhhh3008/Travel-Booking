@@ -113,6 +113,141 @@
       </div>
     </div>
 
+
+     <div class="location-showcase">
+    <!-- Header -->
+    <div class="showcase-header">
+      <h3 class="showcase-title">
+        Địa điểm nổi bật
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M5 12h14M12 5l7 7-7 7"/>
+        </svg>
+      </h3>
+      <div class="showcase-nav">
+        <button class="nav-arrow" id="prevBtn" aria-label="Previous">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        <button class="nav-arrow" id="nextBtn" aria-label="Next">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M9 18l6-6-6-6" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Carousel -->
+    <div class="carousel-wrapper">
+      <div class="carousel-track" id="carouselTrack">
+        <!-- Card 1 -->
+       <!-- Card 1 -->
+  <a href="/rooms/city-slug/thanh-pho-ho-chi-minh" class="location-link">
+    <div class="location-card">
+      <div class="location-image">
+        <img src="https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=600&h=400&fit=crop">
+        <span class="favorite-badge">Được khách yêu thích</span>
+      </div>
+      <div class="location-info">
+        <div class="location-name">Thành phố Hồ Chí Minh</div>
+        <div class="location-meta">
+          <span>1 giường</span> •
+          <span class="location-rating">★ 5.0</span>
+        </div>
+      </div>
+    </div>
+  </a>
+
+  <!-- Card 2 -->
+  <a href="/rooms/city-slug/ha-noi" class="location-link">
+    <div class="location-card">
+      <div class="location-image">
+        <img src="https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=600&h=400&fit=crop">
+        <span class="favorite-badge">Được khách yêu thích</span>
+      </div>
+      <div class="location-info">
+        <div class="location-name">Hà Nội</div>
+        <div class="location-meta">
+          <span>1 giường</span> •
+          <span class="location-rating">★ 4.93</span>
+        </div>
+      </div>
+    </div>
+  </a>
+
+  <!-- Card 3 -->
+  <a href="/rooms/city-slug/da-lat" class="location-link">
+    <div class="location-card">
+      <div class="location-image">
+        <img src="https://images.unsplash.com/photo-1564501049412-61c2a3083791?w=600&h=400&fit=crop">
+        <span class="favorite-badge">Được khách yêu thích</span>
+      </div>
+      <div class="location-info">
+        <div class="location-name">Đà Lạt</div>
+        <div class="location-meta">
+          <span>1 giường</span> •
+          <span class="location-rating">★ 5.0</span>
+        </div>
+      </div>
+    </div>
+  </a>
+
+  <!-- Card 4 -->
+  <a href="/rooms/city-slug/hoi-an" class="location-link">
+    <div class="location-card">
+      <div class="location-image">
+        <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=600&h=400&fit=crop">
+        <span class="favorite-badge">Được khách yêu thích</span>
+      </div>
+      <div class="location-info">
+        <div class="location-name">Hội An</div>
+        <div class="location-meta">
+          <span>1 giường</span> •
+          <span class="location-rating">★ 4.88</span>
+        </div>
+      </div>
+    </div>
+  </a>
+
+  <!-- Card 5 -->
+  <a href="/rooms/city-slug/vung-tau" class="location-link">
+    <div class="location-card">
+      <div class="location-image">
+        <img src="https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=600&h=400&fit=crop">
+        <span class="favorite-badge">Được khách yêu thích</span>
+      </div>
+      <div class="location-info">
+        <div class="location-name">Vũng Tàu</div>
+        <div class="location-meta">
+          <span>1 giường</span> •
+          <span class="location-rating">★ 4.97</span>
+        </div>
+      </div>
+    </div>
+  </a>
+
+  <!-- Card 6 -->
+  <a href="/rooms/city-slug/nha-trang" class="location-link">
+    <div class="location-card">
+      <div class="location-image">
+        <img src="https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=600&h=400&fit=crop">
+        <span class="favorite-badge">Được khách yêu thích</span>
+      </div>
+      <div class="location-info">
+        <div class="location-name">Nha Trang</div>
+        <div class="location-meta">
+          <span>1 giường</span> •
+          <span class="location-rating">★ 4.92</span>
+        </div>
+      </div>
+    </div>
+  </a>
+
+        
+      </div>
+    </div>
+  </div>
+
     <!-- Danh sách phòng -->
    <!-- Lặp theo từng thành phố -->
 <% for (const city in roomsByCity) { %>
@@ -128,7 +263,7 @@
 
   <div class="room-section">
 
-    <% roomsByCity[city].slice(0, 5).forEach(room => { %> <!-- CHỈ LẤY 7 PHÒNG -->
+    <% roomsByCity[city].slice(0, 6).forEach(room => { %> <!-- CHỈ LẤY 6 PHÒNG -->
 
       <a class="card" href="/rooms/<%= room.MaPhong %>" data-type="<%= room.TenLoaiPhong %>" data-city="<%= room.ThanhPho %>">
 
@@ -161,6 +296,32 @@
 
     <% }) %>
 
+<a class="card see-all-card" href="/rooms/city/<%=city%>">
+  
+  <div class="collage-group">
+    <% 
+      // Logic đơn giản: Lấy 3 ảnh bất kỳ từ danh sách phòng hiện có
+      // Nếu không có ảnh thì dùng 'default.jpg'
+      let images = [];
+      roomsByCity[city].forEach(r => {
+         if (r.HinhAnh && images.length < 3) {
+            images.push(r.HinhAnh.split(',')[0].trim());
+         }
+      });
+      // Nếu chưa đủ 3 ảnh thì fill thêm cho đủ (để giao diện không bị lỗi)
+      while (images.length < 3) { images.push('default.jpg'); }
+    %>
+
+    <% images.forEach((img, i) => { %>
+      <div class="collage-item item-<%= i %>">
+        <img src="admin/uploads/anhphong/<%= img %>" alt="Room image">
+      </div>
+    <% }) %>
+  </div>
+
+  <div class="see-all-text">Xem tất cả</div>
+</a>
+      
   </div>
 
   <% } %>
@@ -282,7 +443,7 @@
                 </span>
               </div>
               <div class="card-body">
-                <h3 class="title">Phòng ${room.TenChoO} tại ${room.DistrictName},${room.DistrictName} </h3>
+                <h3 class="title">Phòng ${room.TenChoO} tại ${room.District},${room.ThanhPho} </h3>
                 <div class="meta">
                   ${formatMoney(room.Gia)}đ / đêm · ★ ${room.Rating || 'Chưa có'}
                 </div>
@@ -348,6 +509,57 @@
           location.reload(); // Reload trang để lấy dữ liệu gốc
         });
       }
+    });
+  </script>
+  <script>
+    const track = document.getElementById('carouselTrack');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+
+    const scrollAmount = 320; // width of card + gap
+
+    prevBtn.addEventListener('click', () => {
+      track.scrollBy({
+        left: -scrollAmount,
+        behavior: 'smooth'
+      });
+    });
+
+    nextBtn.addEventListener('click', () => {
+      track.scrollBy({
+        left: scrollAmount,
+        behavior: 'smooth'
+      });
+    });
+
+    // Optional: Add click handlers to cards
+    const cards = document.querySelectorAll('.location-card');
+    cards.forEach(card => {
+      card.addEventListener('click', (e) => {
+        // Prevent navigation if clicking heart icon
+        if (!e.target.closest('.heart-icon')) {
+          console.log('Card clicked:', card.querySelector('.location-name').textContent);
+          // Add your navigation logic here
+        }
+      });
+    });
+
+    // Heart icon toggle
+    const heartIcons = document.querySelectorAll('.heart-icon');
+    heartIcons.forEach(heart => {
+      heart.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const svg = heart.querySelector('svg');
+        const currentFill = svg.getAttribute('fill');
+        
+        if (currentFill === 'none' || !currentFill) {
+          svg.setAttribute('fill', '#ff385c');
+          svg.setAttribute('stroke', '#ff385c');
+        } else {
+          svg.setAttribute('fill', 'none');
+          svg.setAttribute('stroke', '#fff');
+        }
+      });
     });
   </script>
 </main>
