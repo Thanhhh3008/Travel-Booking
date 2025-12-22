@@ -21,4 +21,7 @@ router.post('/:id/show', phongController.showRoom);
 
 router.post('/xoaphong/:id', phongController.deleteRoom);
 
+
+
+
 module.exports = router;

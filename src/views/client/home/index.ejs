@@ -387,7 +387,10 @@
         const oldSections = section.querySelectorAll('.room-section');
         const oldNoResult = document.getElementById('noResultMessage');
         const oldSections2 = section.querySelectorAll('.carousel-wrapper');
+        const oldSections3 = section.querySelectorAll('.showcase-header');
+        
         oldSections2.forEach(sec => sec.remove());
+        oldSections3.forEach(sec => sec.remove());
         oldH3s.forEach(h2 => h2.remove());
         oldH2s.forEach(h2 => h2.remove());
         oldSections.forEach(sec => sec.remove());

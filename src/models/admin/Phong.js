@@ -80,13 +80,15 @@ getById: async (id) => {
       lp.DienTich, 
       lp.SoKhachToiDa, 
       p.Gia,
-      p.ThanhPho
+      nd.Username
     FROM phong p
     LEFT JOIN loaiphong lp ON p.MaLoaiPhong = lp.MaLoaiPhong
+    LEFT JOIN nguoidung nd ON p.MaNguoiDung = nd.MaNguoiDung
     WHERE p.MaPhong = ?
   `, [id]);
   return rows[0];
 },
+
 // Lấy danh sách phòng theo trạng thái
 getRoomsByStatus: async (status) => {
   const [rows] = await pool.query(`
@@ -191,7 +193,36 @@ getRoomsByStatusWithPagination : async (status, limit, offset) => {
   `;
   const [rooms] = await pool.query(query, [status, limit, offset]);
   return rooms;
-}
+},
+
+
+// Đếm tổng số chi tiết đặt phòng
+  countAll: async () => {
+    const [[row]] = await pool.query(`
+      SELECT COUNT(*) AS total
+      FROM chitietdatphong
+    `);
+    return row.total;
+  },
+
+  // Lấy danh sách chi tiết đặt phòng có phân trang
+  getAllWithPagination: async (limit, offset) => {
+    const [rows] = await pool.query(`
+      SELECT
+        ctdp.MaChiTietDatPhong,
+        nd.Username,
+        p.TenChoO,
+        ctdp.NgayDatPhong,
+        ctdp.TrangThai
+      FROM chitietdatphong ctdp
+      JOIN nguoidung nd ON ctdp.MaNguoiDung = nd.MaNguoiDung
+      JOIN phong p ON ctdp.MaPhong = p.MaPhong
+      ORDER BY ctdp.NgayDatPhong DESC
+      LIMIT ? OFFSET ?
+    `, [limit, offset]);
+
+    return rows;
+  }
 };
 
 module.exports = PhongModel;

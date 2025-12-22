@@ -10,18 +10,20 @@
     <div class="row mb-4">
   <div class="col-md-6">
     <p>
+  <strong>
+    <i class="fa-solid fa-user-tie me-1"></i> Chủ sở hữu:
+  </strong>
+  <%= room.Username|| 'Đang cập nhật' %>
+</p>
+
+    <p>
       <strong>
         <i class="fa-solid fa-location-dot me-1"></i> Địa chỉ:
       </strong>
       <%= room.DiaChi %>
     </p>
 
-    <p>
-      <strong>
-        <i class="fa-solid fa-city me-1"></i> Thành phố:
-      </strong>
-      <%= room.ThanhPho %>
-    </p>
+   
 
     <p>
       <strong>

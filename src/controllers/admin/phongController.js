@@ -94,6 +94,7 @@ exports.getRoomDetail = async (req, res) => {
 
 
 
+
 //  Phê duyệt phòng
 exports.approveRoom = async (req, res) => {
   try {
@@ -255,8 +256,9 @@ exports.deleteRoom = async (req, res) => {
     console.error('Lỗi khi xóa phòng:', err);
     res.status(500).send('Lỗi khi xóa phòng: ' + err.message);
   }
+
+
+  
 };
-
-
 
 

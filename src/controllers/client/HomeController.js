@@ -39,7 +39,7 @@ for (const city of cities) {
             // Lấy danh sách thành phố và loại phòng từ database
             const allCities = await roomService.getAllCities();
             const allRoomTypes = await categoryRoomService.getAll();
-            console.log(roomsByCity)
+            
             const thongbao = req.session.login  ? await ThongBao.getByUser(req.session.login.maNguoiDung) : [];
             res.render('client/home/index', { 
                     
