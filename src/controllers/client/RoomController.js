@@ -67,7 +67,7 @@ class RoomController {
         }
 
         const roomService = new RoomService();
-        console.log(cityName)
+       
         const rooms = await roomService.getAll(
             `WHERE p.TrangThaiPhong = 'Đang hoạt động'
              AND p.DiaChi LIKE ?`,
@@ -426,12 +426,14 @@ static async store(req, res) {
             const hasCompletedBooking =
                 await bookingService.hasCompletedBooking(id, userId);
 
-            // const hasReviewed =
-            //     await reviewService.hasReviewed(id, userId);
-
+            const hasReviewed = await reviewService.hasReviewed(id, userId);
+            
             canReview = hasCompletedBooking ;
+            if (hasReviewed) {
+                canReview = false;
+            }
         }
-console.log(room.avartar)
+        console.log(room.Gia)
         // 4 Render
         res.render('client/home/room-detail', {
             message,
@@ -500,15 +502,15 @@ static async review(req, res) {
             );
             }
 
-    // if (await reviewService.hasReviewed(roomId, userId)) {
-    //   req.session.message = {
-    //     type: 'danger',
-    //     mess: 'Bạn đã đánh giá phòng này rồi.',
-    //   };
-    //   return req.session.save(() =>
-    //     res.redirect(`/rooms/${roomId}`)
-    //   );
-    // }
+    if (await reviewService.hasReviewed(roomId, userId)) {
+      req.session.message = {
+        type: 'danger',
+        mess: 'Bạn đã đánh giá phòng này rồi.',
+      };
+      return req.session.save(() =>
+        res.redirect(`/rooms/${roomId}`)
+      );
+    }
 
     await reviewService.create({ roomId, userId, rate, content });
     await roomService.updateRating(roomId);
@@ -551,13 +553,13 @@ static async review(req, res) {
 
         const roomService = new RoomService();
 
-        // 👉 LẤY TẤT CẢ PHÒNG CỦA NGƯỜI DÙNG
+        //  LẤY TẤT CẢ PHÒNG CỦA NGƯỜI DÙNG
         const rooms = await roomService.getAll(
             'WHERE p.MaNguoiDung = ?',
             [userId]
         );
 
-        // 👉 MAP TRẠNG THÁI HIỂN THỊ
+        //  MAP TRẠNG THÁI HIỂN THỊ
         const mappedRooms = rooms.map(room => ({
             ...room,
             TrangThaiHienThi:
@@ -566,7 +568,7 @@ static async review(req, res) {
                     : room.TrangThaiPhong
         }));
 
-        // 👉 PHÂN LOẠI THEO TRẠNG THÁI (DÙNG CHO TAB)
+        //  PHÂN LOẠI THEO TRẠNG THÁI (DÙNG CHO TAB)
         const roomsByStatus = {
             // 'Trống': [],
             // 'Đã đặt trước': [],
@@ -583,7 +585,7 @@ static async review(req, res) {
             }
         });
 
-        // 👉 THỐNG KÊ (STAT CARDS)
+        // THỐNG KÊ (STAT CARDS)
         const stats = {
             total: mappedRooms.length,
             // approved: roomsByStatus['Trống'].length,

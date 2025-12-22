@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Hóa đơn đặt phòng</title>
+  <link rel="stylesheet" href="/css/bootstrap.min.css">
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    .invoice { max-width: 800px; margin: auto; border: 1px solid #ccc; padding: 20px; }
+    .invoice-header { text-align: center; margin-bottom: 20px; }
+    .invoice-table th, .invoice-table td { padding: 8px; }
+    .text-right { text-align: right; }
+  </style>
+</head>
+<body>
+  <div class="invoice">
+    <div class="invoice-header">
+      <h2>Hóa đơn đặt phòng</h2>
+      <p>Mã đơn: <strong><%= booking.MaChiTietDatPhong %></strong></p>
+    </div>
+
+    <h5>Thông tin khách hàng</h5>
+    <p>Họ tên: <%= booking.HoTen %></p>
+    <p>Username: <%= booking.Username %></p>
+    <p>Email: <%= booking.Email %></p>
+
+    <h5>Thông tin phòng</h5>
+    <p>Tên chỗ ở: <%= booking.TenChoO %></p>
+    <p>Số phòng: <%= booking.SoPhong %></p>
+    <p>Địa chỉ: <%= booking.DiaChi %></p>
+    
+    <p>Ngày nhận phòng: <%= booking.NgayNhanPhong ? new Date(booking.NgayNhanPhong).toLocaleDateString('vi-VN') : 'Chưa xác định' %></p>
+<p>Ngày trả phòng: <%= booking.NgayTraPhong ? new Date(booking.NgayTraPhong).toLocaleDateString('vi-VN') : 'Chưa xác định' %></p>
+    <p>Ngày đặt: <%= new Date(booking.NgayDatPhong).toLocaleDateString('vi-VN') %></p>
+<p>Trạng thái phòng: 
+  <% if (booking.TrangThai == 1) { %>
+    <span style="color: green; font-weight: bold;">Đã hoàn thành</span>
+  <% } else { %>
+    <span style="color: orange; font-weight: bold;">Chưa hoàn thành</span>
+  <% } %>
+</p>
+    <h5>Chi tiết thanh toán</h5>
+    <table class="table table-bordered invoice-table">
+      <thead>
+        <tr>
+          <th>Mô tả</th>
+          <th class="text-right">Giá (VND)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Phòng: <%= booking.TenChoO %></td>
+          <td class="text-right"><%= booking.Gia.toLocaleString('vi-VN') %></td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr>
+          <th>Tổng</th>
+          <th class="text-right"><%= booking.Gia.toLocaleString('vi-VN') %></th>
+        </tr>
+      </tfoot>
+    </table>
+
+    <p class="text-center mt-4">Cảm ơn quý khách đã đặt phòng!</p>
+  </div>
+
+  <script>
+    window.print();
+  </script>
+</body>
+</html>

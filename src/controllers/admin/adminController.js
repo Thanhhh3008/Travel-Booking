@@ -12,7 +12,7 @@ class AdminController {
       
 
       // Lấy số liệu
-      const totalUsers = await NguoiDungModel.countAll();
+    const totalUsers = await NguoiDungModel.countAll();
     const totalRooms = await PhongModel.countAll();
       const todayBookings = await BookingService.countToday();
       const totalRevenue = await RevenueService.sumRevenue();

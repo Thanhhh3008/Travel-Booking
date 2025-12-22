@@ -93,7 +93,7 @@ class BookingService {
     const [rows] = await pool.query(`
       SELECT COUNT(*) AS total
       FROM chitietdatphong
-      WHERE ngaydatphong = CURDATE()
+      WHERE DATE(NgayDatPhong) = CURDATE()
     `);
     return rows[0].total;
   }

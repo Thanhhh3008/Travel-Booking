@@ -690,3 +690,46 @@
   color: #64748b;
   font-size: 13px;
 }
+.image-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.9);
+  z-index: 9999;
+  align-items: center;
+  justify-content: center;
+}
+
+.image-modal img {
+  max-width: 90%;
+  max-height: 85%;
+  border-radius: 8px;
+}
+
+.image-modal .close-modal {
+  position: absolute;
+  top: 16px;
+  right: 24px;
+  font-size: 36px;
+  color: #fff;
+  cursor: pointer;
+}
+
+.image-modal .nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 40px;
+  background: none;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  padding: 12px;
+}
+
+.image-modal .prev { left: 24px; }
+.image-modal .next { right: 24px; }
+
+.gallery-img {
+  cursor: pointer;
+}

@@ -114,7 +114,7 @@ class AuthController {
                 type: 'danger'
             };
             req.session.save(() => {
-                res.redirect('/');
+                res.redirect('/register.html');
             });
             return;
         }
@@ -126,7 +126,7 @@ class AuthController {
             };
 
             req.session.save(() => {
-                res.redirect('/');
+                res.redirect('/register.html');
             });
             return;
         }

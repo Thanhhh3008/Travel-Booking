@@ -99,11 +99,13 @@ class RoomService {
                 nd.Username,
                 nd.HoTen,
                 nd.Email,
-                p.gia AS GiaPhong,
+                p.Gia AS GiaPhong,
                 p.TenChoO,
                 p.ThanhPho,
                 p.MaNguoiDung,
-                nd.avartar
+                p.MoTa as MoTaPhong,
+                nd.avartar,
+                lp.*
             FROM phong p
             JOIN loaiphong lp ON p.MaLoaiPhong = lp.MaLoaiPhong
             JOIN nguoidung nd ON p.MaNguoiDung = nd.MaNguoiDung
@@ -142,6 +144,9 @@ class RoomService {
         room.MaNguoiDung = row.MaNguoiDung; 
         room.TrangThaiPhong = row.TrangThaiPhong; 
         room.avartar = row.avartar; 
+        room.MoTa = row.MoTaPhong; 
+        room.SoKhachToiDa = row.SoKhachToiDa; 
+        console.log('GiaPhong từ DB:', row.GiaPhong);
         return room;
 
     } catch (err) {

@@ -50,6 +50,19 @@
   .star-rating-custom label:hover ~ label {
     color: #ffb400 !important;
   }
+  .room-desc {
+  line-height: 1.6;
+  white-space: pre-line; /* giữ xuống dòng trong DB */
+}
+
+/* Giới hạn 4 dòng */
+.room-desc.clamp {
+  display: -webkit-box;
+  -webkit-line-clamp: 7;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
 </style>
 <main class="container section page-room-detail">
   <!-- Thông báo flash -->
@@ -90,33 +103,35 @@
   </div>
 
   <!-- Room Gallery -->
-  <div class="room-gallery">
-    <% 
-      const images = room.HinhAnh ? room.HinhAnh.split(',') : [];
-      const displayImages = images.slice(0, 5);
-    %>
-    
-    <% if (displayImages.length > 0) { %>
-      <img src="/admin/uploads/anhphong/<%= displayImages[0].trim() %>" 
-           alt="<%= room.TenLoaiPhong %>" 
-           class="gallery-main">
-      
-      <% for(let i = 1; i < displayImages.length && i < 5; i++) { %>
-        <img src="/admin/uploads/anhphong/<%= displayImages[i].trim() %>" 
-             alt="<%= room.TenLoaiPhong %>">
-      <% } %>
-    <% } else { %>
-      <img src="/admin/uploads/anhphong/default.jpg" 
-           alt="Phòng" 
-           class="gallery-main">
+<div class="room-gallery">
+  <% 
+    const images = room.HinhAnh ? room.HinhAnh.split(',') : [];
+    const displayImages = images.slice(0, 5);
+  %>
+
+  <% if (displayImages.length > 0) { %>
+    <img
+      src="/admin/uploads/anhphong/<%= displayImages[0].trim() %>"
+      class="gallery-main gallery-img"
+      data-index="0"
+      alt="<%= room.TenLoaiPhong %>">
+
+    <% for(let i = 1; i < displayImages.length; i++) { %>
+      <img
+        src="/admin/uploads/anhphong/<%= displayImages[i].trim() %>"
+        class="gallery-img"
+        data-index="<%= i %>"
+        alt="<%= room.TenLoaiPhong %>">
     <% } %>
-    
-    <% if (images.length > 5) { %>
-    <button class="show-all-photos" onclick="alert('Mở thư viện ảnh đầy đủ')">
-      <span>⊞</span> Hiển thị tất cả ảnh
-    </button>
-    <% } %>
-  </div>
+  <% } else { %>
+    <img src="/admin/uploads/anhphong/default.jpg" class="gallery-main">
+  <% } %>
+
+  <button class="show-all-photos" id="openGallery">
+    <span>⊞</span> Hiển thị tất cả ảnh
+  </button>
+</div>
+
 
   <!-- Room Content -->
   <div class="room-content">
@@ -126,9 +141,9 @@
       <div class="room-title-section">
         <h2>Toàn bộ nhà nghỉ <%= room.TenChoO || 'Chưa rõ' %>  tại <%= room.DiaChi ? room.DiaChi : 'Liên Sơn' %>, Việt Nam</h2>
         <div class="room-meta-inline">
-          <span>3 khách</span>
-          <span>1 phòng ngủ</span>
-          <span>1 giường</span>
+          <span>Tối đa <%=room.SoKhachToiDa || '2'%> khách</span>
+          <span>3 phòng ngủ</span>
+          <span>2 giường</span>
           <span>1 phòng tắm</span>
         </div>
       </div>
@@ -146,13 +161,22 @@
         </div>
       </div>
 
-      <!-- Description -->
-      <% if (room.MoTa || room.description) { %>
-      <div class="room-desc-block">
-        <p><%= room.MoTa || room.description %></p>
-        <button class="show-more-btn" onclick="alert('Hiển thị thêm mô tả')">Hiển thị thêm ></button>
-      </div>
-      <% } %>
+     <!-- Description -->
+<% if (room.MoTa) { %>
+  <div class="room-desc-block">
+    <p id="roomDesc" class="room-desc clamp">
+      <%= room.MoTa %>
+    </p>
+
+    <button
+      id="toggleDesc"
+      class="show-more-btn"
+      type="button">
+      Hiển thị thêm
+    </button>
+  </div>
+<% } %>
+
 
       <!-- Amenities -->
      <!-- Amenities -->
@@ -239,7 +263,7 @@
     <% } else if (!canReview) { %>
       <!-- Không đủ điều kiện -->
       <p style="color:#717171;">
-        Bạn chỉ có thể đánh giá sau khi đã hoàn thành kỳ nghỉ tại phòng này.
+        Bạn chỉ có thể đánh giá MỘT lần sau khi đã hoàn thành kỳ nghỉ tại phòng này. 
   
       </p>
 
@@ -404,10 +428,13 @@
     <!-- Right side - Booking card -->
     <div class="booking-card">
       <div class="booking-price">
-        <span class="price"><%= helpers.formatMoney(room.Gia || room.price) %></span>
-        <span class="per-night">/đêm</span>
-      </div>
-
+  <% if (room.Gia && !isNaN(room.Gia)) { %>
+    <span class="price"><%= helpers.formatMoney(room.Gia) %></span>
+    <span class="per-night">/đêm</span>
+  <% } else { %>
+    <span class="price">Liên hệ</span>
+  <% } %>
+</div>
      
  <!-- Nút đặt phòng -->
             <div class="room-actions">
@@ -419,7 +446,59 @@
             </div>
     </div>
   </div>
+  <div id="imageModal" class="image-modal">
+  <span class="close-modal">&times;</span>
+
+  <img id="modalImage" src="" alt="Ảnh phòng">
+
+  <button class="nav prev">&#10094;</button>
+  <button class="nav next">&#10095;</button>
+</div>
+
 </main>
+<script>
+  const images = <%- JSON.stringify(images || []) %>;
+  let currentIndex = 0;
+
+  const modal = document.getElementById('imageModal');
+  const modalImg = document.getElementById('modalImage');
+  const closeBtn = document.querySelector('.close-modal');
+  const prevBtn = document.querySelector('.prev');
+  const nextBtn = document.querySelector('.next');
+
+  function openModal(index) {
+    currentIndex = index;
+    modalImg.src = '/admin/uploads/anhphong/' + images[currentIndex].trim();
+    modal.style.display = 'flex';
+  }
+
+  document.querySelectorAll('.gallery-img').forEach(img => {
+    img.addEventListener('click', () => {
+      openModal(Number(img.dataset.index));
+    });
+  });
+
+  document.getElementById('openGallery')?.addEventListener('click', () => {
+    openModal(0);
+  });
+
+  closeBtn.onclick = () => modal.style.display = 'none';
+
+  modal.onclick = (e) => {
+    if (e.target === modal) modal.style.display = 'none';
+  };
+
+  prevBtn.onclick = () => {
+    currentIndex = (currentIndex - 1 + images.length) % images.length;
+    modalImg.src = '/admin/uploads/anhphong/' + images[currentIndex].trim();
+  };
+
+  nextBtn.onclick = () => {
+    currentIndex = (currentIndex + 1) % images.length;
+    modalImg.src = '/admin/uploads/anhphong/' + images[currentIndex].trim();
+  };
+</script>
+
 <script>
   const textarea = document.getElementById('reviewContent');
   const counter = document.getElementById('charCount');
@@ -444,6 +523,19 @@
         .forEach(el => el.style.display = 'block');
 
       showMoreBtn.style.display = 'none';
+    });
+  }
+</script>
+<script>
+  const desc = document.getElementById('roomDesc');
+  const btn = document.getElementById('toggleDesc');
+
+  if (desc && btn) {
+    btn.addEventListener('click', () => {
+      const isClamped = desc.classList.contains('clamp');
+
+      desc.classList.toggle('clamp');
+      btn.textContent = isClamped ? 'Thu gọn' : 'Hiển thị thêm';
     });
   }
 </script>

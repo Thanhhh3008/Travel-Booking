@@ -95,8 +95,16 @@
         </div>
 
         <label class="form-field">
-          <span class="label">Số khách</span>
-          <input type="number" min="1" name="SoLuongKhach" value="1">
+          <span class="label">Số khách (tối đa <%= room.SoKhachToiDa || 2 %> )</span>
+          <input
+          type="number"
+          name="SoLuongKhach"
+          min="1"
+          max="<%= room.SoKhachToiDa || 2 %>"
+          value="1"
+          required
+          >
+
         </label>
 
         <label class="form-field">
