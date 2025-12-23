@@ -166,4 +166,15 @@ router.get('/contact.html', ContactController.contactView)
 router.post('/contact', ContactController.senderEmail)
 router.get('/ward/:id_district', WardController.getWardsByIdDistrict)
 router.get('/find/ward/:id', WardController.getWardById)
+// Route hiển thị form quên mật khẩu
+router.get('/quen-mat-khau.html', AuthController.forgotPasswordView);
+
+// Route xử lý gửi email
+router.post('/send-forgot-password-email', AuthController.sendChangePassEmail);
+
+// Route hiển thị form đổi mật khẩu (đã có)
+router.get('/doi-mat-khau.html', AuthController.changePasswordByMail);
+
+// Route xử lý cập nhật mật khẩu mới
+router.post('/update-password-by-email', AuthController.updatePasswordByEmail);
 module.exports = router;

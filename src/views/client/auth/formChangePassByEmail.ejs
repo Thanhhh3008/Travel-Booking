@@ -1,0 +1,64 @@
+<%- include('../layout/header.ejs') %>
+<main class="auth-shell">
+  <section class="auth-card">
+    <div class="auth-head">
+      <div>Đặt lại mật khẩu</div>
+      <a class="link" href="/login.html">Đăng nhập</a>
+    </div>
+    <div class="auth-body">
+      <h1 class="auth-title">Tạo mật khẩu mới 🔐</h1>
+      <p style="color: #666; margin-bottom: 24px; font-size: 14px;">
+        Email: <strong><%= user1.email %></strong>
+      </p>
+
+      <form action="/update-password-by-email" method="POST">
+        <input type="hidden" name="token" value="<%= token1 %>">
+        <input type="hidden" name="email" value="<%= user1.email %>">
+
+        <label class="auth-label" for="new-password">Mật khẩu mới</label>
+        <input 
+          type="password" 
+          name="newPassword" 
+          id="new-password" 
+          class="auth-input"
+          placeholder="Tối thiểu 8 ký tự"
+          required
+          pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$"
+          title="Mật khẩu phải có ít nhất 8 ký tự, gồm chữ hoa, chữ thường và số"
+        >
+        <small style="color: #666; font-size: 13px; display: block; margin-top: 4px;">
+          Phải có ít nhất 8 ký tự, bao gồm chữ hoa, chữ thường và số
+        </small>
+
+        <label class="auth-label" for="confirm-password" style="margin-top: 16px;">Xác nhận mật khẩu</label>
+        <input 
+          type="password" 
+          name="confirmPassword" 
+          id="confirm-password" 
+          class="auth-input"
+          placeholder="Nhập lại mật khẩu mới"
+          required
+        >
+
+        <div style="margin-top: 24px;">
+          <button type="submit" class="auth-btn">Đặt lại mật khẩu</button>
+        </div>
+      </form>
+    </div>
+  </section>
+</main>
+
+<script>
+// Kiểm tra mật khẩu khớp nhau
+document.querySelector('form').addEventListener('submit', function(e) {
+  const newPass = document.getElementById('new-password').value;
+  const confirmPass = document.getElementById('confirm-password').value;
+  
+  if (newPass !== confirmPass) {
+    e.preventDefault();
+    alert('Mật khẩu xác nhận không khớp!');
+  }
+});
+</script>
+
+<%- include('../layout/footer.ejs') %>

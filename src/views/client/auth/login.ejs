@@ -10,15 +10,20 @@
 
       <form action="/login" class="form-login" method="POST">
         <label class="auth-label" for="login-email">Email</label>
-        <input type="email" name="email" id="login-email" class="auth-input" placeholder="ban@gmail.com">
+        <input type="email" name="email" id="login-email" class="auth-input" placeholder="ban@gmail.com" required>
 
         <label class="auth-label" for="login-passs">Password</label>
-        <input type="password" name="password" id="login-passs" class="auth-input">
+        <input type="password" name="password" id="login-passs" class="auth-input" required>
+        
+        <!-- Thêm link quên mật khẩu -->
+        <div style="text-align: right; margin-top: 8px;">
+          <a class="link" href="/quen-mat-khau.html" style="font-size: 14px;">Quên mật khẩu?</a>
+        </div>
+
         <div style="margin-top:12px">
           <button class="auth-btn">Tiếp tục</button>
         </div>
       </form>
-
 
       <div class="auth-divider">hoặc</div>
 
@@ -31,12 +36,7 @@
           </span>
           Tiếp tục với Google
         </a>
-        <!-- <a class="btn" href="#"> Tiếp tục với Apple</a> -->
       </div>
-
-      <!-- <p class="auth-mini">Bằng việc tiếp tục, bạn đồng ý với
-        <a class="link" href="#">Điều khoản</a> và <a class="link" href="#">Chính sách quyền riêng tư</a> của TripStay.
-      </p> -->
     </div>
   </section>
 </main>
