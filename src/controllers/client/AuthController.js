@@ -367,42 +367,40 @@ const hash = user.password.toString();  // default là 'utf8'
 
 
     static sendChangePassEmail = async (req, res) => {
-        const email = req.body.email;
-        const mCustomer = new customerModels();
-        const tmp = await mCustomer.findByEmail(email);
+    const email = req.body.email;
+    const mCustomer = new customerModels();
+    const tmp = await mCustomer.findByEmail(email);
 
-        // Kiểm tra email có tồn tại trong hệ thống không
-        if (!tmp) {
-            req.session.message = {
-                mess: `Email không tồn tại trong hệ thống`,
-                type: 'danger'
-            };
+    // Kiểm tra email có tồn tại trong hệ thống không
+    if (!tmp) {
+        req.session.message = {
+            mess: `Email không tồn tại trong hệ thống`,
+            type: 'danger'
+        };
+        req.session.save(() => {
+            res.redirect('/quen-mat-khau.html');
+        });
+        return;
+    }
 
-            req.session.save(() => {
-                res.redirect('/');
-            });
-            return;
-        }
+    // Kiểm tra tài khoản đã được kích hoạt chưa
+    if (tmp.status === 0) {
+        req.session.message = {
+            mess: `Tài khoản chưa được kích hoạt, vui lòng kiểm tra email để kích hoạt tài khoản hoặc liên hệ với quản trị viên`,
+            type: 'danger'
+        };
+        req.session.save(() => {
+            res.redirect('/quen-mat-khau.html');
+        });
+        return;
+    }
 
-        // Kiểm tra tài khoản đã được kích hoạt chưa
-        if (tmp.status === 0) {
-            req.session.message = {
-                mess: `Tài khoản chưa được kích hoạt, vui lòng kiểm tra email để kích hoạt tài khoản hoặc liên hệ với quản trị viên`,
-                type: 'danger'
-            };
-            req.session.save(() => {
-                res.redirect('/');
-            });
-            return;
-        }
+    const payload = { email: email };
+    const secretKey = process.env.KEY_JWT;
+    const token = jwt.sign(payload, secretKey, { expiresIn: '15m' });
 
-
-        const payload = { email: email };
-        const secretKey = process.env.KEY_JWT;
-        const token = jwt.sign(payload, secretKey, { expiresIn: '15m' });
-
-        const html = `<div style="font-family: Arial, sans-serif; padding:32px; background:#f7f9fa; color:#222; max-width:500px; margin:40px auto; border-radius:12px; box-shadow:0 4px 24px rgba(0,0,0,0.07);">
-  <h2 style="color:#2196F3; margin-bottom:8px;">🔒 Yêu cầu đổi mật khẩu tài khoản <span style="color:#1976d2;">TECHSHOP</span></h2>
+    const html = `<div style="font-family: Arial, sans-serif; padding:32px; background:#f7f9fa; color:#222; max-width:500px; margin:40px auto; border-radius:12px; box-shadow:0 4px 24px rgba(0,0,0,0.07);">
+  <h2 style="color:#2196F3; margin-bottom:8px;">🔒 Yêu cầu đổi mật khẩu tài khoản <span style="color:#1976d2;">TRIPSTAY</span></h2>
   <p style="font-size:16px; margin-bottom:24px;">
     Bạn vừa gửi yêu cầu đổi mật khẩu. Để đặt lại mật khẩu mới, vui lòng nhấn vào nút bên dưới:
   </p>
@@ -423,34 +421,38 @@ const hash = user.password.toString();  // default là 'utf8'
   </div>
 
   <p style="font-size:12px; color:#888; margin-top:24px; text-align:center;">
-    Email này được gửi tự động từ hệ thống TECHSHOP.
+    Email này được gửi tự động từ hệ thống TRIPSTAY.
   </p>
 </div>`;
 
-        if (await sendMailVerify(email, 'ĐỐI MẬT KHẨU TÀI KHOẢN TẠI WEBSITE TECHSHOP', html)) {
-            req.session.message = {
-                mess: `Đã gửi email đổi mật khẩu đến địa chỉ ${email}, vui lòng kiểm tra email để thực hiện`,
-                type: 'success'
-            };
-
-            req.session.save(() => {
-                res.redirect('/');
-            });
-            return;
-        }
-        else {
-            req.session.message = {
-                mess: `Gửi email đổi mật khẩu không thành công, vui lòng thử lại sau`,
-                type: 'danger'
-            };
-
-            req.session.save(() => {
-                res.redirect('/');
-            });
-            return;
-        }
-
+    if (await sendMailVerify(email, 'ĐỔI MẬT KHẨU TÀI KHOẢN TẠI TRIPSTAY', html)) {
+        req.session.message = {
+            mess: `Đã gửi email đổi mật khẩu đến địa chỉ ${email}, vui lòng kiểm tra email để thực hiện`,
+            type: 'success'
+        };
+        req.session.save(() => {
+            res.redirect('/login.html');
+        });
+        return;
+    } else {
+        req.session.message = {
+            mess: `Gửi email đổi mật khẩu không thành công, vui lòng thử lại sau`,
+            type: 'danger'
+        };
+        req.session.save(() => {
+            res.redirect('/quen-mat-khau.html');
+        });
+        return;
     }
+}
+
+// Thêm view cho trang quên mật khẩu
+static forgotPasswordView = async (req, res) => {
+    const message = req.session.message;
+    delete req.session.message;
+    const thongbao = req.session.login ? await ThongBao.getByUser(req.session.login.maNguoiDung) : [];
+    return res.render('client/auth/forgot-password', { message, thongbao });
+}
 
     static changePasswordByMail = async (req, res) => {
         const token = req.query['token'];
@@ -698,7 +700,79 @@ const thongbao = req.session.login  ? await ThongBao.getByUser(req.session.login
 
 
     }
+static updatePasswordByEmail = async (req, res) => {
+    const { token, email, newPassword, confirmPassword } = req.body;
+    const mCustomer = new customerModels();
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/;
 
+    try {
+        // Xác thực token
+        const decoded = jwt.verify(token, process.env.KEY_JWT);
+        
+        if (decoded.email !== email) {
+            req.session.message = {
+                mess: 'Token không hợp lệ',
+                type: 'danger'
+            };
+            return req.session.save(() => res.redirect('/quen-mat-khau.html'));
+        }
+
+        // Kiểm tra mật khẩu khớp
+        if (newPassword !== confirmPassword) {
+            req.session.message = {
+                mess: 'Mật khẩu xác nhận không khớp',
+                type: 'danger'
+            };
+            return req.session.save(() => res.redirect(`/doi-mat-khau.html?token=${token}`));
+        }
+
+        // Kiểm tra độ mạnh mật khẩu
+        if (!passwordRegex.test(newPassword)) {
+            req.session.message = {
+                mess: 'Mật khẩu phải có ít nhất 8 ký tự, gồm chữ hoa, chữ thường và số',
+                type: 'danger'
+            };
+            return req.session.save(() => res.redirect(`/doi-mat-khau.html?token=${token}`));
+        }
+
+        // Lấy thông tin user
+        const user = await mCustomer.findByEmail(email);
+        if (!user) {
+            req.session.message = {
+                mess: 'Không tìm thấy tài khoản',
+                type: 'danger'
+            };
+            return req.session.save(() => res.redirect('/quen-mat-khau.html'));
+        }
+
+        // Hash mật khẩu mới
+        const salt = bcrypt.genSaltSync(saltRounds);
+        const hashedPassword = bcrypt.hashSync(newPassword, salt);
+
+        // Cập nhật mật khẩu
+        if (await mCustomer.updatePassword(user.maNguoiDung, hashedPassword)) {
+            req.session.message = {
+                mess: 'Đổi mật khẩu thành công! Vui lòng đăng nhập với mật khẩu mới',
+                type: 'success'
+            };
+            return req.session.save(() => res.redirect('/login.html'));
+        }
+
+        req.session.message = {
+            mess: 'Đã xảy ra lỗi khi cập nhật mật khẩu',
+            type: 'danger'
+        };
+        return req.session.save(() => res.redirect('/quen-mat-khau.html'));
+
+    } catch (error) {
+        console.error('Error updating password by email:', error);
+        req.session.message = {
+            mess: 'Token không hợp lệ hoặc đã hết hạn',
+            type: 'danger'
+        };
+        return req.session.save(() => res.redirect('/quen-mat-khau.html'));
+    }
+}
     static storePackageVNPay = async (req, res) => {
 
         // const mCustomer = new customerModels()
