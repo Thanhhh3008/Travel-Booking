@@ -727,13 +727,13 @@ static updatePasswordByEmail = async (req, res) => {
         }
 
         // Kiểm tra độ mạnh mật khẩu
-        if (!passwordRegex.test(newPassword)) {
-            req.session.message = {
-                mess: 'Mật khẩu phải có ít nhất 8 ký tự, gồm chữ hoa, chữ thường và số',
-                type: 'danger'
-            };
-            return req.session.save(() => res.redirect(`/doi-mat-khau.html?token=${token}`));
-        }
+        // if (!passwordRegex.test(newPassword)) {
+        //     req.session.message = {
+        //         mess: 'Mật khẩu phải có ít nhất 8 ký tự, gồm chữ hoa, chữ thường và số',
+        //         type: 'danger'
+        //     };
+        //     return req.session.save(() => res.redirect(`/doi-mat-khau.html?token=${token}`));
+        // }
 
         // Lấy thông tin user
         const user = await mCustomer.findByEmail(email);
@@ -755,6 +755,7 @@ static updatePasswordByEmail = async (req, res) => {
                 mess: 'Đổi mật khẩu thành công! Vui lòng đăng nhập với mật khẩu mới',
                 type: 'success'
             };
+            delete req.session.login
             return req.session.save(() => res.redirect('/login.html'));
         }
 

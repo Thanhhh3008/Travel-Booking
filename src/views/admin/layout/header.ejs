@@ -17,6 +17,55 @@
   <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
+
+<style>
+    /* Style cho Sidebar */
+    .sidebar {
+        width: 280px; /* Cố định chiều rộng */
+        transition: all 0.3s;
+    }
+
+    /* Style cho tiêu đề nhóm (Sidebar Header) */
+    .sidebar-header {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: #6c757d; /* Màu xám mờ */
+        margin-bottom: 0.5rem;
+        padding-left: 1rem;
+        font-weight: 700;
+    }
+
+    /* Hiệu ứng hover cho link */
+    .nav-link {
+        padding: 0.8rem 1rem;
+        border-radius: 6px;
+        transition: all 0.2s;
+    }
+
+    .nav-link:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+        color: #fff !important;
+    }
+
+    /* Sub-menu text nhỏ hơn chút */
+    .nav-link.text-white-50 {
+        font-size: 0.9rem;
+        padding: 0.5rem 1rem;
+    }
+    
+    .nav-link.text-white-50:hover {
+        color: #fff !important;
+        background-color: transparent; /* Submenu không cần background khi hover */
+        padding-left: 1.2rem; /* Hiệu ứng đẩy nhẹ sang phải */
+    }
+    
+    /* Xoay mũi tên khi mở dropdown (Option nâng cao) */
+    .nav-link[aria-expanded="true"] .fa-chevron-down {
+        transform: rotate(180deg);
+        transition: transform 0.3s;
+    }
+</style>
 <body>
     <!-- Navbar -->
 <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm rounded mb-2">
@@ -70,54 +119,79 @@
 </nav>
   <div class="d-flex">
  <!-- Sidebar -->
-<div class="bg-dark text-white p-3 sidebar mt-2">
-  <h4 class="text-center mb-4">Admin dashboard</h4>
-  <ul class="nav flex-column">
+<div class="bg-dark text-white sidebar mt-2 d-flex flex-column flex-shrink-0 p-3" style="min-height: 100vh;">
+    <h4 class="text-center mb-4 fw-bold text-uppercase ls-1">Admin</h4>
+    
+    <ul class="nav flex-column mb-auto">
+        
+        <li class="sidebar-header">
+            MENU CHÍNH
+        </li>
+        <li class="nav-item">
+            <a href="/admin" class="nav-link text-white active-item">
+                <i class="fa-solid fa-chart-line text-info me-3"></i>
+                Tổng quan
+            </a>
+        </li>
 
-    <li class="nav-item">
-      <a href="/admin" class="nav-link text-white">
-        <i class="fa-solid fa-chart-line text-info me-2"></i>
-        Tổng quan
-      </a>
-    </li>
+        <li class="sidebar-header mt-3">
+            QUẢN LÝ
+        </li>
+        
+        <li class="nav-item">
+            <a href="/admin/user" class="nav-link text-white">
+                <i class="fa-solid fa-users text-primary me-3"></i>
+                Người dùng
+            </a>
+        </li>
 
-    <li class="nav-item">
-      <a href="/admin/user" class="nav-link text-white">
-        <i class="fa-solid fa-users text-primary me-2"></i>
-        Quản lý người dùng
-      </a>
-    </li>
+        <li class="nav-item">
+            <a class="nav-link text-white d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#roomSubmenu" role="button" aria-expanded="false" aria-controls="roomSubmenu">
+                <span>
+                    <i class="fa-solid fa-house-circle-check text-success me-3"></i>
+                    Quản lý chỗ ở
+                </span>
+                <i class="fa-solid fa-chevron-down fa-xs"></i>
+            </a>
+            <div class="collapse" id="roomSubmenu">
+                <ul class="nav flex-column ms-3 ps-3 border-start border-secondary">
+                    <li class="nav-item">
+                        <a href="/admin/duyetphong/tatca" class="nav-link text-white-50">
+                            <i class="fa-solid fa-list me-2"></i> Danh sách tất cả
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/admin/duyetphong" class="nav-link text-white-50">
+                            <i class="fa-solid fa-clock text-warning me-2"></i> Chờ duyệt
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </li>
 
-    <li class="nav-item">
-      <a href="/admin/duyetphong/tatca" class="nav-link text-white">
-        <i class="fa-solid fa-house-circle-check text-success me-2"></i>
-        Quản lý chỗ ở
-      </a>
-    </li>
+        <li class="nav-item">
+            <a href="/admin/datphong" class="nav-link text-white">
+                <i class="fa-solid fa-receipt text-info me-3"></i>
+                Đơn đặt phòng
+            </a>
+        </li>
 
-    <!-- 🔹 Đơn đặt phòng -->
-    <li class="nav-item">
-      <a href="/admin/datphong" class="nav-link text-white">
-        <i class="fa-solid fa-receipt text-info me-2"></i>
-        Theo dõi đơn đặt phòng
-      </a>
-    </li>
-
-    <li class="nav-item">
-      <a href="/admin/duyetphong" class="nav-link text-white">
-        <i class="fa-solid fa-clock text-warning me-2"></i>
-        Chỗ ở chờ duyệt
-      </a>
-    </li>
-
-    <li class="nav-item">
-      <a href="/admin/thongbao" class="nav-link text-white">
-        <i class="fa-solid fa-bell text-danger me-2"></i>
-        Quản lý thông báo
-      </a>
-    </li>
-
-  </ul>
+        <li class="sidebar-header mt-3">
+            HỆ THỐNG
+        </li>
+        <li class="nav-item">
+            <a href="/admin/thongbao" class="nav-link text-white">
+                <i class="fa-solid fa-bell text-danger me-3"></i>
+                Thông báo
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="#" class="nav-link text-white">
+                <i class="fa-solid fa-gear text-secondary me-3"></i>
+                Cài đặt chung
+            </a>
+        </li>
+    </ul>
 </div>
 
 

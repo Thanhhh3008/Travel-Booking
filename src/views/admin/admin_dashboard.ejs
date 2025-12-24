@@ -8,24 +8,172 @@
 
 <!-- Cards -->
 <div class="row g-3">
-  <div class="col-md-3"><div class="card card-light-blue"><div class="card-body"><h6>Người dùng</h6><h3><%= stats.users %></h3><p class="text-success">+8%</p></div></div></div>
-  <div class="col-md-3"><div class="card card-light-green"><div class="card-body"><h6>Số phòng</h6><h3><%= stats.rooms %></h3><p class="text-success">Đang hoạt động</p></div></div></div>
-  <div class="col-md-3"><div class="card card-light-yellow"><div class="card-body"><h6>Đặt phòng hôm nay</h6><h3><%= stats.bookingsToday %></h3><p class="text-danger">-2%</p></div></div></div>
-  <div class="col-md-3"><div class="card card-light-pink"><div class="card-body"><h6>Doanh thu</h6><h3><%= stats.revenue %>M</h3><p class="text-success">+5%</p></div></div></div>
+  <div class="col-md-3">
+    <div class="card card-light-blue">
+      <div class="card-body">
+        <h6>Người dùng</h6>
+        <h3><%= stats.users %></h3>
+        <p class="text-success">+8%</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card card-light-green">
+      <div class="card-body">
+        <h6>Số phòng</h6>
+        <h3><%= stats.rooms %></h3>
+        <p class="text-success">Đang hoạt động</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card card-light-yellow">
+      <div class="card-body">
+        <h6>Đặt phòng hôm nay</h6>
+        <h3><%= stats.bookingsToday %></h3>
+        <p class="text-danger">-2%</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card card-light-pink">
+      <div class="card-body">
+        <h6>Doanh thu</h6>
+        <h3><%= stats.revenue %>M</h3>
+        <p class="text-success">+5%</p>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- Chart -->
 <div class="card mt-4 shadow-sm border-0">
   <div class="card-body">
-    <h5 class="mb-3">📈 Biểu đồ doanh thu & đặt phòng (7 ngày gần nhất)</h5>
-    <canvas id="dashboardChart" height="120"></canvas>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h5 class="mb-0">📈 Biểu đồ doanh thu & đặt phòng</h5>
+      <div class="btn-group btn-group-sm" role="group">
+        <button type="button" class="btn btn-outline-secondary active" data-period="7">7 ngày</button>
+        <button type="button" class="btn btn-outline-secondary" data-period="30">30 ngày</button>
+        <button type="button" class="btn btn-outline-secondary" data-period="90">3 tháng</button>
+        <button type="button" class="btn btn-outline-secondary" data-period="365">1 năm</button>
+      </div>
+    </div>
+    <canvas id="dashboardChart" height="100"></canvas>
+  </div>
+</div>
+
+<!-- Bảng người dùng nhỏ gọn -->
+<div class="card mt-4 shadow-sm border-0">
+  <div class="card-body">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h5 class="mb-0">
+        <i class="fa-solid fa-users text-primary me-2"></i>
+        Người dùng gần đây
+      </h5>
+      <div class="d-flex gap-2">
+        <div class="btn-group btn-group-sm">
+          <button class="btn btn-outline-secondary active" data-time="week">Tuần này</button>
+          <button class="btn btn-outline-secondary" data-time="month">Tháng này</button>
+        </div>
+        <a href="/admin/user" class="btn btn-sm btn-primary">
+          Xem tất cả
+        </a>
+       
+      </div>
+    </div>
+    
+    <div class="table-responsive">
+      <table class="table table-hover align-middle compact-table">
+        <thead class="table-light">
+          <tr>
+            <th style="width: 60px;">#</th>
+            <th style="width: 120px;">Trạng thái</th>
+            <th>Tên</th>
+            <th style="width: 180px;">Hoạt động</th>
+            
+            <th style="width: 80px;" class="text-center"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% if (recentUsers && recentUsers.length > 0) { %>
+            <% recentUsers.forEach((user, index) => { 
+              // Generate random activity data for demo
+              const activityPercent = Math.floor(Math.random() * 100);
+              const activityColor = activityPercent > 60 ? 'success' : activityPercent > 40 ? 'warning' : 'danger';
+            %>
+            <tr>
+              <td class="text-muted fw-semibold">#<%= user.MaNguoiDung %></td>
+              <td>
+                <% if (user.status === 1 || user.status === '1') { %>
+                  <span class="badge bg-success">Hoàn thành</span>
+                <% } else if (user.status === 0 || user.status === '0') { %>
+                  <span class="badge bg-warning text-dark">Chờ duyệt</span>
+                <% } else if (user.status === 2) { %>
+                  <span class="badge bg-info">Đang xử lý</span>
+                <% } else { %>
+                  <span class="badge bg-secondary">Tạm ngưng</span>
+                <% } %>
+              </td>
+              <td>
+                <div class="d-flex align-items-center">
+                  <% if (user.avartar) { %>
+                    <img 
+                      src="/avartar/<%= user.avartar %>" 
+                      alt="<%= user.HoTen %>" 
+                      class="user-avatar-sm me-2"
+                      onerror="this.src='https://ui-avatars.com/api/?name=<%= encodeURIComponent(user.HoTen) %>&background=random&size=32'"
+                    >
+                  <% } else { %>
+                    <img 
+                      src="https://ui-avatars.com/api/?name=<%= encodeURIComponent(user.HoTen) %>&background=random&size=32" 
+                      alt="<%= user.HoTen %>" 
+                      class="user-avatar-sm me-2"
+                    >
+                  <% } %>
+                  <div>
+                    <div class="fw-semibold small"><%= user.HoTen %></div>
+                    <small class="text-muted"><%= user.vaiTro || 'Khách hàng' %></small>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <div class="d-flex align-items-center">
+                  <div class="progress flex-grow-1 me-2" style="height: 6px;">
+                    <div class="progress-bar bg-<%= activityColor %>" style="width: <%= activityPercent %>%"></div>
+                  </div>
+                  <small class="text-muted"><%= activityPercent %>%</small>
+                </div>
+              </td>
+              <td>
+                <div class="mini-chart">
+                  <canvas id="salesChart<%= index %>" height="30"></canvas>
+                </div>
+              </td>
+              <td class="text-center">
+                <button class="btn btn-sm btn-light" title="Cài đặt">
+                  <i class="fa-solid fa-ellipsis-vertical"></i>
+                </button>
+              </td>
+            </tr>
+            <% }); %>
+          <% } else { %>
+            <tr>
+              <td colspan="6" class="text-center py-4 text-muted">
+                <i class="fa-solid fa-inbox fa-2x mb-2"></i>
+                <p class="mb-0">Chưa có dữ liệu người dùng</p>
+              </td>
+            </tr>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+    
+   
   </div>
 </div>
 
 <!-- Các quy trình quản lý -->
 <div class="row g-3 mt-4">
-
-  <!-- Phê duyệt chỗ ở mới -->
   <div class="col-md-6">
     <div class="card shadow-sm border-0 h-100">
       <div class="card-body">
@@ -45,7 +193,6 @@
     </div>
   </div>
 
-  <!-- Phân quyền người dùng -->
   <div class="col-md-6">
     <div class="card shadow-sm border-0 h-100">
       <div class="card-body">
@@ -64,12 +211,9 @@
       </div>
     </div>
   </div>
-
 </div>
 
 <div class="row g-3 mt-3">
-
-  <!-- Quản lý tất cả chỗ ở -->
   <div class="col-md-6">
     <div class="card shadow-sm border-0 h-100">
       <div class="card-body">
@@ -88,7 +232,6 @@
     </div>
   </div>
 
-  <!-- Quản lý thông báo -->
   <div class="col-md-6">
     <div class="card shadow-sm border-0 h-100">
       <div class="card-body">
@@ -106,36 +249,301 @@
       </div>
     </div>
   </div>
-
 </div>
 
-
-
 <div class="row g-3 mt-3">
-
-  <!-- Quản lý tất cả chỗ ở -->
   <div class="col-md-6">
     <div class="card shadow-sm border-0 h-100">
       <div class="card-body">
         <h5>
           <i class="fa-solid fa-calendar-check text-success me-2"></i>
-            Theo dõi đơn đặt phòng
+          Theo dõi đơn đặt phòng
         </h5>
         <p>
-         Quản lý, theo dõi và xử lý tất cả đơn đặt phòng trong hệ thống.
+          Quản lý, theo dõi và xử lý tất cả đơn đặt phòng trong hệ thống.
         </p>
         <a href="/admin/datphong" class="btn btn-success btn-sm">
-          <i class="fa-solid fa-house me-1"></i>
-         Xem danh sách đơn đặt phòng
+          <i class="fa-solid fa-calendar-days me-1"></i>
+          Xem danh sách đơn đặt phòng
         </a>
       </div>
     </div>
   </div>
-
-
 </div>
 
+<style>
+/* Compact table styling */
+.compact-table {
+  font-size: 0.875rem;
+}
 
+.compact-table thead th {
+  font-weight: 600;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #6c757d;
+  border-bottom: 2px solid #dee2e6;
+  padding: 0.75rem 0.5rem;
+}
+
+.compact-table tbody td {
+  padding: 0.65rem 0.5rem;
+  vertical-align: middle;
+}
+
+.user-avatar-sm {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #f8f9fa;
+}
+
+.badge {
+  font-size: 0.7rem;
+  padding: 0.35rem 0.65rem;
+  font-weight: 500;
+}
+
+.progress {
+  background-color: #e9ecef;
+}
+
+.mini-chart {
+  height: 30px;
+}
+
+/* Hover effect */
+.compact-table tbody tr {
+  transition: all 0.2s ease;
+}
+
+.compact-table tbody tr:hover {
+  background-color: rgba(0, 123, 255, 0.03);
+  box-shadow: inset 3px 0 0 0 #007bff;
+}
+
+/* Button group styling */
+.btn-group-sm .btn {
+  font-size: 0.75rem;
+  padding: 0.35rem 0.75rem;
+}
+
+.btn-group .btn.active {
+  background-color: #343a40;
+  border-color: #343a40;
+  color: white;
+}
+
+/* Chart period buttons */
+.btn-group[role="group"] .btn {
+  border-color: #dee2e6;
+}
+
+.btn-group[role="group"] .btn.active {
+  background-color: #212529;
+  border-color: #212529;
+  color: white;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .compact-table {
+    font-size: 0.75rem;
+  }
+  
+  .user-avatar-sm {
+    width: 28px;
+    height: 28px;
+  }
+  
+  .badge {
+    font-size: 0.65rem;
+    padding: 0.25rem 0.5rem;
+  }
+}
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // ==========================================
+  // PHẦN 1: BIỂU ĐỒ CHÍNH (MAIN CHART)
+  // ==========================================
+  const mainChartData = {
+    '7': {
+      labels: ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'],
+      revenue: [45, 52, 48, 65, 58, 72, 68],
+      bookings: [12, 15, 13, 18, 16, 21, 19]
+    },
+    '30': {
+      labels: ['Tuần 1', 'Tuần 2', 'Tuần 3', 'Tuần 4'],
+      revenue: [180, 220, 195, 245],
+      bookings: [48, 62, 51, 73]
+    },
+    '90': {
+      labels: ['Tháng 1', 'Tháng 2', 'Tháng 3'],
+      revenue: [620, 780, 850],
+      bookings: [165, 208, 227]
+    },
+    '365': {
+      labels: ['Q1', 'Q2', 'Q3', 'Q4'],
+      revenue: [2250, 2680, 2920, 3150],
+      bookings: [600, 715, 780, 842]
+    }
+  };
+
+  const mainCtx = document.getElementById('dashboardChart');
+  let mainChart = null;
+
+  function renderMainChart(period) {
+    const data = mainChartData[period];
+    if (!data) return;
+
+    if (mainChart) {
+      mainChart.data.labels = data.labels;
+      mainChart.data.datasets[0].data = data.revenue;
+      mainChart.data.datasets[1].data = data.bookings;
+      mainChart.update();
+    } else {
+      mainChart = new Chart(mainCtx, {
+        type: 'line',
+        data: {
+          labels: data.labels,
+          datasets: [{
+            label: 'Doanh thu (triệu)',
+            data: data.revenue,
+            borderColor: 'rgb(75, 192, 192)',
+            backgroundColor: 'rgba(75, 192, 192, 0.1)',
+            tension: 0.4,
+            fill: true
+          }, {
+            label: 'Đặt phòng',
+            data: data.bookings,
+            borderColor: 'rgb(255, 99, 132)',
+            backgroundColor: 'rgba(255, 99, 132, 0.1)',
+            tension: 0.4,
+            fill: true
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: true,
+          plugins: {
+            legend: { position: 'top' },
+            tooltip: { mode: 'index', intersect: false }
+          },
+          interaction: { mode: 'nearest', axis: 'x', intersect: false },
+          scales: { y: { beginAtZero: true } }
+        }
+      });
+    }
+  }
+
+  // Khởi tạo biểu đồ chính mặc định 7 ngày
+  renderMainChart('7');
+
+  // Sự kiện click cho biểu đồ chính
+  const mainFilterButtons = document.querySelectorAll('[data-period]');
+  mainFilterButtons.forEach(btn => {
+    btn.addEventListener('click', function(e) {
+      e.preventDefault();
+      mainFilterButtons.forEach(b => b.classList.remove('active'));
+      this.classList.add('active');
+      renderMainChart(this.getAttribute('data-period'));
+    });
+  });
+
+  // ==========================================
+  // PHẦN 2: MINI CHARTS (BẢNG NGƯỜI DÙNG)
+  // ==========================================
+  
+  // Mảng lưu trữ tất cả các instances của biểu đồ nhỏ
+  const miniChartInstances = [];
+
+  // Hàm tạo dữ liệu ngẫu nhiên (Giả lập dữ liệu từ server)
+  function generateRandomData(points) {
+    return Array.from({length: points}, () => Math.floor(Math.random() * 100));
+  }
+
+  // Khởi tạo các biểu đồ nhỏ ban đầu
+  <% if (recentUsers && recentUsers.length > 0) { %>
+    <% recentUsers.forEach((user, index) => { %>
+      (function() {
+        const miniCtx = document.getElementById('salesChart<%= index %>');
+        if (miniCtx) {
+          // Mặc định ban đầu là tuần (7 điểm dữ liệu)
+          const initialData = generateRandomData(7); 
+          
+          const chartInstance = new Chart(miniCtx, {
+            type: 'line',
+            data: {
+              labels: ['', '', '', '', '', '', ''], // Nhãn rỗng để ẩn trục X
+              datasets: [{
+                data: initialData,
+                borderColor: '<%= ["#4bc0c0", "#9966ff", "#ff9f40", "#4dc9f6"][index % 4] %>',
+                borderWidth: 2,
+                pointRadius: 0, // Ẩn điểm tròn để chart gọn
+                tension: 0.4,
+                fill: false
+              }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: { legend: { display: false }, tooltip: { enabled: false } },
+              scales: { x: { display: false }, y: { display: false } },
+              animation: { duration: 1000 } // Hiệu ứng mượt
+            }
+          });
+          
+          // Lưu instance vào mảng để dùng lại sau này
+          miniChartInstances.push(chartInstance);
+        }
+      })();
+    <% }); %>
+  <% } %>
+
+  // Hàm cập nhật toàn bộ Mini Charts
+  function updateMiniCharts(timeFrame) {
+    // Xác định số điểm dữ liệu: Tuần = 7, Tháng = 15 (để đường vẽ dài hơn/khác đi)
+    const dataPoints = timeFrame === 'week' ? 7 : 15; 
+    const labels = new Array(dataPoints).fill('');
+
+    miniChartInstances.forEach(chart => {
+      // Tạo dữ liệu mới ngẫu nhiên cho từng biểu đồ
+      const newData = generateRandomData(dataPoints);
+      
+      // Cập nhật dữ liệu và nhãn
+      chart.data.labels = labels;
+      chart.data.datasets[0].data = newData;
+      
+      // Vẽ lại biểu đồ
+      chart.update();
+    });
+  }
+
+  // Sự kiện click cho bộ lọc Mini Charts (Tuần này / Tháng này)
+  const userFilterButtons = document.querySelectorAll('[data-time]');
+  userFilterButtons.forEach(btn => {
+    btn.addEventListener('click', function(e) {
+      e.preventDefault();
+      
+      // Xử lý CSS active
+      userFilterButtons.forEach(b => b.classList.remove('active'));
+      this.classList.add('active');
+      
+      // Lấy loại thời gian (week/month) và gọi hàm cập nhật
+      const timeFrame = this.getAttribute('data-time');
+      console.log('Cập nhật mini charts theo:', timeFrame);
+      updateMiniCharts(timeFrame);
+    });
+  });
+
+});
+</script>
 
 
 <%- include('./layout/footer') %>
