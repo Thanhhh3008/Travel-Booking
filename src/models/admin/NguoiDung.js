@@ -17,7 +17,30 @@ countAll: async () => {
   return rows[0].total;
 },
 
-
+// Lấy danh sách người dùng gần đây
+   getRecentUsers : async (limit = 5) => {
+    const query = `
+      SELECT 
+        nd.MaNguoiDung,
+        nd.HoTen,
+        nd.Email,
+        nd.avartar,
+        nd.status,
+        vt.TenVaiTro as vaiTro
+      FROM NguoiDung nd
+      LEFT JOIN VaiTro vt ON nd.MaVaiTro = vt.MaVaiTro
+      ORDER BY nd.MaNguoiDung DESC
+      LIMIT ?
+    `;
+    
+    try {
+      const [rows] = await pool.query(query, [limit]);
+      return rows;
+    } catch (error) {
+      console.error('Error getting recent users:', error);
+      throw error;
+    }
+  },
  // Tìm kiếm theo họ tên, Username, SĐT hoặc email
 search: async (keyword) => {
   if (!keyword) {

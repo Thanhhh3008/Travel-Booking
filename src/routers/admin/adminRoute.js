@@ -10,7 +10,7 @@ const requireAdmin = (req, res, next) => {
   next();
 };
 
-router.get('/',  AdminController.dashboard);
+router.get('/',requireAdmin,  AdminController.dashboard);
 
 router.get('/datphong', BookingController.getAllBookingDetails);
 // Route in hóa đơn
