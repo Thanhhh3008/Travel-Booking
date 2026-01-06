@@ -192,6 +192,9 @@ class BookingController {
             req.session.save(() => res.redirect(`/rooms/${roomId}`));
         }
     }
+  
+
+
 }
 
 module.exports = BookingController;

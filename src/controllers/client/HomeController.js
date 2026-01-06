@@ -69,7 +69,7 @@ for (const city of cities) {
         let conditions = ["p.TrangThaiPhong = 'Đang hoạt động'"];
         let params = [];
         
-        // 🔥 TÌM KIẾM THEO TEXT - TÌM TRONG PROVINCE NAME
+        // TÌM KIẾM THEO TEXT - TÌM TRONG PROVINCE NAME
         if (search && search.trim()) {
             conditions.push(`(
                 pr.name LIKE ? OR 
@@ -81,7 +81,7 @@ for (const city of cities) {
             params.push(searchPattern, searchPattern, searchPattern, searchPattern);
         }
         
-        // 🔥 LỌC THEO THÀNH PHỐ - TÌM TRONG PROVINCE NAME
+        //  LỌC THEO THÀNH PHỐ - TÌM TRONG PROVINCE NAME
         if (city && city.trim()) {
             conditions.push("pr.name = ?");
             params.push(city.trim());

@@ -7,6 +7,7 @@
   Danh sách chi tiết đặt phòng
 </h3>
 
+
     <div class="badge bg-info fs-6">
       <i class="fa-solid fa-receipt"></i>
       <%= totalBookings %> đơn
@@ -69,12 +70,23 @@
             </span>
           <% } %>
         </td>
-        <td>
-          <a href="/admin/datphong/<%= b.MaChiTietDatPhong %>/print" 
-             class="btn btn-secondary btn-sm" target="_blank">
-            <i class="fa-solid fa-print"></i> In hóa đơn
-          </a>
-        </td>
+        <td class="d-flex gap-1">
+  <a href="/admin/datphong/<%= b.MaChiTietDatPhong %>/print"
+     class="btn btn-secondary btn-sm" target="_blank">
+    <i class="fa-solid fa-print"></i>
+  </a>
+
+  <% if (b.TrangThai == 0) { %>
+    <form action="/admin/datphong/<%= b.MaChiTietDatPhong %>/delete"
+      method="POST"
+      onsubmit="return confirmDelete();">
+  <button class="btn btn-danger btn-sm">
+    <i class="fa-solid fa-trash"></i>
+  </button>
+</form>
+  <% } %>
+</td>
+
       </tr>
     <% }) %>
   <% } else { %>
@@ -125,5 +137,23 @@
   </div>
   <% } %>
 </div>
+<script>
+  function confirmDelete() {
+    const ok = confirm('Bạn có chắc chắn muốn xóa đơn này không?');
+    if (ok) {
+      // Đánh dấu đã xóa để sau khi reload hiện alert
+      sessionStorage.setItem('bookingDeleted', '1');
+    }
+    return ok;
+  }
+
+  // Khi load lại trang sau redirect
+  window.addEventListener('DOMContentLoaded', function () {
+    if (sessionStorage.getItem('bookingDeleted') === '1') {
+      alert('Xóa đơn đặt phòng thành công!');
+      sessionStorage.removeItem('bookingDeleted');
+    }
+  });
+</script>
 
 <%- include('./layout/footer') %>

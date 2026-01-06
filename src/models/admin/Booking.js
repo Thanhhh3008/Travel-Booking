@@ -48,7 +48,14 @@ getById: async (id) => {
     `, [id]);
 
     return rows[0] || null;
-  }
+  },
+   deleteById: async (id) => {
+    const [result] = await pool.query(
+      'DELETE FROM chitietdatphong WHERE MaChiTietDatPhong = ?',
+      [id]
+    );
+    return result.affectedRows;
+  },
 };
 
 module.exports = BookingModel;

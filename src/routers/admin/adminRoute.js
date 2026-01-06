@@ -15,5 +15,6 @@ router.get('/',requireAdmin,  AdminController.dashboard);
 router.get('/datphong', BookingController.getAllBookingDetails);
 // Route in hóa đơn
 router.get('/datphong/:id/print', BookingController.printBookingInvoice);
+router.post('/datphong/:id/delete', BookingController.deleteBooking);
 
 module.exports = router;
