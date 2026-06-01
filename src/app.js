@@ -62,17 +62,41 @@ app.use(passport.initialize());
 
 
 // Cấu hình Google Strategy
-// passport.use(new GoogleStrategy({
-//     clientID: process.env.CLIENT_ID,
-//     clientSecret: process.env.CLIENT_SECRET,
-//     callbackURL: "http://127.0.0.1:3256/auth/google/callback"
-// },
-//     (accessToken, refreshToken, profile, done) => {
-//         // Xử lý user ở đây (lưu DB hoặc trả về profile)
+passport.use(new GoogleStrategy({
+    clientID: process.env.GOOGLE_CLIENT_ID || 'dummy',
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET || 'dummy',
+    callbackURL: `${process.env.DOMAIN}/auth/google/callback`
+},
+    async (accessToken, refreshToken, profile, done) => {
+        try {
+            const AuthController = require('./controllers/client/AuthController');
+            const email = profile.emails && profile.emails.length > 0 ? profile.emails[0].value : null;
+            if (!email) return done(new Error("No email found from Google"), null);
+            
+            const user = await AuthController.findEmailCustomer(email, profile.displayName);
+            return done(null, user);
+        } catch (error) {
+            return done(error, null);
+        }
+    }
+));
 
-//         return done(null, profile);
-//     }
-// ));
+app.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
+
+app.get('/auth/google/callback', 
+    passport.authenticate('google', { failureRedirect: '/login.html', session: false }),
+    (req, res) => {
+        // Successful authentication
+        req.session.login = req.user;
+        req.session.message = {
+            mess: `Đăng nhập thành công bằng Google`,
+            type: 'success'
+        };
+        req.session.save(() => {
+            res.redirect('/');
+        });
+    }
+);
 
 
 // nơi để import middleware

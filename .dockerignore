@@ -1,19 +1,35 @@
+# Dependencies
 node_modules/
+
+# Environment variables (NEVER commit this)
 .env
 .env.local
+.env.*.local
+
+# Session files
 sessions/
+
+# Uploaded files (user content)
 public/uploads/
 public/qrcode/
 public/admin/uploads/anhphong/
 public/admin/uploads/anhphaply/
 public/avartar/
+
+# Logs
 logs/
 *.log
 npm-debug.log*
+
+# OS files
 .DS_Store
 Thumbs.db
+
+# Archive
 *.rar
 *.zip
 src.rar
+
+# IDE
 .vscode/
 .idea/

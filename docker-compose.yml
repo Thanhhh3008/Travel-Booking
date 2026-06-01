@@ -1,0 +1,76 @@
+version: '3.9'
+
+services:
+  # ─── MySQL Database ───────────────────────────────────────────────
+  db:
+    image: mysql:8.0
+    container_name: tripstay_db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-root}
+      MYSQL_DATABASE: ${DB_NAME:-dulichdb}
+    ports:
+      - "${DB_PORT:-3307}:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./dulichdb.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DB_PASSWORD:-root}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    networks:
+      - tripstay_net
+
+  # ─── Node.js Application ──────────────────────────────────────────
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: tripstay_app
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_HOST: db
+      DB_USERNAME: root
+      DB_PASSWORD: ${DB_PASSWORD:-root}
+      DB_NAME: ${DB_NAME:-dulichdb}
+      DB_PORT: 3306
+      PORT: 6969
+      DOMAIN: ${DOMAIN:-http://localhost:6969}
+      KEY_JWT: ${KEY_JWT:-your_jwt_secret_here}
+      GMAIL_FROM: ${GMAIL_FROM}
+      GMAIL_PASSWORD: ${GMAIL_PASSWORD}
+      GMAIL_USER: ${GMAIL_USER}
+      GMAIL_PASS: ${GMAIL_PASS}
+      VNP_TMN_CODE: ${VNP_TMN_CODE}
+      VNP_HASH_SECRET: ${VNP_HASH_SECRET}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
+    ports:
+      - "6969:6969"
+    volumes:
+      - uploads_data:/app/public/uploads
+      - qrcode_data:/app/public/qrcode
+      - anhphong_data:/app/public/admin/uploads/anhphong
+      - anhphaply_data:/app/public/admin/uploads/anhphaply
+      - avartar_data:/app/public/avartar
+      - sessions_data:/app/sessions
+    networks:
+      - tripstay_net
+
+networks:
+  tripstay_net:
+    driver: bridge
+
+volumes:
+  mysql_data:
+  uploads_data:
+  qrcode_data:
+  anhphong_data:
+  anhphaply_data:
+  avartar_data:
+  sessions_data:

@@ -180,10 +180,10 @@ class BookingController {
             await sendmallconfig(req.session.login.email, 'GỬI MÃ QR CODE THÔNG TIN ĐƠN HÀNG', fileName_qrcode)
 
 
-            req.session.message = { type: 'success', mess: 'Đặt phòng thành công!' };
+            req.session.message = { type: 'success', mess: 'Đặt phòng thành công! Vui lòng hoàn tất thanh toán.' };
             req.session.save(err => {
                 if (err) console.error('Lỗi lưu session:', err);
-                res.redirect('/');
+                res.redirect(`/checkout/${newId}`);
             });
 
         } catch (e) {
