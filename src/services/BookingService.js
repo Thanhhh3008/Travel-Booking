@@ -41,13 +41,15 @@ class BookingService {
     /**
      *  KIỂM TRA PHÒNG CÓ TRÙNG LỊCH KHÔNG
      * Overlap: NOT (oldCheckout <= newCheckin OR oldCheckin >= newCheckout)
+     * Lưu ý: chỉ xét booking đang có hiệu lực (TrangThai IN ('0','1'))
+     *           Bỏ qua CANCELLED (TrangThai = '2')
      */
     async isRoomAvailable(roomId, checkinDate, checkoutDate) {
         const sql = `
             SELECT COUNT(*) AS total
             FROM chitietdatphong
             WHERE MaPhong = ?
-              AND TrangThai = '0'
+              AND TrangThai IN ('0', '1')
               AND NOT (
                 NgayTraPhong < ?
                 OR NgayNhanPhong >= ?
@@ -103,6 +105,22 @@ async markCompleted(bookingId) {
         UPDATE chitietdatphong
         SET TrangThai = '1'
         WHERE MaChiTietDatPhong = ?
+    `;
+    const [result] = await pool.execute(sql, [bookingId]);
+    return result.affectedRows > 0;
+}
+
+/**
+ * HỦY BOOKING (set TrangThai = '2', LichSu = 'CANCELLED')
+ * Được gọi bởi BookingTimeoutService khi hết 10 phút chưa thanh toán.
+ */
+async cancelBooking(bookingId) {
+    const sql = `
+        UPDATE chitietdatphong
+        SET TrangThai = '2',
+            LichSu    = 'CANCELLED'
+        WHERE MaChiTietDatPhong = ?
+          AND TrangThai = '0'
     `;
     const [result] = await pool.execute(sql, [bookingId]);
     return result.affectedRows > 0;

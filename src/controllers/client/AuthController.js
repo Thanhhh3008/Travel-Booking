@@ -11,6 +11,7 @@ const { VNPay, ignoreLogger, ProductCode, VnpLocale, dateFormat } = require('vnp
 const { v4: uuidv4 } = require('uuid');
 require('dotenv').config();
 const ThongBao = require('../../models/admin/ThongBao');
+const bookingTimeoutService = require('../../services/BookingTimeoutService');
 class AuthController {
     static sendToVerifyEmail = async (email) => {
         const payload = { email: email };
@@ -845,6 +846,10 @@ static updatePasswordByEmail = async (req, res) => {
         // console.log(mND, ' ', mdp)
 
         await mR.updateStatus(mp, 'Đã Đặt Trước');
+
+        // ✅ XÓA TIMEOUT REDIS – booking đã thanh toán, ngăn poller cancel nhầm
+        await bookingTimeoutService.clearTimeout(mdp);
+
         await mDP.updatePaymentStatus(mdp, mND);
         await mT.saveTranSacTion({
             MaNguoiDung: mND,

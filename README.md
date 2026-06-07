@@ -7,6 +7,7 @@
 [![Node.js](https://img.shields.io/badge/Node.js-20-339933?logo=node.js&logoColor=white)](https://nodejs.org)
 [![Express](https://img.shields.io/badge/Express-5.x-000000?logo=express&logoColor=white)](https://expressjs.com)
 [![MySQL](https://img.shields.io/badge/MySQL-8.0-4479A1?logo=mysql&logoColor=white)](https://www.mysql.com)
+[![Redis](https://img.shields.io/badge/Redis-7.x-DC382D?logo=redis&logoColor=white)](https://redis.io)
 [![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker&logoColor=white)](https://www.docker.com)
 [![CI/CD](https://github.com/Thanhhh3008/Travel-Booking/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/Thanhhh3008/Travel-Booking/actions)
 [![License: ISC](https://img.shields.io/badge/License-ISC-blue.svg)](https://opensource.org/licenses/ISC)
@@ -46,6 +47,7 @@
 ### 📅 Booking & Payment
 - Real-time **date availability checker** to prevent double-booking
 - Booking with check-in / check-out date selection (minimum 2 nights, up to 30 days in advance)
+- **Automated Reservation Timeout**: Leverages **Redis TTL** to automatically cancel unpaid bookings after 10 minutes, optimizing room inventory availability.
 - Integrated **VNPay payment gateway** (supports sandbox & production)
 - **QR code** generated and emailed to user upon successful booking
 - Full booking history with payment status tracking
@@ -74,6 +76,7 @@
 | **Template Engine** | EJS (Server-Side Rendering) |
 | **Database** | MySQL 8.0 |
 | **Authentication** | express-session, bcrypt, jsonwebtoken, Passport.js (Google OAuth2) |
+| **Caching & Job Queue** | Redis |
 | **File Upload** | Multer |
 | **Email** | Nodemailer (Gmail SMTP) |
 | **Payment** | VNPay SDK |
@@ -128,7 +131,7 @@ Travel-Booking/
 
 - [Git](https://git-scm.com/)
 - [Docker Desktop](https://www.docker.com/products/docker-desktop/) (for Docker option)
-- OR [Node.js 20+](https://nodejs.org/) + [MySQL 8.0](https://www.mysql.com/) (for local option)
+- OR [Node.js 20+](https://nodejs.org/) + [MySQL 8.0](https://www.mysql.com/) + [Redis 7+](https://redis.io/) (for local option)
 
 ### Option 1: Run with Docker (Recommended)
 

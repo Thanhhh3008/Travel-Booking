@@ -29,6 +29,11 @@ const checkRoleUpdate = require('./middlewares/checkRoleUpdate');
 const http = require("http");
 // const redisStore = require('./database/connectRedisDB');
 
+// ─── Booking Timeout Service (Redis) ──────────────────
+// Tự động HỦY các booking chưa thanh toán sau 10 phút
+const bookingTimeoutService = require('./services/BookingTimeoutService');
+
+
 // Set up session
 app.use(session({
     store: new FileStore({
@@ -196,4 +201,11 @@ app.use('/admin', adminRoutes);
 app.listen(port, () => {
     console.log(`Example app listening on port http://127.0.0.1:${port}`)
     console.log(`Admin dashoboard: http://127.0.0.1:${port}/admin`)
+
+    // Khởi động background poller kiểm tra booking hết hạn thanh toán
+    bookingTimeoutService.startPoller();
 });
+
+// Graceful shutdown
+process.on('SIGTERM', () => bookingTimeoutService.stopPoller());
+process.on('SIGINT',  () => bookingTimeoutService.stopPoller());

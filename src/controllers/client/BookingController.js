@@ -5,6 +5,7 @@ const User = require('../../models/admin/NguoiDung');
 const QRCode = require('qrcode');
 const genQrCode = require('../../util/genQrCode');
 const { sendmallconfig } = require('../../util/mailer');
+const bookingTimeoutService = require('../../services/BookingTimeoutService');
 
 class BookingController {
 
@@ -173,6 +174,11 @@ class BookingController {
                 SoLuongKhach: SoLuongKhach
             });
 
+            // ✅ ĐẶT REDIS TIMEOUT 10 PHÚT
+            // Nếu user không thanh toán VNPay trong 10 phút,
+            // background poller sẽ tự động chuyển booking sang CANCELLED.
+            await bookingTimeoutService.scheduleTimeout(newId);
+
             const data = { order_id: newId, maPhong: roomId, checkIn: checkinDate, checkOut: checkoutDate, tongtien: totalPrice }
 
             const fileName_qrcode = await genQrCode(JSON.stringify(data));
@@ -180,7 +186,7 @@ class BookingController {
             await sendmallconfig(req.session.login.email, 'GỬI MÃ QR CODE THÔNG TIN ĐƠN HÀNG', fileName_qrcode)
 
 
-            req.session.message = { type: 'success', mess: 'Đặt phòng thành công! Vui lòng hoàn tất thanh toán.' };
+            req.session.message = { type: 'success', mess: 'Đặt phòng thành công! Vui lòng hoàn tất thanh toán trong 10 phút.' };
             req.session.save(err => {
                 if (err) console.error('Lỗi lưu session:', err);
                 res.redirect(`/checkout/${newId}`);
